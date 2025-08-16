@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Menu, X, Phone, MapPin, Clock } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../hooks/useCart';
@@ -15,20 +15,24 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Debug cart state in header
-  useEffect(() => {
-    console.log('Header: Cart items changed:', items);
-    console.log('Header: Item count:', getItemCount());
-  }, [items, getItemCount]);
-
   // Use settings from database or fallback to defaults
   const siteData = settings || {
     siteName: 'TechHub Pro',
     siteTagline: 'Your Complete Technology Solution',
     address: '123 Tech Street, Digital City, DC 12345',
     phone: '+1 (555) 123-4567',
-    hours: 'Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM'
+    hours: 'Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM',
+    logoUrl: undefined, // fallback: avoids undefined property
   };
+
+  // Debug cart state in header
+  useEffect(() => {
+    console.log('Header: Cart items changed:', items);
+    console.log('Header: Item count:', getItemCount());
+  }, [items]); // only depend on items, not the function
+
+  const itemCount = getItemCount();
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       {/* Top Bar */}
@@ -119,9 +123,9 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
               className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
               <ShoppingCart className="w-6 h-6" />
-              {getItemCount() > 0 && (
+              {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-semibold animate-pulse">
-                  {getItemCount()}
+                  {itemCount}
                 </span>
               )}
             </button>

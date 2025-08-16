@@ -2,15 +2,9 @@ import React, { useState } from 'react';
 import { Calendar, Clock, User, Phone, MapPin, MessageSquare, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../hooks/useCart';
-import { Reservation } from '../../types';
+import { supabase } from '../../lib/supabaseClient'; // 👈 import Supabase client
 
-interface ReservationFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (reservation: Omit<Reservation, 'id' | 'createdAt' | 'status'>) => void;
-}
-
-export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormProps) {
+export function ReservationForm({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { items, getTotalAmount, clearCart } = useCart();
   const [formData, setFormData] = useState({
     customerName: '',
@@ -40,17 +34,28 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
     setLoading(true);
 
     try {
-      const reservation: Omit<Reservation, 'id' | 'createdAt' | 'status'> = {
-        referenceNumber: `RES-${Date.now()}`,
-        ...formData,
-        items,
-        totalAmount: getTotalAmount()
+      const reservation = {
+        reference_number: `RES-${Date.now()}`,
+        customer_name: formData.customerName,
+        customer_phone: formData.customerPhone,
+        customer_whatsapp: formData.customerWhatsApp || null,
+        pickup_branch: formData.pickupBranch,
+        proposed_date: formData.proposedDate,
+        proposed_time: formData.proposedTime,
+        notes: formData.notes,
+        items: items, // 👈 stored as JSON
+        total_amount: getTotalAmount(),
       };
 
-      await onSubmit(reservation);
+      const { error } = await supabase
+        .from('reservations') // 👈 Supabase table name
+        .insert([reservation]);
+
+      if (error) throw error;
+
       clearCart();
       onClose();
-      
+
       // Reset form
       setFormData({
         customerName: '',
@@ -61,9 +66,9 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
         proposedTime: '',
         notes: ''
       });
-    } catch (error) {
-      console.error('Failed to submit reservation:', error);
-      // Don't clear cart or close form on error
+    } catch (err) {
+      console.error('Failed to submit reservation:', err);
+      alert('Failed to submit reservation. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -95,6 +100,7 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
             </button>
           </div>
 
+          {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* Order Summary */}
             <div className="bg-gray-50 rounded-lg p-4">
@@ -249,19 +255,10 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
 
             {/* Actions */}
             <div className="flex gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="flex-1"
-              >
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                loading={loading}
-                className="flex-1"
-              >
+              <Button type="submit" loading={loading} className="flex-1">
                 Submit Reservation
               </Button>
             </div>

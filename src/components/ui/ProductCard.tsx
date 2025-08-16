@@ -16,7 +16,30 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log('Adding to cart:', product.name); // Debug log
+   
+   // Validate product data
+   if (!product || !product.id) {
+     console.error('Invalid product data:', product);
+     return;
+   }
+   
+   // Check stock
+   if (product.stock <= 0) {
+     console.warn('Product out of stock:', product.name);
+     return;
+   }
+   
     addItem(product, 1);
+   
+   // Show visual feedback
+   const button = e.target as HTMLElement;
+   const originalText = button.textContent;
+   button.textContent = 'Added!';
+   setTimeout(() => {
+     if (button.textContent === 'Added!') {
+       button.textContent = originalText;
+     }
+   }, 1000);
   };
 
   const handleViewDetails = (e: React.MouseEvent) => {

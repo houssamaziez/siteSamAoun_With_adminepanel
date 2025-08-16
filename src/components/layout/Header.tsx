@@ -11,9 +11,15 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount } = useCart();
+  const { getItemCount, items } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Debug cart state in header
+  useEffect(() => {
+    console.log('Header: Cart items changed:', items);
+    console.log('Header: Item count:', getItemCount());
+  }, [items, getItemCount]);
 
   // Use settings from database or fallback to defaults
   const siteData = settings || {
@@ -113,11 +119,11 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
               className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
               <ShoppingCart className="w-6 h-6" />
-              {getItemCount() > 0 ? (
+              {getItemCount() > 0 && (
                 <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-semibold animate-pulse">
                   {getItemCount()}
                 </span>
-              ) : null}
+              )}
             </button>
 
             {/* CTA Button */}

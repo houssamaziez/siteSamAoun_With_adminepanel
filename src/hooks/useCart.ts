@@ -5,78 +5,108 @@ const CART_STORAGE_KEY = 'techhub_cart';
 
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       if (savedCart) {
-        setItems(JSON.parse(savedCart));
+        const parsedCart = JSON.parse(savedCart);
+        console.log('Loading cart from localStorage:', parsedCart);
+        setItems(parsedCart);
       }
     } catch (error) {
       console.error('Failed to load cart from localStorage:', error);
+    } finally {
+      setIsLoaded(true);
     }
   }, []);
 
-  // Save cart to localStorage whenever items change
+  // Save cart to localStorage whenever items change (but only after initial load)
   useEffect(() => {
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-    } catch (error) {
-      console.error('Failed to save cart to localStorage:', error);
+    if (isLoaded) {
+      try {
+        console.log('Saving cart to localStorage:', items);
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      } catch (error) {
+        console.error('Failed to save cart to localStorage:', error);
+      }
     }
-  }, [items]);
+  }, [items, isLoaded]);
 
   const addItem = useCallback((product: Product, quantity: number = 1, notes?: string) => {
-    console.log('useCart addItem called:', product.name, quantity); // Debug log
+    console.log('useCart addItem called:', product.name, 'quantity:', quantity);
+    
     setItems(prev => {
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
       
       if (existingIndex >= 0) {
-        console.log('Item exists, updating quantity'); // Debug log
+        console.log('Item exists, updating quantity');
         const updated = [...prev];
         updated[existingIndex] = {
           ...updated[existingIndex],
           quantity: updated[existingIndex].quantity + quantity,
           notes: notes || updated[existingIndex].notes
         };
-        console.log('Updated cart:', updated); // Debug log
+        console.log('Updated cart:', updated);
         return updated;
       }
       
-      console.log('Adding new item to cart'); // Debug log
-      const newCart = [...prev, { product, quantity, notes }];
-      console.log('New cart:', newCart); // Debug log
+      console.log('Adding new item to cart');
+      const newItem: CartItem = { product, quantity, notes };
+      const newCart = [...prev, newItem];
+      console.log('New cart:', newCart);
       return newCart;
     });
   }, []);
 
   const updateItem = useCallback((productId: string, updates: Partial<Pick<CartItem, 'quantity' | 'notes'>>) => {
-    setItems(prev => prev.map(item => 
-      item.product.id === productId 
-        ? { ...item, ...updates }
-        : item
-    ));
+    console.log('Updating cart item:', productId, updates);
+    setItems(prev => {
+      const updated = prev.map(item => 
+        item.product.id === productId 
+          ? { ...item, ...updates }
+          : item
+      );
+      console.log('Cart after update:', updated);
+      return updated;
+    });
   }, []);
 
   const removeItem = useCallback((productId: string) => {
-    setItems(prev => prev.filter(item => item.product.id !== productId));
+    console.log('Removing item from cart:', productId);
+    setItems(prev => {
+      const filtered = prev.filter(item => item.product.id !== productId);
+      console.log('Cart after removal:', filtered);
+      return filtered;
+    });
   }, []);
 
   const clearCart = useCallback(() => {
+    console.log('Clearing cart');
     setItems([]);
   }, []);
 
   const getItemCount = useCallback(() => {
-    return items.reduce((total, item) => total + item.quantity, 0);
+    const count = items.reduce((total, item) => total + item.quantity, 0);
+    console.log('Cart item count:', count);
+    return count;
   }, [items]);
 
   const getTotalAmount = useCallback(() => {
-    return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    const total = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    console.log('Cart total amount:', total);
+    return total;
   }, [items]);
 
   const getItem = useCallback((productId: string) => {
     return items.find(item => item.product.id === productId);
+  }, [items]);
+
+  // Debug: Log cart state changes
+  useEffect(() => {
+    console.log('Cart state changed:', items);
   }, [items]);
 
   return {
@@ -87,6 +117,7 @@ export function useCart() {
     clearCart,
     getItemCount,
     getTotalAmount,
-    getItem
+    getItem,
+    isLoaded
   };
 }

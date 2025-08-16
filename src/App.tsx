@@ -16,6 +16,7 @@ import { ProductDetail } from './components/product/ProductDetail';
 import { Reservation } from './types';
 import { useProducts, useCategories, createReservation } from './hooks/useSupabaseData';
 import { getCurrentUser } from './lib/supabase';
+import { useCart } from './hooks/useCart';
 
 type View = 'home' | 'products' | 'product-detail' | 'admin';
 
@@ -32,11 +33,13 @@ function App() {
   // Use Supabase data instead of mock data
   const { products } = useProducts();
   const { categories } = useCategories();
+  const { items: cartItems } = useCart();
 
   // Debug: Log when products are loaded
   useEffect(() => {
     console.log('Products loaded:', products.length);
-  }, [products]);
+    console.log('Cart items in App:', cartItems.length);
+  }, [products, cartItems]);
 
   useEffect(() => {
     checkAuthStatus();

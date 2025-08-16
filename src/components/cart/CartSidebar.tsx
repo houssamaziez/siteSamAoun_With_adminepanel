@@ -56,60 +56,71 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
         </div>
 
         {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ height: 'calc(100vh - 200px)' }}>
-          {items.length === 0 ? (
+        <div className="flex-1 overflow-y-auto p-4" style={{ height: 'calc(100vh - 200px)' }}>
+          {!isLoaded ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="text-gray-500 mt-2">Loading cart...</p>
+            </div>
+          ) : items.length === 0 ? (
             <div className="text-center py-12">
               <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
               <p className="text-gray-500">Add some products to get started!</p>
             </div>
           ) : (
-            items.map((item) => (
-              <div key={item.product.id} className="flex items-center space-x-4 bg-gray-50 rounded-lg p-4">
-                <img
-                  src={item.product.images[0]}
-                  alt={item.product.name}
-                  className="w-16 h-16 object-cover rounded-lg"
-                />
+            <div className="space-y-4">
+              {items.map((item) => (
+                <div key={item.product.id} className="flex items-center space-x-4 bg-gray-50 rounded-lg p-4">
+                  <img
+                    src={item.product.images?.[0] || '/placeholder-image.jpg'}
+                    alt={item.product.name}
+                    className="w-16 h-16 object-cover rounded-lg"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=200';
+                    }}
+                  />
                 
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 line-clamp-2">
-                    {item.product.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">{item.product.brand}</p>
-                  <p className="text-lg font-semibold text-blue-600">
-                    ${item.product.price.toLocaleString()}
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-end space-y-2">
-                  {/* Quantity Controls */}
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleQuantityChange(item.product.id, item.quantity - 1)}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                    <span className="w-8 text-center font-medium">{item.quantity}</span>
-                    <button
-                      onClick={() => handleQuantityChange(item.product.id, item.quantity + 1)}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 line-clamp-2">
+                      {item.product.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">{item.product.brand}</p>
+                    <p className="text-lg font-semibold text-blue-600">
+                      ${item.product.price.toLocaleString()}
+                    </p>
                   </div>
 
-                  {/* Remove Button */}
-                  <button
-                    onClick={() => removeItem(item.product.id)}
-                    className="text-red-500 hover:text-red-700 text-sm transition-colors duration-200"
-                  >
-                    Remove
-                  </button>
+                  <div className="flex flex-col items-end space-y-2">
+                    {/* Quantity Controls */}
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleQuantityChange(item.product.id, item.quantity - 1)}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="w-8 text-center font-medium">{item.quantity}</span>
+                      <button
+                        onClick={() => handleQuantityChange(item.product.id, item.quantity + 1)}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Remove Button */}
+                    <button
+                      onClick={() => removeItem(item.product.id)}
+                      className="text-red-500 hover:text-red-700 text-sm transition-colors duration-200"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
 

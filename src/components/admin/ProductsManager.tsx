@@ -79,6 +79,11 @@ export function ProductsManager() {
     setEditingProduct(null);
   };
 
+  const handleFormSuccess = () => {
+    console.log('Product form success, refreshing data...');
+    refetch();
+    handleCloseForm();
+  };
   if (loading || checkingAuth) {
     return (
       <div className="space-y-6">
@@ -255,10 +260,7 @@ export function ProductsManager() {
       <ProductForm
         isOpen={showForm}
         onClose={handleCloseForm}
-        onSuccess={() => {
-          refetch();
-          handleCloseForm();
-        }}
+        onSuccess={handleFormSuccess}
         editingProduct={editingProduct}
       />
 

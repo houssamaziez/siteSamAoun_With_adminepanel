@@ -85,45 +85,58 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
 
     try {
       const productData = {
-          sku: formData.sku,
-          name: formData.name,
-          slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
-          brand: formData.brand,
-          price: parseFloat(formData.price),
-          original_price: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
-          currency: formData.currency,
-          images: formData.images.filter(img => img.trim() !== ''),
-          category_id: formData.categoryId,
-          short_description: formData.shortDescription,
-          description: formData.description,
-          stock: parseInt(formData.stock),
-          status: formData.status,
-          featured: formData.featured,
-          warranty: formData.warranty,
-          condition: formData.condition
+        sku: formData.sku,
+        name: formData.name,
+        slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
+        brand: formData.brand,
+        price: parseFloat(formData.price),
+        original_price: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
+        currency: formData.currency,
+        images: formData.images.filter(img => img.trim() !== ''),
+        category_id: formData.categoryId,
+        short_description: formData.shortDescription,
+        description: formData.description,
+        stock: parseInt(formData.stock),
+        status: formData.status,
+        featured: formData.featured,
+        warranty: formData.warranty,
+        condition: formData.condition
       };
 
-      let error;
+      console.log('Updating product with data:', productData);
+      console.log('Product ID:', editingProduct?.id);
+
       if (editingProduct) {
         // Update existing product
-        const result = await supabase
+        const { data, error } = await supabase
           .from('products')
           .update(productData)
           .eq('id', editingProduct.id);
-        error = result.error;
+        
+        console.log('Update result:', { data, error });
+        
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
       } else {
         // Create new product
-        const result = await supabase
+        const { data, error } = await supabase
           .from('products')
           .insert(productData);
-        error = result.error;
+        
+        console.log('Insert result:', { data, error });
+        
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
       }
-
-      if (error) throw error;
 
       onSuccess();
       onClose();
     } catch (err) {
+      console.error('Form submission error:', err);
       setError(err instanceof Error ? err.message : `Failed to ${editingProduct ? 'update' : 'create'} product`);
     } finally {
       setLoading(false);

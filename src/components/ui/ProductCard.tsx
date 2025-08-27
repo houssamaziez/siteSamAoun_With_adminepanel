@@ -16,6 +16,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log('🛒 ProductCard: Adding to cart clicked for:', product.name);
+    console.log('🛒 ProductCard: Current cart items before add:', getItem(product.id));
    
    // Validate product data
    if (!product || !product.id) {
@@ -26,6 +27,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
    // Check stock
    if (product.stock <= 0) {
      console.warn('⚠️ ProductCard: Product out of stock:', product.name);
+     alert('This product is out of stock');
      return;
    }
    
@@ -36,7 +38,9 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
       stock: product.stock
     });
     
+    console.log('🛒 ProductCard: About to call addItem...');
     addItem(product, 1);
+    console.log('🛒 ProductCard: addItem called successfully');
    
    // Show visual feedback
    const button = e.target as HTMLElement;
@@ -58,6 +62,12 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
        }
      }, 2000);
    }
+    
+    // Additional check after adding
+    setTimeout(() => {
+      const updatedItem = getItem(product.id);
+      console.log('🔍 ProductCard: Item after add attempt:', updatedItem);
+    }, 100);
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {

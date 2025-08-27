@@ -11,13 +11,24 @@ export function useCart() {
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      console.log('🔄 Loading cart from localStorage:', savedCart);
       if (savedCart) {
         const parsedCart = JSON.parse(savedCart);
-        console.log('🔄 Loading cart from localStorage:', parsedCart);
-        setItems(parsedCart);
+        console.log('📦 Parsed cart data:', parsedCart);
+        if (Array.isArray(parsedCart)) {
+          setItems(parsedCart);
+          console.log('✅ Cart loaded successfully:', parsedCart.length, 'items');
+        } else {
+          console.warn('⚠️ Invalid cart data format, resetting cart');
+          setItems([]);
+        }
+      } else {
+        console.log('📭 No saved cart found, starting with empty cart');
+        setItems([]);
       }
     } catch (error) {
       console.error('❌ Failed to load cart from localStorage:', error);
+      setItems([]);
     }
   }, []);
 
@@ -28,6 +39,7 @@ export function useCart() {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
       // Trigger update to notify components
       setUpdateTrigger(prev => prev + 1);
+      console.log('✅ Cart saved successfully, trigger updated to:', updateTrigger + 1);
     } catch (error) {
       console.error('❌ Failed to save cart to localStorage:', error);
     }
@@ -36,6 +48,7 @@ export function useCart() {
   const addItem = useCallback((product: Product, quantity: number = 1, notes?: string) => {
     console.log('🛒 ADD TO CART - Product:', product.name, 'Quantity:', quantity);
     console.log('🛒 Product details:', { id: product.id, price: product.price, stock: product.stock });
+    console.log('🛒 Current cart state before adding:', items);
     
     // Validate product
     if (!product || !product.id) {
@@ -52,7 +65,9 @@ export function useCart() {
     
     setItems(prev => {
       console.log('🛒 Current cart items:', prev);
+      console.log('🛒 Cart is empty:', prev.length === 0);
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
+      console.log('🔍 Existing item index:', existingIndex);
       let newItems;
       
       if (existingIndex >= 0) {
@@ -66,11 +81,21 @@ export function useCart() {
       } else {
         console.log('➕ Adding new item to cart');
         const newItem: CartItem = { product, quantity, notes };
+        console.log('📦 New item created:', newItem);
         newItems = [...prev, newItem];
       }
       
       console.log('✅ New cart state:', newItems);
       console.log('✅ Total items in cart:', newItems.reduce((sum, item) => sum + item.quantity, 0));
+      
+      // Force immediate localStorage save
+      try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(newItems));
+        console.log('💾 Immediate save to localStorage completed');
+      } catch (error) {
+        console.error('❌ Failed immediate save:', error);
+      }
+      
       return newItems;
     });
   }, []);
@@ -100,6 +125,8 @@ export function useCart() {
   const clearCart = useCallback(() => {
     console.log('🧹 Clearing cart');
     setItems([]);
+    localStorage.removeItem(CART_STORAGE_KEY);
+    console.log('✅ Cart cleared and localStorage cleaned');
   }, []);
 
   const getItemCount = useCallback(() => {

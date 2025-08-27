@@ -31,6 +31,8 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   // Log cart changes for debugging
   useEffect(() => {
     console.log('🔔 Header: Cart updated, count:', cartCount, 'items:', items.length);
+    console.log('🔔 Header: Update trigger:', updateTrigger);
+    console.log('🔔 Header: Cart items:', items);
   }, [items, updateTrigger, cartCount]);
 
   return (

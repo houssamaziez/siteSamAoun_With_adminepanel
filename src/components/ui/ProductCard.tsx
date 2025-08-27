@@ -33,13 +33,21 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
    
    // Show visual feedback
    const button = e.target as HTMLElement;
-   const originalText = button.textContent;
-   button.textContent = 'Added!';
-   setTimeout(() => {
-     if (button.textContent === 'Added!') {
-       button.textContent = originalText;
-     }
-   }, 1000);
+   const buttonElement = button.closest('button');
+   if (buttonElement) {
+     const originalText = buttonElement.textContent;
+     buttonElement.textContent = 'Added!';
+     buttonElement.classList.add('bg-green-500', 'hover:bg-green-600');
+     buttonElement.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+     
+     setTimeout(() => {
+       if (buttonElement.textContent === 'Added!') {
+         buttonElement.textContent = originalText;
+         buttonElement.classList.remove('bg-green-500', 'hover:bg-green-600');
+         buttonElement.classList.add('bg-blue-600', 'hover:bg-blue-700');
+       }
+     }, 1500);
+   }
   };
 
   const handleViewDetails = (e: React.MouseEvent) => {

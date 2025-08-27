@@ -11,9 +11,10 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount, items } = useCart();
+  const { getItemCount, items, itemCount } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
+  const [cartCount, setCartCount] = useState(0);
 
   // Use settings from database or fallback to defaults
   const siteData = settings || {
@@ -28,10 +29,15 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   // Debug cart state in header
   useEffect(() => {
     console.log('Header: Cart items changed:', items);
-    console.log('Header: Item count:', getItemCount());
-  }, [items]); // only depend on items, not the function
+    const count = getItemCount();
+    console.log('Header: Item count:', count);
+    setCartCount(count);
+  }, [items, getItemCount]);
 
-  const itemCount = getItemCount();
+  // Also update count when itemCount from hook changes
+  useEffect(() => {
+    setCartCount(itemCount);
+  }, [itemCount]);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -120,12 +126,12 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             {/* Cart */}
             <button
               onClick={onCartOpen}
-              className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+              className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 group"
             >
-              <ShoppingCart className="w-6 h-6" />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-semibold animate-pulse">
-                  {itemCount}
+              <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg animate-bounce">
+                  {cartCount}
                 </span>
               )}
             </button>

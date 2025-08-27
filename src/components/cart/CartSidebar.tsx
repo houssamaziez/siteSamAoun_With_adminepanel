@@ -10,7 +10,15 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
-  const { items, updateItem, removeItem, getTotalAmount, getItemCount } = useCart();
+  const { items, updateItem, removeItem, getTotalAmount, getItemCount, itemCount } = useCart();
+  const [displayCount, setDisplayCount] = useState(0);
+  const [displayTotal, setDisplayTotal] = useState(0);
+
+  // Update display values when cart changes
+  useEffect(() => {
+    setDisplayCount(getItemCount());
+    setDisplayTotal(getTotalAmount());
+  }, [items, getItemCount, getTotalAmount]);
 
   // Debug: Log cart items
   useEffect(() => {
@@ -44,7 +52,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
           <div className="flex items-center space-x-2">
             <ShoppingBag className="w-6 h-6 text-blue-600" />
             <h2 className="text-xl font-semibold text-gray-900">
-              Cart ({getItemCount()})
+              Cart ({displayCount})
             </h2>
           </div>
           <button
@@ -125,7 +133,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
             {/* Total */}
             <div className="flex items-center justify-between text-lg font-semibold">
               <span>Total:</span>
-              <span className="text-blue-600">${getTotalAmount().toLocaleString()}</span>
+              <span className="text-blue-600">${displayTotal.toLocaleString()}</span>
             </div>
 
             {/* Note */}

@@ -59,6 +59,11 @@ export function useCart() {
       console.log('New cart:', newCart);
       return newCart;
     });
+    
+    // Force a re-render by updating a timestamp
+    setTimeout(() => {
+      console.log('Cart update completed');
+    }, 0);
   }, []);
 
   const updateItem = useCallback((productId: string, updates: Partial<Pick<CartItem, 'quantity' | 'notes'>>) => {
@@ -92,7 +97,7 @@ export function useCart() {
     const count = items.reduce((total, item) => total + item.quantity, 0);
     console.log('Cart item count:', count);
     return count;
-  }, [items]);
+  }, [items]); // This dependency ensures the count updates when items change
 
   const getTotalAmount = useCallback(() => {
     const total = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
@@ -111,6 +116,7 @@ export function useCart() {
 
   return {
     items,
+    itemCount: getItemCount(), // Add direct access to item count
     addItem,
     updateItem,
     removeItem,

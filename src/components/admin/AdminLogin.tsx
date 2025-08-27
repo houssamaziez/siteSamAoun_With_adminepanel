@@ -23,7 +23,11 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
       const { data, error } = await signInWithEmail(email, password);
       
       if (error) {
-        setError(error.message);
+        if (error.message.includes('Network connection failed')) {
+          setError('Cannot connect to server. Please check your internet connection and try again.');
+        } else {
+          setError(error.message);
+        }
         return;
       }
 

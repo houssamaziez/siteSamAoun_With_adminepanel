@@ -138,12 +138,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
               )}
             </button>
 
-            {/* CTA Button */}
-            <div className="hidden sm:block">
-              <Button size="sm" onClick={onAdminAccess} className="hover-lift btn-primary">
-                Admin
-              </Button>
-            </div>
+        
           </div>
         </div>
       </div>

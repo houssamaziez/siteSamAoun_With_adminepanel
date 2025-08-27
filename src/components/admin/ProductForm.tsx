@@ -25,6 +25,7 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
     categoryId: '',
     shortDescription: '',
     description: '',
+    specifications: {} as Record<string, string>,
     stock: '0',
     status: 'active' as 'active' | 'inactive' | 'out_of_stock',
     featured: false,
@@ -50,6 +51,7 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         categoryId: editingProduct.category_id || editingProduct.category?.id || '',
         shortDescription: editingProduct.shortDescription || '',
         description: editingProduct.description || '',
+        specifications: editingProduct.specifications || {},
         stock: editingProduct.stock?.toString() || '0',
         status: editingProduct.status || 'active',
         featured: editingProduct.featured || false,
@@ -72,6 +74,7 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         categoryId: '',
         shortDescription: '',
         description: '',
+        specifications: {},
         stock: '0',
         status: 'active',
         featured: false,
@@ -99,6 +102,7 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         category_id: formData.categoryId,
         short_description: formData.shortDescription,
         description: formData.description,
+        specifications: formData.specifications,
         stock: parseInt(formData.stock),
         status: formData.status,
         featured: formData.featured,
@@ -204,6 +208,48 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
   const removeImageField = (index: number) => {
     const newImages = formData.images.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, images: newImages.length > 0 ? newImages : [''] }));
+  };
+
+  const handleSpecificationChange = (index: number, type: 'key' | 'value', value: string) => {
+    const specs = { ...formData.specifications };
+    const entries = Object.entries(specs);
+    
+    if (type === 'key') {
+      // Remove old key and add new key with same value
+      const oldKey = entries[index]?.[0];
+      const oldValue = entries[index]?.[1] || '';
+      if (oldKey) {
+        delete specs[oldKey];
+      }
+      if (value.trim()) {
+        specs[value] = oldValue;
+      }
+    } else {
+      // Update value for existing key
+      const key = entries[index]?.[0];
+      if (key) {
+        specs[key] = value;
+      }
+    }
+    
+    setFormData(prev => ({ ...prev, specifications: specs }));
+  };
+
+  const addSpecification = () => {
+    const specs = { ...formData.specifications };
+    const newKey = `Specification ${Object.keys(specs).length + 1}`;
+    specs[newKey] = '';
+    setFormData(prev => ({ ...prev, specifications: specs }));
+  };
+
+  const removeSpecification = (index: number) => {
+    const specs = { ...formData.specifications };
+    const entries = Object.entries(specs);
+    const keyToRemove = entries[index]?.[0];
+    if (keyToRemove) {
+      delete specs[keyToRemove];
+    }
+    setFormData(prev => ({ ...prev, specifications: specs }));
   };
 
   if (!isOpen) return null;
@@ -332,6 +378,21 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                Currency
+              </label>
+              <select
+                name="currency"
+                value={formData.currency}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="DZD">DZD (Algerian Dinar)</option>
+                <option value="USD">USD (US Dollar)</option>
+                <option value="EUR">EUR (Euro)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Images
               </label>
               {formData.images.map((image, index) => (
@@ -391,6 +452,45 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Specifications
+              </label>
+              <div className="space-y-2">
+                {Object.entries(formData.specifications || {}).map(([key, value], index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={key}
+                      onChange={(e) => handleSpecificationChange(index, 'key', e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Specification name (e.g., Processor)"
+                    />
+                    <input
+                      type="text"
+                      value={value}
+                      onChange={(e) => handleSpecificationChange(index, 'value', e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Specification value (e.g., Intel i7)"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeSpecification(index)}
+                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addSpecification}
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  + Add specification
+                </button>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

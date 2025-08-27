@@ -207,8 +207,15 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                 isUpdating ? 'opacity-75 cursor-not-allowed' : ''
               }`}
             >
-              {isUpdating ? 'Updating...' : '🛒 Reserve Items'}
+              {isUpdating ? 'Updating...' : 'Make Reservation'}
             </Button>
+            
+            {/* Additional Reservation Info */}
+            <div className="text-center mt-3">
+              <p className="text-xs text-gray-500">
+                Click to proceed with your reservation request
+              </p>
+            </div>
           </div>
         )}
       </div>

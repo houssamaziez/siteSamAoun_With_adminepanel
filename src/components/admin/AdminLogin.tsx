@@ -130,11 +130,18 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
           </div>
 
           <div className="text-center animate-fade-in stagger-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold text-blue-900 mb-2">Default Admin Account</h4>
+              <p className="text-sm text-blue-800">
+                <strong>Email:</strong> admin@techhub.com<br/>
+                <strong>Password:</strong> admin123
+              </p>
+              <p className="text-xs text-blue-600 mt-2">
+                Please change the password after first login for security
+              </p>
+            </div>
             <p className="text-sm text-gray-600">
-              To create an admin user, go to your Supabase dashboard → Authentication → Users → Add user
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Then add the user ID to the admins table in your database
+              Use the default account above or create additional users through the admin panel
             </p>
           </div>
         </form>

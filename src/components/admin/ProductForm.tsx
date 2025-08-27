@@ -449,7 +449,7 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
               Cancel
             </Button>
             <Button
-              onClick={handleSubmit}
+              type="submit"
               loading={loading}
               className="flex-1"
             >

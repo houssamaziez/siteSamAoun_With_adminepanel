@@ -10,6 +10,7 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { HomePage } from './components/pages/HomePage';
 import { ProductsPage } from './components/pages/ProductsPage';
 import { ProductDetailPage } from './components/pages/ProductDetailPage';
+import { ContactPage } from './components/pages/ContactPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { Reservation } from './types';
 import { createReservation } from './hooks/useSupabaseData';
@@ -126,6 +127,7 @@ function AppContent() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:category" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

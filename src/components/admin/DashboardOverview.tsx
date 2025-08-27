@@ -197,7 +197,7 @@ export function DashboardOverview() {
                       <p className="font-medium text-gray-900">{product.name}</p>
                       <p className="text-sm text-gray-600">{product.sku}</p>
                     </div>
-                    <span className={\`px-2 py-1 text-xs font-medium rounded-full ${
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       product.stock === 0 ? 'bg-red-100 text-red-800' :
                       product.stock <= 2 ? 'bg-orange-100 text-orange-800' :
                       'bg-yellow-100 text-yellow-800'

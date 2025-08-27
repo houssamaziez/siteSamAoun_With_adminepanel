@@ -18,6 +18,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
 
   // Debug: Log cart items
   useEffect(() => {
+  }, []);
 
   if (!isOpen) return null;
 

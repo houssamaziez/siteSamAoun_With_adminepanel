@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import {
   ArrowLeft,
   ShoppingCart,
@@ -12,7 +13,6 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import CartSidebar from './components/cart/CartSidebar';
-
 
 // Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
@@ -28,6 +28,7 @@ interface Product {
   originalPrice?: number;
   stock: number;
   shortDescription: string;
+  category?: { name: string };
 }
 
 interface ProductDetailProps {
@@ -54,9 +55,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     notes: ''
   });
   const [loading, setLoading] = useState(false);
-
-  // Cart state
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [showCartSidebar, setShowCartSidebar] = useState(false);
 
   const discountPercent = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -69,24 +69,18 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   ];
 
   const timeSlots = [
-    '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-    '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
-    '5:00 PM', '6:00 PM'
+    '9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM'
   ];
 
-  const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= product.stock) setQuantity(newQuantity);
+  const handleQuantityChange = (newQty: number) => {
+    if (newQty >= 1 && newQty <= product.stock) setQuantity(newQty);
   };
 
-  // --- Add to cart function with animation ---
   const addToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
     e.stopPropagation();
+    e.preventDefault();
 
-    if (product.stock <= 0) {
-      alert('هذا المنتج غير متوفر في المخزون!');
-      return;
-    }
+    if (product.stock <= 0) return alert('هذا المنتج غير متوفر في المخزون!');
 
     setCartItems(prev => {
       const existing = prev.find(item => item.product.id === product.id);
@@ -101,27 +95,15 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       }
     });
 
-    // تأثير بصري على الزر
-    const button = e.currentTarget;
-    button.classList.add('animate-pulse', 'bg-green-500', 'border-green-500', 'text-white');
+    // زر تأثير بصري
+    const btn = e.currentTarget;
+    btn.classList.add('animate-pulse', 'bg-green-500', 'text-white');
+    setTimeout(() => btn.classList.remove('animate-pulse','bg-green-500','text-white'), 1000);
 
-    const successIndicator = document.createElement('div');
-    successIndicator.innerHTML = '✓ تمت الإضافة!';
-    successIndicator.className = 'absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-bounce z-50 pointer-events-none';
-    button.style.position = 'relative';
-    button.appendChild(successIndicator);
-
-    setTimeout(() => {
-      button.classList.remove('animate-pulse', 'bg-green-500', 'border-green-500', 'text-white');
-      if (successIndicator.parentNode) successIndicator.remove();
-    }, 2000);
+    setShowCartSidebar(true); // فتح Sidebar تلقائي بعد إضافة
   };
 
-  useEffect(() => {
-    console.log('🛒 Cart updated:', cartItems);
-  }, [cartItems]);
-
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -129,7 +111,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const reservationData = {
         reference_number: `REF-${Date.now()}`,
@@ -143,7 +124,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
         total_amount: product.price * quantity
       };
-
       const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
 
@@ -161,17 +141,15 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     } catch (err) {
       console.error(err);
       alert('حدث خطأ أثناء إرسال الحجز!');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   const cartQuantity = cartItems.find(item => item.product.id === product.id)?.quantity || 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
       <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 mb-8">
-        <ArrowLeft className="w-5 h-5 mr-2" /> Back to Products
+        <ArrowLeft className="w-5 h-5 mr-2"/> Back to Products
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -183,8 +161,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           </div>
           {product.images.length > 1 && (
             <div className="flex space-x-2 overflow-x-auto">
-              {product.images.map((img, i) => (
-                <button key={i} onClick={() => setSelectedImageIndex(i)} className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${i===selectedImageIndex?'border-blue-500':'border-gray-200 hover:border-gray-300'}`}>
+              {product.images.map((img,i)=>(
+                <button key={i} onClick={()=>setSelectedImageIndex(i)} className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${i===selectedImageIndex?'border-blue-500':'border-gray-200 hover:border-gray-300'}`}>
                   <img src={img} alt="" className="w-full h-full object-cover"/>
                 </button>
               ))}
@@ -204,7 +182,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
             <div className="flex items-center mb-4">
-              {[...Array(5)].map((_, i) => <Star key={i} className={`w-5 h-5 ${i<4?'text-yellow-400':'text-gray-300'}`}/>)}
+              {[...Array(5)].map((_,i)=><Star key={i} className={`w-5 h-5 ${i<4?'text-yellow-400':'text-gray-300'}`}/>)}
             </div>
             <p className="text-gray-600">{product.shortDescription}</p>
           </div>
@@ -213,20 +191,15 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium text-gray-700">الكمية:</span>
               <div className="flex items-center border border-gray-300 rounded-lg">
-                <button onClick={() => handleQuantityChange(quantity-1)} disabled={quantity<=1}><Minus className="w-4 h-4"/></button>
+                <button onClick={()=>handleQuantityChange(quantity-1)} disabled={quantity<=1}><Minus className="w-4 h-4"/></button>
                 <span className="px-4">{quantity}</span>
-                <button onClick={() => handleQuantityChange(quantity+1)} disabled={quantity>=product.stock}><Plus className="w-4 h-4"/></button>
+                <button onClick={()=>handleQuantityChange(quantity+1)} disabled={quantity>=product.stock}><Plus className="w-4 h-4"/></button>
               </div>
             </div>
 
             <div className="flex space-x-4">
-              <Button
-                onClick={addToCart}
-                disabled={product.stock === 0}
-                icon={ShoppingCart}
-                className="flex-1 relative"
-              >
-                إضافة إلى السلة {cartQuantity > 0 && `(${cartQuantity})`}
+              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1 relative">
+                إضافة إلى السلة {cartQuantity>0 && `(${cartQuantity})`}
               </Button>
               <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">
                 حجز الآن
@@ -288,6 +261,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           </div>
         </div>
       )}
+
+      {/* Cart Sidebar */}
+      {showCartSidebar && <CartSidebar cartItems={cartItems} onClose={()=>setShowCartSidebar(false)}/>}
     </div>
   );
 }

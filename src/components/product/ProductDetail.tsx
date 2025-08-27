@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 import {
-  ArrowLeft, ShoppingCart, Heart, Share2, Star, Shield,
-  Truck, RotateCcw, Check, Minus, Plus
+  ArrowLeft, ShoppingCart, Heart, Share2, Star, Check, Minus, Plus
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
-import ReservationForm from "../reservation/ReservationForm";
+import ReservationForm from "../reservation/ReservationForm"; // ✅ تأكد من التصدير
 
 interface ProductDetailProps {
   product: Product;
   onBack: () => void;
 }
 
-export function ProductDetail({ product, onBack }: ProductDetailProps) {
+export default function ProductDetail({ product, onBack }: ProductDetailProps) {
   const { addItem, getItem, updateItem } = useCart();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'description' | 'specifications' | 'reviews'>('description');
   const [isReservationOpen, setIsReservationOpen] = useState(false);
 
   const cartItem = getItem(product.id);
@@ -97,7 +95,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
         {/* تفاصيل المنتج */}
         <div className="space-y-6">
-          {/* العنوان والتقييم */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-blue-600">{product.brand}</span>
@@ -183,7 +180,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
 
             <div className="flex space-x-4">
-              {/* زر إضافة للسلة */}
               <Button
                 data-add-to-cart
                 onClick={handleAddToCart}
@@ -195,7 +191,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 {cartItem ? `Update Cart (${cartItem.quantity})` : 'Add to Cart'}
               </Button>
 
-              {/* زر إضافة للحجوزات */}
               <Button
                 onClick={handleReservationClick}
                 disabled={product.stock === 0}
@@ -213,17 +208,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       {isReservationOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg relative">
-            {/* زر الغلق */}
             <button
               onClick={() => setIsReservationOpen(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
             >
               ✕
             </button>
-            {/* عنوان النافذة */}
             <h2 className="text-2xl font-bold mb-4">Complete Your Reservation</h2>
 
-            {/* استدعاء فورم الحجز */}
             <ReservationForm
               product={product}
               onClose={() => setIsReservationOpen(false)}

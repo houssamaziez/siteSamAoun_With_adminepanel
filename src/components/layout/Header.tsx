@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount, items, forceUpdate } = useCart();
+  const { getItemCount, items, updateTrigger } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
 

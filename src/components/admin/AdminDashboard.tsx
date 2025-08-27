@@ -16,9 +16,10 @@ import { ProductsManager } from './ProductsManager';
 import { CategoriesManager } from './CategoriesManager';
 import { ReservationsManager } from './ReservationsManager';
 import { SiteSettingsManager } from './SiteSettingsManager';
+import { UsersManager } from './UsersManager';
 import { signOut } from '../../lib/supabase';
 
-type AdminView = 'overview' | 'products' | 'categories' | 'reservations' | 'settings';
+type AdminView = 'overview' | 'products' | 'categories' | 'reservations' | 'users' | 'settings';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -38,6 +39,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
     { id: 'products', name: 'Products', icon: Package },
     { id: 'categories', name: 'Categories', icon: FolderOpen },
     { id: 'reservations', name: 'Reservations', icon: Calendar },
+    { id: 'users', name: 'Users', icon: Users },
     { id: 'settings', name: 'Settings', icon: Settings },
   ];
 
@@ -51,6 +53,8 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
         return <CategoriesManager />;
       case 'reservations':
         return <ReservationsManager />;
+      case 'users':
+        return <UsersManager />;
       case 'settings':
         return <SiteSettingsManager />;
       default:

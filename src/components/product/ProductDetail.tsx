@@ -270,4 +270,4 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       </div>
     </div>
   );
-} update to work 
+} 

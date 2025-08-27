@@ -53,14 +53,6 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
           </div>
           <div className="flex items-center space-x-2">
             <button
-              onClick={handleRefreshCart}
-              disabled={isRefreshing}
-              className="p-2 hover:bg-gray-100 rounded-full hover-scale transition-colors duration-200"
-              title="Refresh cart"
-            >
-              <RefreshCw className={`w-5 h-5 text-gray-500 ${isRefreshing ? 'animate-spin' : ''}`} />
-            </button>
-            <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full hover-scale transition-colors duration-200"
             >

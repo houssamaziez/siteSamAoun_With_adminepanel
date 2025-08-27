@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 
-// تعريف نوع المنتج محلياً لتجنب مشاكل import
+// تعريف نوع المنتج محلياً
 interface Product {
   id: number;
   name: string;
@@ -35,7 +35,7 @@ interface Product {
   shortDescription: string;
 }
 
-// تعريف نوع الحجز محلياً
+// نوع الحجز
 interface ReservationItem {
   product: Product;
   quantity: number;
@@ -115,7 +115,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     e.preventDefault();
     setLoading(true);
     handleAddToReservation();
-    // Reset form
     setFormData({
       customerName: '',
       customerPhone: '',
@@ -146,7 +145,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">-{discountPercent}%</div>
             )}
           </div>
-
           {product.images.length > 1 && (
             <div className="flex space-x-2 overflow-x-auto">
               {product.images.map((image, index) => (
@@ -164,12 +162,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-blue-600">{product.brand}</span>
               <div className="flex items-center space-x-2">
-                <button className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors duration-200">
-                  <Heart className="w-5 h-5" />
-                </button>
-                <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50 transition-colors duration-200">
-                  <Share2 className="w-5 h-5" />
-                </button>
+                <button className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors duration-200"><Heart className="w-5 h-5" /></button>
+                <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50 transition-colors duration-200"><Share2 className="w-5 h-5" /></button>
               </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
@@ -203,13 +197,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium text-gray-700">الكمية:</span>
               <div className="flex items-center border border-gray-300 rounded-lg">
-                <button onClick={() => handleQuantityChange(quantity - 1)} disabled={quantity <= 1} className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
-                  <Minus className="w-4 h-4" />
-                </button>
+                <button onClick={() => handleQuantityChange(quantity - 1)} disabled={quantity <= 1} className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"><Minus className="w-4 h-4" /></button>
                 <span className="px-4 py-2 font-medium">{quantity}</span>
-                <button onClick={() => handleQuantityChange(quantity + 1)} disabled={quantity >= product.stock} className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
-                  <Plus className="w-4 h-4" />
-                </button>
+                <button onClick={() => handleQuantityChange(quantity + 1)} disabled={quantity >= product.stock} className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"><Plus className="w-4 h-4" /></button>
               </div>
             </div>
 
@@ -228,4 +218,87 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
       {/* Reservation Modal */}
       {showReservationForm && (
-        <div className
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-black bg-opacity-50" onClick={() => setShowReservationForm(false)} />
+            <div className="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-900">Reserve Your Items</h2>
+                <button onClick={() => setShowReservationForm(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"><X className="w-6 h-6 text-gray-500" /></button>
+              </div>
+
+              <form onSubmit={handleReservationSubmit} className="p-6 space-y-6">
+                {/* Order Summary */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 mb-3">Order Summary</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span>{product.name} x{quantity}</span>
+                      <span className="font-medium">{(product.price * quantity).toLocaleString()} د.ج</span>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-semibold">
+                    <span>Total:</span>
+                    <span className="text-blue-600">{(product.price * quantity).toLocaleString()} د.ج</span>
+                  </div>
+                </div>
+
+                {/* Customer Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2"><User className="w-4 h-4 mr-2" /> Full Name *</label>
+                    <input type="text" name="customerName" value={formData.customerName} onChange={handleFormChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your full name" />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2"><Phone className="w-4 h-4 mr-2" /> Phone Number *</label>
+                    <input type="tel" name="customerPhone" value={formData.customerPhone} onChange={handleFormChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Your phone number" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2"><Phone className="w-4 h-4 mr-2" /> WhatsApp Number (Optional)</label>
+                  <input type="tel" name="customerWhatsApp" value={formData.customerWhatsApp} onChange={handleFormChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="WhatsApp number (if different)" />
+                </div>
+
+                {/* Pickup Details */}
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2"><MapPin className="w-4 h-4 mr-2" /> Pickup Location *</label>
+                  <select name="pickupBranch" value={formData.pickupBranch} onChange={handleFormChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    {branches.map(branch => <option key={branch.value} value={branch.value}>{branch.label}</option>)}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2"><Calendar className="w-4 h-4 mr-2" /> Preferred Date *</label>
+                    <input type="date" name="proposedDate" value={formData.proposedDate} onChange={handleFormChange} required min={new Date().toISOString().split('T')[0]} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2"><Clock className="w-4 h-4 mr-2" /> Preferred Time *</label>
+                    <select name="proposedTime" value={formData.proposedTime} onChange={handleFormChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <option value="">Select time</option>
+                      {timeSlots.map(time => <option key={time} value={time}>{time}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2"><MessageSquare className="w-4 h-4 mr-2" /> Additional Notes (Optional)</label>
+                  <textarea name="notes" value={formData.notes} onChange={handleFormChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Any special requirements or questions..." />
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-4">
+                  <Button type="button" variant="outline" onClick={() => setShowReservationForm(false)} className="flex-1">Cancel</Button>
+                  <Button type="submit" loading={loading} className="flex-1">Submit Reservation</Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

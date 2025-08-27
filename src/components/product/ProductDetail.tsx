@@ -6,7 +6,7 @@ import {
 import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
-import ReservationForm from '@/components/reservation/ReservationForm';
+import ReservationForm from "../reservation/ReservationForm";
 
 interface ProductDetailProps {
   product: Product;

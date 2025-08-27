@@ -58,6 +58,31 @@ export function ProductsManager() {
     setEditingProduct(null);
   };
 
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', productId);
+
+      if (error) throw error;
+      
+      refetch();
+      alert('Product deleted successfully!');
+    } catch (err) {
+      alert(`Failed to delete product: ${err.message}`);
+    }
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setEditingProduct(null);
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -194,16 +219,22 @@ export function ProductsManager() {
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-2">
                       <button className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                        onClick={() => handleViewProduct(product)}
+                        title="View product details"
                         title="View product details"
                         onClick={() => handleViewProduct(product)}
                         <Eye className="w-4 h-4" />
                         onClick={() => handleEditProduct(product)}
                       </button>
+                        onClick={() => handleEditProduct(product)}
+                        title="Edit product"
                         title="Edit product"
                       <button className="p-2 text-gray-400 hover:text-green-600 rounded-lg hover:bg-green-50">
                         <Edit className="w-4 h-4" />
                         onClick={() => handleDeleteProduct(product.id)}
                       </button>
+                        onClick={() => handleDeleteProduct(product.id)}
+                        title="Delete product"
                         title="Delete product"
                       <button className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50">
                         <Trash2 className="w-4 h-4" />
@@ -233,6 +264,7 @@ export function ProductsManager() {
           handleCloseForm();
         }}
         editingProduct={editingProduct}
+        editingProduct={editingProduct}
       />
 
       {/* Product View Modal */}
@@ -245,23 +277,35 @@ export function ProductsManager() {
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900">Product Details</h2>
                 <button onClick={() => setViewingProduct(null)} className="p-2 hover:bg-gray-100 rounded-full">
-                  <X className="w-5 h-5 text-gray-500" />
+                  <X className="w-6 h-6 text-gray-500" />
                 </button>
               </div>
 
-              <div className="p-6 max-h-96 overflow-y-auto">
+              <div className="p-6 max-h-[600px] overflow-y-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <img
                       src={viewingProduct.images[0]}
                       alt={viewingProduct.name}
-                      className="w-full h-64 object-cover rounded-lg"
+                      className="w-full h-64 object-cover rounded-lg shadow-md"
                     />
+                    {viewingProduct.images.length > 1 && (
+                      <div className="flex space-x-2 mt-3 overflow-x-auto">
+                        {viewingProduct.images.slice(1, 4).map((image, index) => (
+                          <img
+                            key={index}
+                            src={image}
+                            alt={`${viewingProduct.name} ${index + 2}`}
+                            className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900">{viewingProduct.name}</h3>
-                      <p className="text-lg text-gray-600">{viewingProduct.brand}</p>
+                      <p className="text-lg text-blue-600 font-medium">{viewingProduct.brand}</p>
                     </div>
                     <div>
                       <span className="text-3xl font-bold text-blue-600">
@@ -272,19 +316,33 @@ export function ProductsManager() {
                           {viewingProduct.originalPrice.toLocaleString()} د.ج
                         </span>
                       )}
+                      {viewingProduct.originalPrice && (
+                        <span className="ml-2 bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
+                          {Math.round(((viewingProduct.originalPrice - viewingProduct.price) / viewingProduct.originalPrice) * 100)}% OFF
+                        </span>
+                      )}
                     </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 gap-3 text-sm bg-gray-50 p-4 rounded-lg">
                       <div>
-                        <span className="font-medium">SKU:</span> {viewingProduct.sku}
+                        <span className="font-medium text-gray-700">SKU:</span> 
+                        <span className="ml-2 font-mono bg-gray-200 px-2 py-1 rounded text-xs">{viewingProduct.sku}</span>
                       </div>
                       <div>
-                        <span className="font-medium">Stock:</span> {viewingProduct.stock}
+                        <span className="font-medium text-gray-700">Stock:</span> 
+                        <span className={`ml-2 px-2 py-1 text-xs font-medium rounded ${
+                          viewingProduct.stock === 0 ? 'bg-red-100 text-red-800' :
+                          viewingProduct.stock <= 5 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {viewingProduct.stock} units
+                        </span>
                       </div>
                       <div>
-                        <span className="font-medium">Category:</span> {viewingProduct.category.name}
+                        <span className="font-medium text-gray-700">Category:</span> 
+                        <span className="ml-2 bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">{viewingProduct.category.name}</span>
                       </div>
                       <div>
-                        <span className="font-medium">Status:</span> 
+                        <span className="font-medium text-gray-700">Status:</span> 
                         <span className={`ml-1 px-2 py-1 text-xs rounded-full ${
                           viewingProduct.status === 'active' ? 'bg-green-100 text-green-800' :
                           viewingProduct.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
@@ -293,27 +351,87 @@ export function ProductsManager() {
                           {viewingProduct.status}
                         </span>
                       </div>
+                      <div>
+                        <span className="font-medium text-gray-700">Condition:</span> 
+                        <span className="ml-2 capitalize">{viewingProduct.condition}</span>
+                      </div>
+                      {viewingProduct.warranty && (
+                        <div>
+                          <span className="font-medium text-gray-700">Warranty:</span> 
+                          <span className="ml-2">{viewingProduct.warranty}</span>
+                        </div>
+                      )}
+                      <div>
+                        <span className="font-medium text-gray-700">Featured:</span> 
+                        <span className={`ml-2 px-2 py-1 text-xs rounded ${
+                          viewingProduct.featured ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {viewingProduct.featured ? 'Yes' : 'No'}
+                        </span>
+                      </div>
                     </div>
-                    <div>
+                    {viewingProduct.shortDescription && (
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-2">Short Description</h4>
+                        <p className="text-gray-600 bg-blue-50 p-3 rounded-lg">{viewingProduct.shortDescription}</p>
+                      </div>
+                    )}
+                    {viewingProduct.description && (
+                      <div>
                       <h4 className="font-medium text-gray-900 mb-2">Description</h4>
-                      <p className="text-gray-600">{viewingProduct.description || viewingProduct.shortDescription}</p>
-                    </div>
+                        <p className="text-gray-600 leading-relaxed">{viewingProduct.description}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 {viewingProduct.specifications && Object.keys(viewingProduct.specifications).length > 0 && (
                   <div className="mt-6">
                     <h4 className="font-medium text-gray-900 mb-3">Specifications</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {Object.entries(viewingProduct.specifications).map(([key, value]) => (
                         <div key={key} className="flex justify-between py-2 border-b border-gray-200">
                           <span className="font-medium text-gray-700">{key}</span>
-                          <span className="text-gray-600">{value}</span>
+                            <span className="text-gray-900 font-medium">{value}</span>
                         </div>
                       ))}
+                      </div>
                     </div>
                   </div>
                 )}
+                
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <div className="text-sm text-gray-500">
+                      Created: {new Date(viewingProduct.createdAt).toLocaleDateString()}
+                    </div>
+                    <div className="flex space-x-3">
+                      <Button
+                        onClick={() => {
+                          setViewingProduct(null);
+                          handleEditProduct(viewingProduct);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        icon={Edit}
+                      >
+                        Edit Product
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setViewingProduct(null);
+                          handleDeleteProduct(viewingProduct.id);
+                        }}
+                        variant="danger"
+                        size="sm"
+                        icon={Trash2}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

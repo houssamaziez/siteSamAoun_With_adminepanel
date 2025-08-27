@@ -77,7 +77,16 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     if (newQuantity >= 1 && newQuantity <= product.stock) setQuantity(newQuantity);
   };
 
-  const addToCart = () => {
+  // --- Add to cart function with animation ---
+  const addToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (product.stock <= 0) {
+      alert('هذا المنتج غير متوفر في المخزون!');
+      return;
+    }
+
     setCartItems(prev => {
       const existing = prev.find(item => item.product.id === product.id);
       if (existing) {
@@ -90,7 +99,21 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         return [...prev, { product, quantity }];
       }
     });
-    alert('تمت إضافة المنتج إلى السلة!');
+
+    // تأثير بصري على الزر
+    const button = e.currentTarget;
+    button.classList.add('animate-pulse', 'bg-green-500', 'border-green-500', 'text-white');
+
+    const successIndicator = document.createElement('div');
+    successIndicator.innerHTML = '✓ تمت الإضافة!';
+    successIndicator.className = 'absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-bounce z-50 pointer-events-none';
+    button.style.position = 'relative';
+    button.appendChild(successIndicator);
+
+    setTimeout(() => {
+      button.classList.remove('animate-pulse', 'bg-green-500', 'border-green-500', 'text-white');
+      if (successIndicator.parentNode) successIndicator.remove();
+    }, 2000);
   };
 
   useEffect(() => {
@@ -120,7 +143,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         total_amount: product.price * quantity
       };
 
-      const { data, error } = await supabase.from('reservations').insert([reservationData]);
+      const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
 
       alert('تم إرسال الحجز بنجاح!');
@@ -196,7 +219,12 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
 
             <div className="flex space-x-4">
-              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1">
+              <Button
+                onClick={addToCart}
+                disabled={product.stock === 0}
+                icon={ShoppingCart}
+                className="flex-1 relative"
+              >
                 إضافة إلى السلة {cartQuantity > 0 && `(${cartQuantity})`}
               </Button>
               <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">

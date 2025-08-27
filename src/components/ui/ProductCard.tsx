@@ -53,6 +53,8 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
+  };
+
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
     onViewDetails?.();

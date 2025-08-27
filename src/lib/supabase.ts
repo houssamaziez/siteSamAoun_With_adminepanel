@@ -75,7 +75,7 @@ export const getCurrentUser = async () => {
   try {
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error) {
-      console.error('Get user error:', error);
+      console.info('Get user info:', error);
     }
     return { user, error };
   } catch (error) {

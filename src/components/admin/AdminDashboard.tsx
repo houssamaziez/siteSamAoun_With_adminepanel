@@ -50,7 +50,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
           .from('admins')
           .select('name')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         
         if (adminData?.name) {
           setUserName(adminData.name);

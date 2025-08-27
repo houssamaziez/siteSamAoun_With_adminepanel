@@ -11,10 +11,10 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount, items, itemCount, updateTrigger } = useCart();
+  const { getItemCount, items, version } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
-  const [displayCount, setDisplayCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
   // Use settings from database or fallback to defaults
   const siteData = settings || {
@@ -26,12 +26,12 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
     logoUrl: undefined, // fallback: avoids undefined property
   };
 
-  // Update display count when cart changes
+  // Update cart count when cart changes
   useEffect(() => {
     const count = getItemCount();
-    console.log('Header: Updating display count to:', count);
-    setDisplayCount(count);
-  }, [items, updateTrigger, getItemCount]);
+    console.log('Header: Updating cart count to:', count);
+    setCartCount(count);
+  }, [items, version, getItemCount]);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -123,9 +123,9 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
               className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 group"
             >
               <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
-              {displayCount > 0 && (
+              {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg animate-bounce">
-                  {displayCount}
+                  {cartCount}
                 </span>
               )}
             </button>

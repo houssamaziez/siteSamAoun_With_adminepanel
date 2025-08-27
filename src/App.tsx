@@ -34,19 +34,6 @@ function App() {
   // Use Supabase data instead of mock data
   const { products } = useProducts();
   const { categories } = useCategories();
-  const { items: cartItems, getItemCount } = useCart();
-
-  // Debug: Log when products are loaded
-  useEffect(() => {
-    console.log('Products loaded:', products.length);
-    console.log('Cart items in App:', cartItems.length);
-    console.log('Cart count in App:', getItemCount());
-  }, [products, cartItems, getItemCount]);
-
-  // Force re-render when cart changes
-  useEffect(() => {
-    setForceUpdate(prev => prev + 1);
-  }, [cartItems]);
 
   useEffect(() => {
     checkAuthStatus();

@@ -10,15 +10,18 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
-  const { items, updateItem, removeItem, getTotalAmount, getItemCount, updateTrigger } = useCart();
-  const [displayCount, setDisplayCount] = useState(0);
-  const [displayTotal, setDisplayTotal] = useState(0);
+  const { items, updateItem, removeItem, getTotalAmount, getItemCount, version } = useCart();
+  const [cartCount, setCartCount] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
 
-  // Update display values when cart changes
+  // Update cart values when cart changes
   useEffect(() => {
-    setDisplayCount(getItemCount());
-    setDisplayTotal(getTotalAmount());
-  }, [items, updateTrigger, getItemCount, getTotalAmount]);
+    const count = getItemCount();
+    const total = getTotalAmount();
+    console.log('CartSidebar: Updating count to', count, 'and total to', total);
+    setCartCount(count);
+    setCartTotal(total);
+  }, [items, version, getItemCount, getTotalAmount]);
 
   // Debug: Log cart items
   useEffect(() => {
@@ -52,7 +55,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
           <div className="flex items-center space-x-2">
             <ShoppingBag className="w-6 h-6 text-blue-600" />
             <h2 className="text-xl font-semibold text-gray-900">
-              Cart ({displayCount})
+              Cart ({cartCount})
             </h2>
           </div>
           <button
@@ -133,7 +136,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
             {/* Total */}
             <div className="flex items-center justify-between text-lg font-semibold">
               <span>Total:</span>
-              <span className="text-blue-600">${displayTotal.toLocaleString()}</span>
+              <span className="text-blue-600">${cartTotal.toLocaleString()}</span>
             </div>
 
             {/* Note */}

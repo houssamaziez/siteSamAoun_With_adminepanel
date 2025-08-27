@@ -6,7 +6,7 @@ const CART_STORAGE_KEY = 'techhub_cart';
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [version, setVersion] = useState(0);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -30,6 +30,8 @@ export function useCart() {
       try {
         console.log('Saving cart to localStorage:', items);
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+        // Force version update to trigger re-renders
+        setVersion(prev => prev + 1);
       } catch (error) {
         console.error('Failed to save cart to localStorage:', error);
       }
@@ -41,28 +43,25 @@ export function useCart() {
     
     setItems(prev => {
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
+      let newItems;
       
       if (existingIndex >= 0) {
         console.log('Item exists, updating quantity');
-        const updated = [...prev];
-        updated[existingIndex] = {
-          ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + quantity,
-          notes: notes || updated[existingIndex].notes
+        newItems = [...prev];
+        newItems[existingIndex] = {
+          ...newItems[existingIndex],
+          quantity: newItems[existingIndex].quantity + quantity,
+          notes: notes || newItems[existingIndex].notes
         };
-        console.log('Updated cart:', updated);
-        return updated;
+      } else {
+        console.log('Adding new item to cart');
+        const newItem: CartItem = { product, quantity, notes };
+        newItems = [...prev, newItem];
       }
       
-      console.log('Adding new item to cart');
-      const newItem: CartItem = { product, quantity, notes };
-      const newCart = [...prev, newItem];
-      console.log('New cart:', newCart);
-      return newCart;
+      console.log('New cart state:', newItems);
+      return newItems;
     });
-    
-    // Trigger update for components that depend on cart changes
-    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const updateItem = useCallback((productId: string, updates: Partial<Pick<CartItem, 'quantity' | 'notes'>>) => {
@@ -76,7 +75,6 @@ export function useCart() {
       console.log('Cart after update:', updated);
       return updated;
     });
-    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const removeItem = useCallback((productId: string) => {
@@ -86,40 +84,33 @@ export function useCart() {
       console.log('Cart after removal:', filtered);
       return filtered;
     });
-    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const clearCart = useCallback(() => {
     console.log('Clearing cart');
     setItems([]);
-    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const getItemCount = useCallback(() => {
     const count = items.reduce((total, item) => total + item.quantity, 0);
     console.log('Cart item count:', count);
     return count;
-  }, [items, updateTrigger]);
+  }, [items]);
 
   const getTotalAmount = useCallback(() => {
     const total = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
     console.log('Cart total amount:', total);
     return total;
-  }, [items, updateTrigger]);
+  }, [items]);
 
   const getItem = useCallback((productId: string) => {
     return items.find(item => item.product.id === productId);
-  }, [items, updateTrigger]);
-
-  // Debug: Log cart state changes
-  useEffect(() => {
-    console.log('Cart state changed:', items);
   }, [items]);
 
   return {
     items,
     itemCount: getItemCount(),
-    updateTrigger, // Expose trigger for components that need to react to changes
+    version, // Expose version for components that need to track changes
     addItem,
     updateItem,
     removeItem,

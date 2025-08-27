@@ -1,8 +1,22 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ShoppingCart, Heart, Share2, Star, Shield, Truck, RotateCcw, Check, Minus, Plus } from 'lucide-react';
+import {
+  ArrowLeft,
+  ShoppingCart,
+  Heart,
+  Share2,
+  Star,
+  Shield,
+  Truck,
+  RotateCcw,
+  Check,
+  Minus,
+  Plus,
+  BookmarkPlus,
+} from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
+import { useReservation } from '../../hooks/useReservation';
 
 interface ProductDetailProps {
   product: Product;
@@ -11,12 +25,18 @@ interface ProductDetailProps {
 
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const { addItem, getItem, updateItem } = useCart();
+  const {
+    addReservation,
+    getReservationItem,
+    updateReservation,
+  } = useReservation();
+
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'description' | 'specifications' | 'reviews'>('description');
-  
   const cartItem = getItem(product.id);
-  const discountPercent = product.originalPrice 
+  const reservationItem = getReservationItem(product.id);
+
+  const discountPercent = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
@@ -28,6 +48,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   };
 
+  const handleAddToReservation = () => {
+    if (reservationItem) {
+      updateReservation(product.id, reservationItem.quantity + quantity);
+    } else {
+      addReservation(product, quantity);
+    }
+  };
+
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1 && newQuantity <= product.stock) {
       setQuantity(newQuantity);
@@ -36,7 +64,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Back Button */}
+      {/* زر العودة */}
       <button
         onClick={onBack}
         className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors duration-200"
@@ -46,9 +74,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Images */}
+        {/* صور المنتج */}
         <div className="space-y-4">
-          {/* Main Image */}
           <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
             <img
               src={product.images[selectedImageIndex]}
@@ -62,7 +89,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             )}
           </div>
 
-          {/* Thumbnail Images */}
           {product.images.length > 1 && (
             <div className="flex space-x-2 overflow-x-auto">
               {product.images.map((image, index) => (
@@ -70,7 +96,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
                   className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors duration-200 ${
-                    selectedImageIndex === index ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
+                    selectedImageIndex === index
+                      ? 'border-blue-500'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <img
@@ -84,9 +112,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           )}
         </div>
 
-        {/* Product Info */}
+        {/* تفاصيل المنتج */}
         <div className="space-y-6">
-          {/* Header */}
+          {/* العنوان */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-blue-600">{product.brand}</span>
@@ -100,14 +128,16 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-            
-            {/* Rating */}
+
+            {/* التقييم */}
             <div className="flex items-center mb-4">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    className={`w-5 h-5 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                  <Star
+                    key={i}
+                    className={`w-5 h-5 ${
+                      i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                    }`}
                   />
                 ))}
               </div>
@@ -117,7 +147,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             <p className="text-gray-600 text-lg leading-relaxed">{product.shortDescription}</p>
           </div>
 
-          {/* Price */}
+          {/* السعر */}
           <div className="border-t border-b border-gray-200 py-6">
             <div className="flex items-center space-x-4">
               <span className="text-4xl font-bold text-gray-900">
@@ -130,31 +160,33 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               )}
               {discountPercent > 0 && (
                 <span className="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
-                  Save {discountPercent}%
+                  وفر {discountPercent}%
                 </span>
               )}
             </div>
-            
-            {/* Stock Status */}
+
+            {/* حالة المخزون */}
             <div className="mt-3">
               {product.stock > 0 ? (
                 <div className="flex items-center text-green-600">
                   <Check className="w-5 h-5 mr-2" />
-                  <span className="font-medium">In Stock ({product.stock} available)</span>
+                  <span className="font-medium">
+                    متوفر ({product.stock} قطعة)
+                  </span>
                 </div>
               ) : (
                 <div className="flex items-center text-red-600">
                   <Minus className="w-5 h-5 mr-2" />
-                  <span className="font-medium">Out of Stock</span>
+                  <span className="font-medium">غير متوفر</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Quantity & Buttons */}
+          {/* الكمية والأزرار */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700">Quantity:</span>
+              <span className="text-sm font-medium text-gray-700">الكمية:</span>
               <div className="flex items-center border border-gray-300 rounded-lg">
                 <button
                   onClick={() => handleQuantityChange(quantity - 1)}
@@ -174,62 +206,63 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* الأزرار */}
             <div className="flex space-x-4">
-              {/* زر إضافة إلى السلة */}
               <Button
-                data-add-to-cart
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
                 icon={ShoppingCart}
                 size="lg"
                 className="flex-1 transition-all duration-300 hover:scale-105"
               >
-                {cartItem ? `Update Cart (${cartItem.quantity})` : 'Add to Cart'}
+                {cartItem
+                  ? `تحديث السلة (${cartItem.quantity})`
+                  : 'إضافة إلى السلة'}
               </Button>
 
-              {/* زر إضافة إلى الحجوزات */}
               <Button
-                onClick={handleAddToCart}
+                onClick={handleAddToReservation}
                 disabled={product.stock === 0}
-                icon={ShoppingCart}
+                icon={BookmarkPlus}
                 size="lg"
                 className="flex-1 bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300 hover:scale-105"
               >
-                إضافة إلى الحجوزات
+                {reservationItem
+                  ? `تحديث الحجز (${reservationItem.quantity})`
+                  : 'إضافة إلى الحجوزات'}
               </Button>
             </div>
           </div>
 
-          {/* Features */}
+          {/* المميزات */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <Shield className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">Warranty</p>
-                <p className="text-sm text-gray-600">{product.warranty || '1 Year'}</p>
+                <p className="font-medium text-gray-900">الضمان</p>
+                <p className="text-sm text-gray-600">{product.warranty || 'سنة واحدة'}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <Truck className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">Free Shipping</p>
-                <p className="text-sm text-gray-600">Same day delivery</p>
+                <p className="font-medium text-gray-900">توصيل مجاني</p>
+                <p className="text-sm text-gray-600">تسليم في نفس اليوم</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                 <RotateCcw className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <p className="font-medium text-gray-900">Returns</p>
-                <p className="text-sm text-gray-600">30-day policy</p>
+                <p className="font-medium text-gray-900">الإرجاع</p>
+                <p className="text-sm text-gray-600">سياسة إرجاع 30 يوم</p>
               </div>
             </div>
           </div>

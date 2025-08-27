@@ -520,6 +520,70 @@ export function SiteSettingsManager() {
             </div>
           )}
 
+          {/* Map Settings Tab */}
+          {activeTab === 'map' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <MapPin className="w-5 h-5 mr-2" />
+                إعدادات الخريطة والموقع
+              </h3>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  رابط Google Maps
+                </label>
+                <input
+                  type="url"
+                  name="mapUrl"
+                  value={formData.mapUrl}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="https://maps.google.com/maps?q=36.7538,3.0588&z=15"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  رابط Google Maps الذي سيتم استخدامه في زر "Find Us"
+                </p>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-3">كيفية الحصول على رابط Google Maps:</h4>
+                <ol className="text-sm text-blue-800 space-y-1">
+                  <li><strong>1.</strong> اذهب إلى <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="underline">Google Maps</a></li>
+                  <li><strong>2.</strong> ابحث عن موقع متجرك</li>
+                  <li><strong>3.</strong> انقر على "مشاركة" أو "Share"</li>
+                  <li><strong>4.</strong> انسخ الرابط والصقه في الحقل أعلاه</li>
+                </ol>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="enableDirections"
+                  checked={formData.enableDirections}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label className="ml-2 block text-sm text-gray-700">
+                  تفعيل زر الاتجاهات في صفحة الاتصال
+                </label>
+              </div>
+
+              {formData.mapUrl && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-green-900 mb-2">معاينة الرابط:</h4>
+                  <a
+                    href={formData.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 text-sm underline break-all"
+                  >
+                    {formData.mapUrl}
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Social Media Tab */}
           {activeTab === 'social' && (
             <div className="space-y-6">

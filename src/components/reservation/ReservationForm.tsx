@@ -17,7 +17,7 @@ import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
 import { useReservation } from '../../hooks/useReservation';
-import { ReservationForm } from './ReservationForm'; // استورد الفورم الجديد
+
 
 interface ProductDetailProps {
   product: Product;

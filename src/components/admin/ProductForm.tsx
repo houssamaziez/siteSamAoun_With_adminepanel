@@ -437,25 +437,25 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
                 Featured Product
               </label>
             </div>
-          </form>
 
-          <div className="flex gap-3 p-6 border-t border-gray-200">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              loading={loading}
-              className="flex-1"
-            >
-              {editingProduct ? 'Update Product' : 'Create Product'}
-            </Button>
-          </div>
+            <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                loading={loading}
+                className="flex-1"
+              >
+                {editingProduct ? 'Update Product' : 'Create Product'}
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

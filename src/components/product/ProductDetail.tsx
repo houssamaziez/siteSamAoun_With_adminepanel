@@ -1,15 +1,9 @@
+
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { ArrowLeft, ShoppingCart, Heart, Share2, Star, Minus, Plus, BookmarkPlus, X } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Heart, Share2, Star, Shield, Truck, RotateCcw, Check, Minus, Plus } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
-import CartSidebar from "../cart/CartSidebar";
-
-// Supabase
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface ProductDetailProps {
   product: Product;
@@ -17,201 +11,300 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
-  const { addItem, getItem, isUpdating } = useCart();
-  const cartItem = getItem(product.id);
-
+  const { addItem, getItem, updateItem } = useCart();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [showReservationForm, setShowReservationForm] = useState(false);
-  const [formData, setFormData] = useState({
-    customerName: '',
-    customerPhone: '',
-    customerWhatsApp: '',
-    pickupBranch: 'main-store',
-    proposedDate: '',
-    proposedTime: '',
-    notes: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [showCartSidebar, setShowCartSidebar] = useState(false);
-
-  const discountPercent = product.originalPrice
+  const [activeTab, setActiveTab] = useState<'description' | 'specifications' | 'reviews'>('description');
+  
+  const cartItem = getItem(product.id);
+  const discountPercent = product.originalPrice 
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
-  const branches = [
-    { value: 'main-store', label: 'Main Store - Downtown' },
-    { value: 'tech-plaza', label: 'Tech Plaza Branch' },
-    { value: 'mall-location', label: 'Shopping Mall Location' }
-  ];
-
-  const timeSlots = ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM'];
-
-  const handleQuantityChange = (newQty: number) => {
-    if (newQty >= 1 && newQty <= product.stock) setQuantity(newQty);
+  const handleAddToCart = () => {
+    console.log('🛒 ProductDetail: Adding to cart from detail page');
+    console.log('🛒 ProductDetail: Product:', product.name, 'Quantity:', quantity);
+    console.log('🛒 ProductDetail: Product data:', {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      stock: product.stock
+    });
+    
+    if (cartItem) {
+      console.log('🔄 ProductDetail: Item exists in cart, updating quantity');
+      updateItem(product.id, { quantity: cartItem.quantity + quantity });
+    } else {
+      console.log('➕ ProductDetail: Adding new item to cart');
+      addItem(product, quantity);
+    }
+    
+    // Add visual feedback with animation
+    const addButton = document.querySelector('[data-add-to-cart]') as HTMLElement;
+    if (addButton) {
+      console.log('✅ ProductDetail: Showing visual feedback');
+      addButton.classList.add('animate-pulse');
+      addButton.style.transform = 'scale(1.05)';
+      addButton.style.transition = 'all 0.3s ease';
+      
+      setTimeout(() => {
+        addButton.classList.remove('animate-pulse');
+        addButton.style.transform = '';
+      }, 1000);
+    }
   };
 
-  // --- Add to cart like ProductCard ---
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (product.stock <= 0) return alert('هذا المنتج غير متوفر في المخزون!');
-
-    addItem(product, quantity);
-
-    // تأثير بصري على الزر
-    const btn = e.currentTarget;
-    btn.classList.add('animate-pulse', 'bg-green-500', 'text-white');
-
-    const successIndicator = document.createElement('div');
-    successIndicator.innerHTML = '✓ تمت الإضافة!';
-    successIndicator.className = 'absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-bounce z-50 pointer-events-none';
-    btn.style.position = 'relative';
-    btn.appendChild(successIndicator);
-
-    setTimeout(() => {
-      btn.classList.remove('animate-pulse', 'bg-green-500', 'text-white');
-      if (successIndicator.parentNode) successIndicator.remove();
-    }, 2000);
-
-    setShowCartSidebar(true);
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity >= 1 && newQuantity <= product.stock) {
+      setQuantity(newQuantity);
+    }
   };
-
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleReservationSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const reservationData = {
-        reference_number: `REF-${Date.now()}`,
-        customer_name: formData.customerName,
-        customer_phone: formData.customerPhone,
-        customer_whatsapp: formData.customerWhatsApp,
-        pickup_branch: formData.pickupBranch,
-        proposed_date: formData.proposedDate,
-        proposed_time: formData.proposedTime,
-        notes: formData.notes,
-        items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
-        total_amount: product.price * quantity
-      };
-      const { error } = await supabase.from('reservations').insert([reservationData]);
-      if (error) throw error;
-      alert('تم إرسال الحجز بنجاح!');
-      setShowReservationForm(false);
-      setFormData({
-        customerName: '', customerPhone: '', customerWhatsApp: '',
-        pickupBranch: 'main-store', proposedDate: '', proposedTime: '', notes: ''
-      });
-    } catch (err) {
-      console.error(err);
-      alert('حدث خطأ أثناء إرسال الحجز!');
-    } finally { setLoading(false); }
-  };
-
-  const cartQuantity = getItem(product.id)?.quantity || 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-      <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 mb-8">
-        <ArrowLeft className="w-5 h-5 mr-2"/> Back to Products
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Back Button */}
+      <button
+        onClick={onBack}
+        className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors duration-200"
+      >
+        <ArrowLeft className="w-5 h-5 mr-2" />
+        Back to Products
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Images */}
+        {/* Product Images */}
         <div className="space-y-4">
-          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
-            <img src={product.images[selectedImageIndex]} alt={product.name} className="w-full h-full object-cover"/>
-            {discountPercent > 0 && <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">-{discountPercent}%</div>}
+          {/* Main Image */}
+          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden">
+            <img
+              src={product.images[selectedImageIndex]}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+            {discountPercent > 0 && (
+              <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                -{discountPercent}%
+              </div>
+            )}
           </div>
+
+          {/* Thumbnail Images */}
           {product.images.length > 1 && (
             <div className="flex space-x-2 overflow-x-auto">
-              {product.images.map((img,i)=>(
-                <button key={i} onClick={()=>setSelectedImageIndex(i)} className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${i===selectedImageIndex?'border-blue-500':'border-gray-200 hover:border-gray-300'}`}>
-                  <img src={img} alt="" className="w-full h-full object-cover"/>
+              {product.images.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImageIndex(index)}
+                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors duration-200 ${
+                    selectedImageIndex === index ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`${product.name} ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* Product Details */}
+        {/* Product Info */}
         <div className="space-y-6">
+          {/* Header */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-blue-600">{product.brand}</span>
               <div className="flex items-center space-x-2">
-                <button className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50"><Heart className="w-5 h-5"/></button>
-                <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50"><Share2 className="w-5 h-5"/></button>
+                <button className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors duration-200">
+                  <Heart className="w-5 h-5" />
+                </button>
+                <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50 transition-colors duration-200">
+                  <Share2 className="w-5 h-5" />
+                </button>
               </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+            
+            {/* Rating */}
             <div className="flex items-center mb-4">
-              {[...Array(5)].map((_,i)=><Star key={i} className={`w-5 h-5 ${i<4?'text-yellow-400':'text-gray-300'}`}/>)}
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className={`w-5 h-5 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                  />
+                ))}
+              </div>
+              <span className="text-sm text-gray-600 ml-2">(4.2) • 127 reviews</span>
             </div>
-            <p className="text-gray-600">{product.shortDescription}</p>
+
+            <p className="text-gray-600 text-lg leading-relaxed">{product.shortDescription}</p>
           </div>
 
+          {/* Price */}
+          <div className="border-t border-b border-gray-200 py-6">
+            <div className="flex items-center space-x-4">
+              <span className="text-4xl font-bold text-gray-900">
+                {product.price.toLocaleString()} د.ج
+              </span>
+              {product.originalPrice && (
+                <span className="text-xl text-gray-500 line-through">
+                  {product.originalPrice.toLocaleString()} د.ج
+                </span>
+              )}
+              {discountPercent > 0 && (
+                <span className="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
+                  Save {discountPercent}%
+                </span>
+              )}
+            </div>
+            
+            {/* Stock Status */}
+            <div className="mt-3">
+              {product.stock > 0 ? (
+                <div className="flex items-center text-green-600">
+                  <Check className="w-5 h-5 mr-2" />
+                  <span className="font-medium">In Stock ({product.stock} available)</span>
+                </div>
+              ) : (
+                <div className="flex items-center text-red-600">
+                  <Minus className="w-5 h-5 mr-2" />
+                  <span className="font-medium">Out of Stock</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Quantity & Add to Cart */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700">الكمية:</span>
+              <span className="text-sm font-medium text-gray-700">Quantity:</span>
               <div className="flex items-center border border-gray-300 rounded-lg">
-                <button onClick={()=>handleQuantityChange(quantity-1)} disabled={quantity<=1}><Minus className="w-4 h-4"/></button>
-                <span className="px-4">{quantity}</span>
-                <button onClick={()=>handleQuantityChange(quantity+1)} disabled={quantity>=product.stock}><Plus className="w-4 h-4"/></button>
+                <button
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                  disabled={quantity <= 1}
+                  className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="px-4 py-2 font-medium">{quantity}</span>
+                <button
+                  onClick={() => handleQuantityChange(quantity + 1)}
+                  disabled={quantity >= product.stock}
+                  className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
             <div className="flex space-x-4">
-              <Button onClick={handleAddToCart} disabled={product.stock===0 || isUpdating} icon={ShoppingCart} className="flex-1 relative">
-                {isUpdating ? 'Adding...' : `إضافة إلى السلة${cartQuantity>0 ? ` (${cartQuantity})` : ''}`}
+              <Button
+                data-add-to-cart
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+                icon={ShoppingCart}
+                size="lg"
+                className="flex-1 transition-all duration-300 hover:scale-105"
+              >
+                {cartItem ? `Update Cart (${cartItem.quantity})` : 'Add to Cart'}
               </Button>
-              <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">
-                حجز الآن
-              </Button>
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <Shield className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Warranty</p>
+                <p className="text-sm text-gray-600">{product.warranty || '1 Year'}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <Truck className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Free Shipping</p>
+                <p className="text-sm text-gray-600">Same day delivery</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <RotateCcw className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Returns</p>
+                <p className="text-sm text-gray-600">30-day policy</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Reservation Modal */}
-      {showReservationForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-semibold">Reserve Your Items</h2>
-              <button onClick={()=>setShowReservationForm(false)}><X className="w-6 h-6 text-gray-500"/></button>
-            </div>
-            <form onSubmit={handleReservationSubmit} className="space-y-4">
-              <input name="customerName" value={formData.customerName} onChange={handleFormChange} required placeholder="Full Name" className="w-full border p-2 rounded"/>
-              <input name="customerPhone" value={formData.customerPhone} onChange={handleFormChange} required placeholder="Phone" className="w-full border p-2 rounded"/>
-              <input name="customerWhatsApp" value={formData.customerWhatsApp} onChange={handleFormChange} placeholder="WhatsApp (Optional)" className="w-full border p-2 rounded"/>
-              <select name="pickupBranch" value={formData.pickupBranch} onChange={handleFormChange} className="w-full border p-2 rounded">
-                {branches.map(b=><option key={b.value} value={b.value}>{b.label}</option>)}
-              </select>
-              <div className="grid grid-cols-2 gap-4">
-                <input type="date" name="proposedDate" value={formData.proposedDate} onChange={handleFormChange} min={new Date().toISOString().split('T')[0]} className="w-full border p-2 rounded" required/>
-                <select name="proposedTime" value={formData.proposedTime} onChange={handleFormChange} className="w-full border p-2 rounded" required>
-                  <option value="">Select</option>
-                  {timeSlots.map(t=><option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-              <textarea name="notes" value={formData.notes} onChange={handleFormChange} rows={3} placeholder="Notes (Optional)" className="w-full border p-2 rounded"/>
-              <div className="flex gap-4">
-                <Button type="button" onClick={()=>setShowReservationForm(false)} className="flex-1">Cancel</Button>
-                <Button type="submit" loading={loading} className="flex-1">Submit Reservation</Button>
-              </div>
-            </form>
-          </div>
+      {/* Product Details Tabs */}
+      <div className="mt-16">
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8">
+            {[
+              { id: 'description', label: 'Description' },
+              { id: 'specifications', label: 'Specifications' },
+              { id: 'reviews', label: 'Reviews (127)' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                  activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
         </div>
-      )}
 
-      {/* Cart Sidebar */}
-      {showCartSidebar && <CartSidebar cartItems={cartItems} onClose={()=>setShowCartSidebar(false)}/>}
+        <div className="py-8">
+          {activeTab === 'description' && (
+            <div className="prose max-w-none">
+              <p className="text-gray-700 leading-relaxed text-lg">
+                {product.description || product.shortDescription}
+              </p>
+            </div>
+          )}
+
+          {activeTab === 'specifications' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Object.entries(product.specifications || {}).map(([key, value]) => (
+                <div key={key} className="flex justify-between py-3 border-b border-gray-200">
+                  <span className="font-medium text-gray-900">{key}</span>
+                  <span className="text-gray-600">{value}</span>
+                </div>
+              ))}
+              {Object.keys(product.specifications || {}).length === 0 && (
+                <p className="text-gray-500 col-span-2">No specifications available.</p>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'reviews' && (
+            <div className="space-y-6">
+              <div className="text-center py-12">
+                <p className="text-gray-500">Reviews feature coming soon!</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

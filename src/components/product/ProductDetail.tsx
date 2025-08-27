@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   ShoppingCart,
@@ -13,9 +13,9 @@ import {
 import { Button } from '../ui/Button';
 import { createClient } from '@supabase/supabase-js';
 
-// إعداد Supabase باستخدام متغيرات البيئة
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Supabase
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface Product {
@@ -39,8 +39,6 @@ interface CartItem {
   quantity: number;
 }
 
-let cartItems: CartItem[] = [];
-
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -55,6 +53,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     notes: ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Cart state
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const discountPercent = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -77,11 +78,24 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   };
 
   const addToCart = () => {
-    const existing = cartItems.find(item => item.product.id === product.id);
-    if (existing) existing.quantity += quantity;
-    else cartItems.push({ product, quantity });
+    setCartItems(prev => {
+      const existing = prev.find(item => item.product.id === product.id);
+      if (existing) {
+        return prev.map(item =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        return [...prev, { product, quantity }];
+      }
+    });
     alert('تمت إضافة المنتج إلى السلة!');
   };
+
+  useEffect(() => {
+    console.log('🛒 Cart updated:', cartItems);
+  }, [cartItems]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -93,22 +107,18 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     setLoading(true);
 
     try {
-    const reservationData = {
-  reference_number: `REF-${Date.now()}`,Add to Cart
-
-
-
-  customer_name: formData.customerName,
-  customer_phone: formData.customerPhone,
-  customer_whatsapp: formData.customerWhatsApp,
-  pickup_branch: formData.pickupBranch,
-  proposed_date: formData.proposedDate,
-  proposed_time: formData.proposedTime,
-  notes: formData.notes,
-  items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
-  total_amount: product.price * quantity
-};
-
+      const reservationData = {
+        reference_number: `REF-${Date.now()}`,
+        customer_name: formData.customerName,
+        customer_phone: formData.customerPhone,
+        customer_whatsapp: formData.customerWhatsApp,
+        pickup_branch: formData.pickupBranch,
+        proposed_date: formData.proposedDate,
+        proposed_time: formData.proposedTime,
+        notes: formData.notes,
+        items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
+        total_amount: product.price * quantity
+      };
 
       const { data, error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
@@ -131,6 +141,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       setLoading(false);
     }
   };
+
+  const cartQuantity = cartItems.find(item => item.product.id === product.id)?.quantity || 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -184,8 +196,12 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
 
             <div className="flex space-x-4">
-              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1">إضافة إلى السلة</Button>
-              <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">حجز الآن</Button>
+              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1">
+                إضافة إلى السلة {cartQuantity > 0 && `(${cartQuantity})`}
+              </Button>
+              <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">
+                حجز الآن
+              </Button>
             </div>
           </div>
         </div>

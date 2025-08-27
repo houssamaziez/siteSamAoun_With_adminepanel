@@ -70,9 +70,11 @@ const reservationData = {
   proposed_date: formData.proposedDate,
   proposed_time: formData.proposedTime,
   notes: formData.notes,
-  items: JSON.stringify([{ product, quantity }]), 
+  items: [{ product, quantity }], // بدون stringify
   total_amount: product.price * quantity
 };
+
+const { error } = await supabase.from('reservations').insert([reservationData]);
 
 
       const { error } = await supabase.from('reservations').insert([reservationData]);

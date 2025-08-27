@@ -1,39 +1,28 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Navigation } from './components/layout/Navigation';
-import { Hero } from './components/sections/Hero';
-import { Categories } from './components/sections/Categories';
-import { FeaturedProducts } from './components/sections/FeaturedProducts';
-import { Services } from './components/sections/Services';
-import { Testimonials } from './components/sections/Testimonials';
 import { Footer } from './components/layout/Footer';
 import { CartSidebar } from './components/cart/CartSidebar';
 import { ReservationForm } from './components/reservation/ReservationForm';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
-import { ProductDetail } from './components/product/ProductDetail';
+import { HomePage } from './components/pages/HomePage';
+import { ProductsPage } from './components/pages/ProductsPage';
+import { ProductDetailPage } from './components/pages/ProductDetailPage';
+import { NotFoundPage } from './components/pages/NotFoundPage';
 import { Reservation } from './types';
-import { useProducts, useCategories, createReservation } from './hooks/useSupabaseData';
+import { createReservation } from './hooks/useSupabaseData';
 import { getCurrentUser } from './lib/supabase';
-import { useCart } from './hooks/useCart';
 
-type View = 'home' | 'products' | 'product-detail' | 'admin';
-
-function App() {
-  const [currentView, setCurrentView] = useState<View>('home');
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isReservationFormOpen, setIsReservationFormOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [forceUpdate, setForceUpdate] = useState(0);
-
-  // Use Supabase data instead of mock data
-  const { products } = useProducts();
-  const { categories } = useCategories();
 
   useEffect(() => {
     checkAuthStatus();
@@ -51,18 +40,16 @@ function App() {
   };
 
   const handleCategorySelect = (categorySlug: string) => {
-    setSelectedCategory(categorySlug === 'all' ? null : categorySlug);
-    setCurrentView('products');
+    const path = categorySlug === 'all' ? '/products' : `/products/${categorySlug}`;
+    navigate(path);
   };
 
   const handleProductView = (productId: string) => {
-    setSelectedProductId(productId);
-    setCurrentView('product-detail');
+    navigate(`/product/${productId}`);
   };
 
   const handleExploreProducts = () => {
-    setSelectedCategory(null);
-    setCurrentView('products');
+    navigate('/products');
   };
 
   const handleReservationSubmit = async (reservation: Omit<Reservation, 'id' | 'createdAt' | 'status'>) => {
@@ -76,15 +63,8 @@ function App() {
     }
   };
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const handleAdminAccess = () => {
-    setCurrentView('admin');
+    navigate('/admin');
   };
 
   const handleAdminLogin = () => {
@@ -93,7 +73,7 @@ function App() {
 
   const handleAdminLogout = () => {
     setIsAuthenticated(false);
-    setCurrentView('home');
+    navigate('/');
   };
 
   // Show loading while checking auth
@@ -105,8 +85,11 @@ function App() {
     );
   }
 
+  // Check if we're on admin route
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   // Show admin interface
-  if (currentView === 'admin') {
+  if (isAdminRoute) {
     if (!isAuthenticated) {
       return <AdminLogin onLogin={handleAdminLogin} />;
     }
@@ -122,87 +105,29 @@ function App() {
         onAdminAccess={handleAdminAccess}
       />
 
-      {/* Navigation */}
-      {currentView === 'home' && (
+      {/* Navigation - only show on home page */}
+      {location.pathname === '/' && (
         <Navigation onCategorySelect={handleCategorySelect} />
       )}
 
       {/* Main Content */}
       <main>
-        {currentView === 'home' && (
-          <>
-            <Hero onExploreProducts={handleExploreProducts} />
-            
-            <div id="categories">
-              <Categories 
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <HomePage
                 onCategorySelect={handleCategorySelect}
-                categories={categories}
+                onProductView={handleProductView}
+                onExploreProducts={handleExploreProducts}
               />
-            </div>
-            
-            <div id="featured-products">
-              <FeaturedProducts 
-                products={products}
-                onViewProduct={handleProductView}
-                onViewAllProducts={handleExploreProducts}
-              />
-            </div>
-            
-            <div id="services">
-              <Services />
-            </div>
-            
-            <div id="testimonials">
-              <Testimonials />
-            </div>
-          </>
-        )}
-
-        {currentView === 'products' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {selectedCategory ? 
-                    `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products` : 
-                    'All Products'
-                  }
-                </h1>
-                <p className="text-gray-600 mt-2">
-                  Discover our comprehensive range of technology products
-                </p>
-              </div>
-              
-              <button
-                onClick={() => setCurrentView('home')}
-                className="text-blue-600 hover:text-blue-800 font-medium"
-              >
-                ← Back to Home
-              </button>
-            </div>
-
-            {/* Products would be rendered here with filtering logic */}
-            <div className="text-center py-20">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Product Catalog Coming Soon
-              </h2>
-              <p className="text-gray-600">
-                The full product catalog with advanced filtering is being developed.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {currentView === 'product-detail' && (
-          <>
-            {selectedProductId && (
-              <ProductDetail
-                product={products.find(p => p.id === selectedProductId)!}
-                onBack={() => setCurrentView('home')}
-              />
-            )}
-          </>
-        )}
+            } 
+          />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:category" element={<ProductsPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </main>
 
       {/* Footer */}
@@ -222,6 +147,14 @@ function App() {
         onSubmit={handleReservationSubmit}
       />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 

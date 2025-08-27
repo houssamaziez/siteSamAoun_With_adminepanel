@@ -42,13 +42,13 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
       
       {/* Sidebar */}
-      <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-300 ease-in-out">
+      <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-all duration-500 ease-in-out animate-slide-in">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-2">
-            <ShoppingBag className="w-6 h-6 text-blue-600" />
+            <ShoppingBag className="w-6 h-6 text-blue-600 animate-pulse" />
             <h2 className="text-xl font-semibold text-gray-900">
-              Cart ({cartCount})
+              <span className="transition-all duration-300">Cart ({cartCount})</span>
             </h2>
           </div>
           <button
@@ -70,7 +70,10 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
           ) : (
             <div className="space-y-4">
               {items.map((item) => (
-                <div key={item.product.id} className="flex items-center space-x-4 bg-gray-50 rounded-lg p-4">
+                <div 
+                  key={item.product.id} 
+                  className="flex items-center space-x-4 bg-gray-50 rounded-lg p-4 transition-all duration-300 hover:bg-gray-100 animate-fade-in"
+                >
                   <img
                     src={item.product.images?.[0] || '/placeholder-image.jpg'}
                     alt={item.product.name}
@@ -96,14 +99,14 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleQuantityChange(item.product.id, item.quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200"
+                        className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-all duration-300 hover:scale-110"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-8 text-center font-medium">{item.quantity}</span>
+                      <span className="w-8 text-center font-medium transition-all duration-300">{item.quantity}</span>
                       <button
                         onClick={() => handleQuantityChange(item.product.id, item.quantity + 1)}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-colors duration-200"
+                        className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-full transition-all duration-300 hover:scale-110"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -112,7 +115,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                     {/* Remove Button */}
                     <button
                       onClick={() => removeItem(item.product.id)}
-                      className="text-red-500 hover:text-red-700 text-sm transition-colors duration-200"
+                      className="text-red-500 hover:text-red-700 text-sm transition-all duration-300 hover:scale-105"
                     >
                       Remove
                     </button>
@@ -127,9 +130,9 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
         {items.length > 0 && (
           <div className="border-t border-gray-200 p-4 space-y-4">
             {/* Total */}
-            <div className="flex items-center justify-between text-lg font-semibold">
+            <div className="flex items-center justify-between text-lg font-semibold transition-all duration-300">
               <span>Total:</span>
-              <span className="text-blue-600">${cartTotal.toLocaleString()}</span>
+              <span className="text-blue-600 animate-pulse">${cartTotal.toLocaleString()}</span>
             </div>
 
             {/* Note */}
@@ -143,7 +146,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
               size="lg"
               icon={ArrowRight}
               iconPosition="right"
-              className="w-full"
+              className="w-full transition-all duration-300 hover:scale-105"
             >
               Reserve Items
             </Button>

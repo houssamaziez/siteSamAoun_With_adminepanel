@@ -120,11 +120,17 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             {/* Cart */}
             <button
               onClick={onCartOpen}
-              className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 group"
+              className="relative p-2 text-gray-600 hover:text-gray-900 transition-all duration-300 group hover:scale-110"
             >
-              <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
+              <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg animate-bounce">
+                <span 
+                  key={cartCount}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg animate-bounce transition-all duration-300"
+                  style={{
+                    animation: 'bounce 0.6s ease-in-out, pulse 0.3s ease-in-out'
+                  }}
+                >
                   {cartCount}
                 </span>
               )}

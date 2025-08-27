@@ -27,19 +27,19 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     } else {
       addItem(product, quantity);
     }
-  };
-
-  const handleBuyNow = () => {
-    console.log('Buy Now clicked:', product.name, 'quantity:', quantity);
-    // First add to cart
-    if (cartItem) {
-      updateItem(product.id, { quantity: cartItem.quantity + quantity });
-    } else {
-      addItem(product, quantity);
+    
+    // Add visual feedback with animation
+    const addButton = document.querySelector('[data-add-to-cart]') as HTMLElement;
+    if (addButton) {
+      addButton.classList.add('animate-pulse');
+      addButton.style.transform = 'scale(1.05)';
+      addButton.style.transition = 'all 0.3s ease';
+      
+      setTimeout(() => {
+        addButton.classList.remove('animate-pulse');
+        addButton.style.transform = '';
+      }, 1000);
     }
-    // Then proceed to checkout/reservation
-    // You can add navigation to checkout page here
-    alert(`Added ${quantity} x ${product.name} to cart and proceeding to checkout!`);
   };
 
   const handleQuantityChange = (newQuantity: number) => {
@@ -190,21 +190,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
             <div className="flex space-x-4">
               <Button
+                data-add-to-cart
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
                 icon={ShoppingCart}
                 size="lg"
-                className="flex-1"
+                className="flex-1 transition-all duration-300 hover:scale-105"
               >
                 {cartItem ? `Update Cart (${cartItem.quantity})` : 'Add to Cart'}
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={handleBuyNow}
-                className="px-6"
-              >
-                Buy Now
               </Button>
             </div>
           </div>

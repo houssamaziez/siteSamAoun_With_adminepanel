@@ -1,17 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import {
-  ArrowLeft,
-  ShoppingCart,
-  Heart,
-  Share2,
-  Star,
-  Minus,
-  Plus,
-  BookmarkPlus,
-  X
-} from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Heart, Share2, Star, Minus, Plus, BookmarkPlus, X } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Product } from '../../types';
+import { useCart } from '../../hooks/useCart';
 import CartSidebar from './components/cart/CartSidebar';
 
 // Supabase
@@ -19,29 +11,15 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-interface Product {
-  id: number;
-  name: string;
-  brand: string;
-  images: string[];
-  price: number;
-  originalPrice?: number;
-  stock: number;
-  shortDescription: string;
-  category?: { name: string };
-}
-
 interface ProductDetailProps {
   product: Product;
   onBack: () => void;
 }
 
-interface CartItem {
-  product: Product;
-  quantity: number;
-}
-
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
+  const { addItem, getItem, isUpdating } = useCart();
+  const cartItem = getItem(product.id);
+
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
@@ -55,7 +33,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     notes: ''
   });
   const [loading, setLoading] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showCartSidebar, setShowCartSidebar] = useState(false);
 
   const discountPercent = product.originalPrice
@@ -68,39 +45,37 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     { value: 'mall-location', label: 'Shopping Mall Location' }
   ];
 
-  const timeSlots = [
-    '9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM'
-  ];
+  const timeSlots = ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM'];
 
   const handleQuantityChange = (newQty: number) => {
     if (newQty >= 1 && newQty <= product.stock) setQuantity(newQty);
   };
 
-  const addToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
+  // --- Add to cart like ProductCard ---
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (product.stock <= 0) return alert('هذا المنتج غير متوفر في المخزون!');
 
-    setCartItems(prev => {
-      const existing = prev.find(item => item.product.id === product.id);
-      if (existing) {
-        return prev.map(item =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      } else {
-        return [...prev, { product, quantity }];
-      }
-    });
+    addItem(product, quantity);
 
-    // زر تأثير بصري
+    // تأثير بصري على الزر
     const btn = e.currentTarget;
     btn.classList.add('animate-pulse', 'bg-green-500', 'text-white');
-    setTimeout(() => btn.classList.remove('animate-pulse','bg-green-500','text-white'), 1000);
 
-    setShowCartSidebar(true); // فتح Sidebar تلقائي بعد إضافة
+    const successIndicator = document.createElement('div');
+    successIndicator.innerHTML = '✓ تمت الإضافة!';
+    successIndicator.className = 'absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-bounce z-50 pointer-events-none';
+    btn.style.position = 'relative';
+    btn.appendChild(successIndicator);
+
+    setTimeout(() => {
+      btn.classList.remove('animate-pulse', 'bg-green-500', 'text-white');
+      if (successIndicator.parentNode) successIndicator.remove();
+    }, 2000);
+
+    setShowCartSidebar(true);
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>) => {
@@ -126,17 +101,11 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       };
       const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
-
       alert('تم إرسال الحجز بنجاح!');
       setShowReservationForm(false);
       setFormData({
-        customerName: '',
-        customerPhone: '',
-        customerWhatsApp: '',
-        pickupBranch: 'main-store',
-        proposedDate: '',
-        proposedTime: '',
-        notes: ''
+        customerName: '', customerPhone: '', customerWhatsApp: '',
+        pickupBranch: 'main-store', proposedDate: '', proposedTime: '', notes: ''
       });
     } catch (err) {
       console.error(err);
@@ -144,7 +113,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     } finally { setLoading(false); }
   };
 
-  const cartQuantity = cartItems.find(item => item.product.id === product.id)?.quantity || 0;
+  const cartQuantity = getItem(product.id)?.quantity || 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
@@ -153,7 +122,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* الصور */}
+        {/* Images */}
         <div className="space-y-4">
           <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
             <img src={product.images[selectedImageIndex]} alt={product.name} className="w-full h-full object-cover"/>
@@ -170,7 +139,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           )}
         </div>
 
-        {/* تفاصيل المنتج */}
+        {/* Product Details */}
         <div className="space-y-6">
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -198,8 +167,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
 
             <div className="flex space-x-4">
-              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1 relative">
-                إضافة إلى السلة {cartQuantity>0 && `(${cartQuantity})`}
+              <Button onClick={handleAddToCart} disabled={product.stock===0 || isUpdating} icon={ShoppingCart} className="flex-1 relative">
+                {isUpdating ? 'Adding...' : `إضافة إلى السلة${cartQuantity>0 ? ` (${cartQuantity})` : ''}`}
               </Button>
               <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">
                 حجز الآن
@@ -211,48 +180,27 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
       {/* Reservation Modal */}
       {showReservationForm && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-2xl w-full max-w-2xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold">Reserve Your Items</h2>
               <button onClick={()=>setShowReservationForm(false)}><X className="w-6 h-6 text-gray-500"/></button>
             </div>
             <form onSubmit={handleReservationSubmit} className="space-y-4">
-              <div>
-                <label>Full Name *</label>
-                <input name="customerName" value={formData.customerName} onChange={handleFormChange} required className="w-full border p-2 rounded"/>
-              </div>
-              <div>
-                <label>Phone *</label>
-                <input name="customerPhone" value={formData.customerPhone} onChange={handleFormChange} required className="w-full border p-2 rounded"/>
-              </div>
-              <div>
-                <label>WhatsApp (Optional)</label>
-                <input name="customerWhatsApp" value={formData.customerWhatsApp} onChange={handleFormChange} className="w-full border p-2 rounded"/>
-              </div>
-              <div>
-                <label>Pickup Branch *</label>
-                <select name="pickupBranch" value={formData.pickupBranch} onChange={handleFormChange} className="w-full border p-2 rounded">
-                  {branches.map(b=><option key={b.value} value={b.value}>{b.label}</option>)}
+              <input name="customerName" value={formData.customerName} onChange={handleFormChange} required placeholder="Full Name" className="w-full border p-2 rounded"/>
+              <input name="customerPhone" value={formData.customerPhone} onChange={handleFormChange} required placeholder="Phone" className="w-full border p-2 rounded"/>
+              <input name="customerWhatsApp" value={formData.customerWhatsApp} onChange={handleFormChange} placeholder="WhatsApp (Optional)" className="w-full border p-2 rounded"/>
+              <select name="pickupBranch" value={formData.pickupBranch} onChange={handleFormChange} className="w-full border p-2 rounded">
+                {branches.map(b=><option key={b.value} value={b.value}>{b.label}</option>)}
+              </select>
+              <div className="grid grid-cols-2 gap-4">
+                <input type="date" name="proposedDate" value={formData.proposedDate} onChange={handleFormChange} min={new Date().toISOString().split('T')[0]} className="w-full border p-2 rounded" required/>
+                <select name="proposedTime" value={formData.proposedTime} onChange={handleFormChange} className="w-full border p-2 rounded" required>
+                  <option value="">Select</option>
+                  {timeSlots.map(t=><option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label>Preferred Date *</label>
-                  <input type="date" name="proposedDate" value={formData.proposedDate} onChange={handleFormChange} min={new Date().toISOString().split('T')[0]} className="w-full border p-2 rounded" required/>
-                </div>
-                <div>
-                  <label>Preferred Time *</label>
-                  <select name="proposedTime" value={formData.proposedTime} onChange={handleFormChange} required className="w-full border p-2 rounded">
-                    <option value="">Select</option>
-                    {timeSlots.map(t=><option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label>Notes (Optional)</label>
-                <textarea name="notes" value={formData.notes} onChange={handleFormChange} rows={3} className="w-full border p-2 rounded"/>
-              </div>
+              <textarea name="notes" value={formData.notes} onChange={handleFormChange} rows={3} placeholder="Notes (Optional)" className="w-full border p-2 rounded"/>
               <div className="flex gap-4">
                 <Button type="button" onClick={()=>setShowReservationForm(false)} className="flex-1">Cancel</Button>
                 <Button type="submit" loading={loading} className="flex-1">Submit Reservation</Button>

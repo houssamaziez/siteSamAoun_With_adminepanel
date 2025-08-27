@@ -12,9 +12,16 @@ import {
   Minus,
   Plus,
   BookmarkPlus,
+  Calendar,
+  Clock,
+  User,
+  Phone,
+  MapPin,
+  MessageSquare,
+  X
 } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { Product } from '../../types';
+import { Product, Reservation } from '../../types';
 import { useCart } from '../../hooks/useCart';
 import { useReservation } from '../../hooks/useReservation';
 
@@ -30,6 +37,16 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
+  const [formData, setFormData] = useState({
+    customerName: '',
+    customerPhone: '',
+    customerWhatsApp: '',
+    pickupBranch: 'main-store',
+    proposedDate: '',
+    proposedTime: '',
+    notes: ''
+  });
+  const [loading, setLoading] = useState(false);
 
   const cartItem = getItem(product.id);
   const reservationItem = getReservationItem(product.id);
@@ -37,6 +54,18 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const discountPercent = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+
+  const branches = [
+    { value: 'main-store', label: 'Main Store - Downtown' },
+    { value: 'tech-plaza', label: 'Tech Plaza Branch' },
+    { value: 'mall-location', label: 'Shopping Mall Location' }
+  ];
+
+  const timeSlots = [
+    '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+    '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
+    '5:00 PM', '6:00 PM'
+  ];
 
   const handleAddToCart = () => {
     if (cartItem) {
@@ -47,16 +76,54 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   };
 
   const handleAddToReservation = () => {
-    if (reservationItem) {
-      updateReservation(product.id, reservationItem.quantity + quantity);
-    } else {
-      addReservation(product, quantity);
+    setLoading(true);
+    try {
+      if (reservationItem) {
+        updateReservation(product.id, reservationItem.quantity + quantity);
+      } else {
+        addReservation(product, quantity);
+      }
+      setShowReservationForm(false);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1 && newQuantity <= product.stock) {
       setQuantity(newQuantity);
+    }
+  };
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleReservationSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const reservation: Omit<Reservation, 'id' | 'createdAt' | 'status'> = {
+        referenceNumber: `RES-${Date.now()}`,
+        ...formData,
+        items: [{ product, quantity }],
+        totalAmount: product.price * quantity
+      };
+      console.log('Reservation submitted:', reservation);
+      handleAddToReservation();
+      // Reset form
+      setFormData({
+        customerName: '',
+        customerPhone: '',
+        customerWhatsApp: '',
+        pickupBranch: 'main-store',
+        proposedDate: '',
+        proposedTime: '',
+        notes: ''
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,7 +179,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
         {/* تفاصيل المنتج */}
         <div className="space-y-6">
-          {/* العنوان */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-blue-600">{product.brand}</span>
@@ -126,8 +192,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-
-            {/* التقييم */}
             <div className="flex items-center mb-4">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
@@ -139,11 +203,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
               <span className="text-sm text-gray-600 ml-2">(4.2) • 127 reviews</span>
             </div>
-
             <p className="text-gray-600 text-lg leading-relaxed">{product.shortDescription}</p>
           </div>
 
-          {/* السعر */}
           <div className="border-t border-b border-gray-200 py-6">
             <div className="flex items-center space-x-4">
               <span className="text-4xl font-bold text-gray-900">{product.price.toLocaleString()} د.ج</span>
@@ -158,8 +220,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 </span>
               )}
             </div>
-
-            {/* حالة المخزون */}
             <div className="mt-3">
               {product.stock > 0 ? (
                 <div className="flex items-center text-green-600">
@@ -175,7 +235,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
           </div>
 
-          {/* الكمية والأزرار */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium text-gray-700">الكمية:</span>
@@ -198,7 +257,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
             </div>
 
-            {/* الأزرار */}
             <div className="flex space-x-4">
               <Button
                 onClick={handleAddToCart}
@@ -222,7 +280,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
           </div>
 
-          {/* المميزات */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -257,40 +314,157 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         </div>
       </div>
 
-      {/* نموذج الحجز */}
+      {/* Reservation Modal */}
       {showReservationForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
-            <h2 className="text-xl font-bold mb-4">نموذج الحجز</h2>
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-black bg-opacity-50" onClick={() => setShowReservationForm(false)} />
+            <div className="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-900">Reserve Your Items</h2>
+                <button onClick={() => setShowReservationForm(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">الكمية:</label>
-              <input
-                type="number"
-                min={1}
-                max={product.stock}
-                value={quantity}
-                onChange={(e) => handleQuantityChange(Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
-            </div>
+              <form onSubmit={handleReservationSubmit} className="p-6 space-y-6">
+                {/* Order Summary */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 mb-3">Order Summary</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span>{product.name} x{quantity}</span>
+                      <span className="font-medium">{(product.price * quantity).toLocaleString()} د.ج</span>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-semibold">
+                    <span>Total:</span>
+                    <span className="text-blue-600">{(product.price * quantity).toLocaleString()} د.ج</span>
+                  </div>
+                </div>
 
-            <div className="flex justify-end space-x-2">
-              <Button
-                onClick={() => setShowReservationForm(false)}
-                className="bg-gray-200 text-gray-700 hover:bg-gray-300"
-              >
-                إلغاء
-              </Button>
-              <Button
-                onClick={() => {
-                  handleAddToReservation();
-                  setShowReservationForm(false);
-                }}
-                className="bg-purple-600 text-white hover:bg-purple-700"
-              >
-                تأكيد الحجز
-              </Button>
+                {/* Customer Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                      <User className="w-4 h-4 mr-2" /> Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="customerName"
+                      value={formData.customerName}
+                      onChange={handleFormChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                      <Phone className="w-4 h-4 mr-2" /> Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      name="customerPhone"
+                      value={formData.customerPhone}
+                      onChange={handleFormChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Your phone number"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                    <Phone className="w-4 h-4 mr-2" /> WhatsApp Number (Optional)
+                  </label>
+                  <input
+                    type="tel"
+                    name="customerWhatsApp"
+                    value={formData.customerWhatsApp}
+                    onChange={handleFormChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="WhatsApp number (if different)"
+                  />
+                </div>
+
+                {/* Pickup Details */}
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                    <MapPin className="w-4 h-4 mr-2" /> Pickup Location *
+                  </label>
+                  <select
+                    name="pickupBranch"
+                    value={formData.pickupBranch}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    {branches.map((branch) => (
+                      <option key={branch.value} value={branch.value}>{branch.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                      <Calendar className="w-4 h-4 mr-2" /> Preferred Date *
+                    </label>
+                    <input
+                      type="date"
+                      name="proposedDate"
+                      value={formData.proposedDate}
+                      onChange={handleFormChange}
+                      required
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                      <Clock className="w-4 h-4 mr-2" /> Preferred Time *
+                    </label>
+                    <select
+                      name="proposedTime"
+                      value={formData.proposedTime}
+                      onChange={handleFormChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">Select time</option>
+                      {timeSlots.map((time) => <option key={time} value={time}>{time}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                    <MessageSquare className="w-4 h-4 mr-2" /> Additional Notes (Optional)
+                  </label>
+                  <textarea
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleFormChange}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Any special requirements or questions..."
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-4">
+                  <Button type="button" variant="outline" onClick={() => setShowReservationForm(false)} className="flex-1">
+                    Cancel
+                  </Button>
+                  <Button type="submit" loading={loading} className="flex-1">
+                    Submit Reservation
+                  </Button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

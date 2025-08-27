@@ -34,22 +34,22 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   }, [items, forceUpdate, cartCount]);
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-soft">
       {/* Top Bar */}
-      <div className="bg-gray-900 text-white text-sm">
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center">
+            <div className="flex items-center space-x-6 animate-fade-in-left">
+              <div className="flex items-center hover-scale">
                 <Phone className="w-4 h-4 mr-2" />
                 <span>{siteData.phone}</span>
               </div>
-              <div className="hidden md:flex items-center">
+              <div className="hidden md:flex items-center hover-scale">
                 <MapPin className="w-4 h-4 mr-2" />
                 <span>{siteData.address}</span>
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center animate-fade-in-right">
               <Clock className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">{siteData.hours}</span>
               <span className="sm:hidden">Open Mon-Sat</span>
@@ -69,7 +69,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             >
               <Menu className="w-6 h-6" />
             </button>
-            <div className="flex-shrink-0 ml-4 md:ml-0">
+            <div className="flex-shrink-0 ml-4 md:ml-0 animate-fade-in">
               <div className="flex items-center space-x-3">
                 {siteData.logoUrl && (
                   <img
@@ -79,15 +79,15 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
                   />
                 )}
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{siteData.siteName}</h1>
-                  <p className="text-sm text-gray-600 hidden sm:block">{siteData.siteTagline}</p>
+                  <h1 className="text-2xl font-bold gradient-text hover-scale">{siteData.siteName}</h1>
+                  <p className="text-sm text-gray-600 hidden sm:block opacity-80">{siteData.siteTagline}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8">
+          <div className="hidden md:flex flex-1 max-w-lg mx-8 animate-fade-in">
             <div className="w-full relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
                 <Search className="h-5 w-5 text-gray-400" />
@@ -96,7 +96,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-glow transition-all duration-300"
                 placeholder="Search products, brands, or categories..."
               />
               {searchQuery && (
@@ -111,24 +111,24 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 animate-fade-in-right">
             {/* Mobile Search */}
-            <button className="md:hidden p-2 text-gray-600 hover:text-gray-900">
+            <button className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover-scale">
               <Search className="w-6 h-6" />
             </button>
 
             {/* Cart */}
             <button
               onClick={onCartOpen}
-              className="relative p-2 text-gray-600 hover:text-gray-900 transition-all duration-300 group hover:scale-110"
+              className="relative p-3 text-gray-600 hover:text-gray-900 transition-all duration-300 group hover-scale hover-glow rounded-full"
             >
-              <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+              <ShoppingCart className="w-6 h-6 group-hover:animate-wiggle transition-transform duration-300" />
               {cartCount > 0 && (
                 <span 
                   key={cartCount}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg animate-bounce transition-all duration-300"
+                  className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-medium animate-cart-bounce transition-all duration-300"
                   style={{
-                    animation: 'bounce 0.6s ease-in-out, pulse 0.3s ease-in-out'
+                    animation: 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite'
                   }}
                 >
                   {cartCount}
@@ -138,7 +138,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
 
             {/* CTA Button */}
             <div className="hidden sm:block">
-              <Button size="sm" onClick={onAdminAccess}>
+              <Button size="sm" onClick={onAdminAccess} className="hover-lift btn-primary">
                 Admin
               </Button>
             </div>
@@ -147,7 +147,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
       </div>
 
       {/* Mobile Search Bar */}
-      <div className="md:hidden border-t border-gray-200 px-4 py-3">
+      <div className="md:hidden border-t border-gray-200 px-4 py-3 bg-gray-50/50">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
             <Search className="h-5 w-5 text-gray-400" />
@@ -156,7 +156,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-glow"
             placeholder="Search products..."
           />
         </div>

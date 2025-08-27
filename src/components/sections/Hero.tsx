@@ -31,26 +31,26 @@ export function Hero({ onExploreProducts }: HeroProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
-          <div className="text-white">
-            <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+          <div className="text-white animate-fade-in-left">
+            <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6 animate-fade-in-up stagger-1">
               {settings?.heroTitle || siteData.heroTitle}
-              <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent animate-pulse">
                 
               </span>{' '}
               
             </h1>
             
-            <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed">
+            <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed animate-fade-in-up stagger-2">
               {settings?.heroSubtitle || siteData.heroSubtitle}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 mb-12 animate-fade-in-up stagger-3">
               <Button 
                 size="lg" 
                 onClick={onExploreProducts}
                 icon={ArrowRight}
                 iconPosition="right"
-                className="text-lg px-8 py-4"
+                className="text-lg px-8 py-4 hover-lift btn-primary"
               >
                 Explore Products
               </Button>
@@ -59,16 +59,16 @@ export function Hero({ onExploreProducts }: HeroProps) {
                 variant="outline" 
                 size="lg"
                 icon={Play}
-                className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-gray-900"
+                className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-gray-900 hover-lift glass"
               >
                 Watch Demo
               </Button>
             </div>
 
             {/* Features */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 animate-fade-in-up stagger-4">
+              <div className="flex items-center space-x-3 hover-scale">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center animate-float">
                   <Shield className="w-6 h-6 text-blue-400" />
                 </div>
                 <div>
@@ -77,8 +77,8 @@ export function Hero({ onExploreProducts }: HeroProps) {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-emerald-500 bg-opacity-20 rounded-full flex items-center justify-center">
+              <div className="flex items-center space-x-3 hover-scale stagger-1">
+                <div className="flex-shrink-0 w-12 h-12 bg-emerald-500 bg-opacity-20 rounded-full flex items-center justify-center animate-float stagger-2">
                   <Truck className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
@@ -87,8 +87,8 @@ export function Hero({ onExploreProducts }: HeroProps) {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0 w-12 h-12 bg-purple-500 bg-opacity-20 rounded-full flex items-center justify-center">
+              <div className="flex items-center space-x-3 hover-scale stagger-2">
+                <div className="flex-shrink-0 w-12 h-12 bg-purple-500 bg-opacity-20 rounded-full flex items-center justify-center animate-float stagger-4">
                   <HeadphonesIcon className="w-6 h-6 text-purple-400" />
                 </div>
                 <div>
@@ -100,20 +100,20 @@ export function Hero({ onExploreProducts }: HeroProps) {
           </div>
 
           {/* Hero Image/Animation */}
-          <div className="relative">
-            <div className="relative z-10">
+          <div className="relative animate-fade-in-right">
+            <div className="relative z-10 hover-lift">
               <img
                 src="https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Professional Tech Setup"
-                className="w-full rounded-2xl shadow-2xl"
+                className="w-full rounded-2xl shadow-strong hover-glow"
               />
               
               {/* Floating Elements */}
-              <div className="absolute -top-6 -right-6 w-20 h-20 bg-blue-500 rounded-full opacity-80 animate-pulse"></div>
-              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-emerald-500 rounded-full opacity-60 animate-bounce"></div>
+              <div className="absolute -top-6 -right-6 w-20 h-20 bg-blue-500 rounded-full opacity-80 animate-float"></div>
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-emerald-500 rounded-full opacity-60 animate-float stagger-3"></div>
               
               {/* Stats Card */}
-              <div className="absolute bottom-6 left-6 bg-white bg-opacity-90 backdrop-blur-sm rounded-xl p-4 shadow-xl">
+              <div className="absolute bottom-6 left-6 glass rounded-xl p-4 shadow-strong animate-scale-in stagger-5 hover-glow">
                 <div className="flex items-center space-x-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-gray-900">{settings?.statProductsCount || siteData.statProductsCount}</div>

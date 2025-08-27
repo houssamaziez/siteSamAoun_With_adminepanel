@@ -11,15 +11,8 @@ interface AdminUser {
   created_at: string;
 }
 
-interface AuthUser {
-  id: string;
-  email: string;
-  created_at: string;
-}
-
 export function UsersManager() {
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [authUsers, setAuthUsers] = useState<AuthUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,7 +21,6 @@ export function UsersManager() {
 
   useEffect(() => {
     fetchUsers();
-    fetchAuthUsers();
   }, []);
 
   const fetchUsers = async () => {
@@ -42,24 +34,6 @@ export function UsersManager() {
       setUsers(data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch users');
-    }
-  };
-
-  const fetchAuthUsers = async () => {
-    try {
-      // Note: In production, you'd need admin privileges to list users
-      // This is a simplified version for demonstration
-      const { data: { users }, error } = await supabase.auth.admin.listUsers();
-      
-      if (error) {
-        console.warn('Cannot fetch auth users (admin privileges required):', error);
-        setAuthUsers([]);
-      } else {
-        setAuthUsers(users || []);
-      }
-    } catch (err) {
-      console.warn('Auth users fetch failed:', err);
-      setAuthUsers([]);
     } finally {
       setLoading(false);
     }
@@ -246,27 +220,26 @@ interface UserFormProps {
 
 function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
   const [formData, setFormData] = useState({
+    userId: '',
     email: '',
-    password: '',
     name: '',
     role: 'staff' as 'admin' | 'manager' | 'staff'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (editingUser) {
       setFormData({
+        userId: editingUser.id,
         email: editingUser.email,
-        password: '', // Don't show existing password
         name: editingUser.name,
         role: editingUser.role
       });
     } else {
       setFormData({
+        userId: '',
         email: '',
-        password: '',
         name: '',
         role: 'staff'
       });
@@ -292,29 +265,17 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
 
         if (error) throw error;
       } else {
-        // Create new user
-        // First create auth user
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-          email: formData.email,
-          password: formData.password,
-          email_confirm: true
-        });
+        // Create new admin user entry
+        const { error } = await supabase
+          .from('admins')
+          .insert({
+            id: formData.userId,
+            email: formData.email,
+            name: formData.name,
+            role: formData.role
+          });
 
-        if (authError) throw authError;
-
-        if (authData.user) {
-          // Then add to admins table
-          const { error: adminError } = await supabase
-            .from('admins')
-            .insert({
-              id: authData.user.id,
-              email: formData.email,
-              name: formData.name,
-              role: formData.role
-            });
-
-          if (adminError) throw adminError;
-        }
+        if (error) throw error;
       }
 
       onSuccess();
@@ -354,6 +315,26 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
               </div>
             )}
 
+            {!editingUser && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Supabase User ID *
+                </label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={formData.userId}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter Supabase User ID"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Create the user in Supabase Auth first, then enter their User ID here
+                </p>
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Full Name *
@@ -383,36 +364,6 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
                 placeholder="john@example.com"
               />
             </div>
-
-            {!editingUser && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password *
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

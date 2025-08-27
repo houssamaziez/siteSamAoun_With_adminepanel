@@ -219,6 +219,33 @@ html {
   animation: cart-bounce 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Professional Cart Animations */
+@keyframes scale-98 {
+  0% { transform: scale(1); }
+  100% { transform: scale(0.98); }
+}
+
+.scale-98 {
+  transform: scale(0.98);
+}
+
+.scale-100 {
+  transform: scale(1);
+}
+
+/* Enhanced Button States */
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+
 /* Hover Effects */
 .hover-lift {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

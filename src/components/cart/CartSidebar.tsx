@@ -11,6 +11,8 @@ interface CartSidebarProps {
 
 export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
   const { items, updateItem, removeItem, getTotalAmount, getItemCount, updateTrigger, refreshCart, getCacheStatus } = useCart();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(Date.now());
   
   // Get current values directly
   const cartCount = getItemCount();
@@ -23,16 +25,27 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
     console.log('🛒 CartSidebar: Count:', cartCount);
     console.log('🛒 CartSidebar: Total:', cartTotal);
     console.log('🛒 CartSidebar: Cache status:', getCacheStatus());
+    setLastUpdated(Date.now());
   }, [items, updateTrigger, cartCount, cartTotal, getCacheStatus]);
+
+  // Auto-refresh cart when sidebar opens
+  useEffect(() => {
+    if (isOpen) {
+      console.log('🔄 CartSidebar: Refreshing cart on open');
+      refreshCart();
+    }
+  }, [isOpen, refreshCart]);
 
   if (!isOpen) return null;
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
+    setIsUpdating(true);
     if (newQuantity <= 0) {
       removeItem(productId);
     } else {
       updateItem(productId, { quantity: newQuantity });
     }
+    setTimeout(() => setIsUpdating(false), 300);
   };
 
   const handleCheckout = () => {
@@ -48,14 +61,29 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
       {/* Sidebar */}
       <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white/95 backdrop-blur-md shadow-strong transform transition-all duration-500 ease-in-out animate-slide-in">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 relative">
           <div className="flex items-center space-x-2">
             <ShoppingBag className="w-7 h-7 text-blue-600 animate-float" />
             <h2 className="text-2xl font-bold gradient-text">
-              <span className="transition-all duration-300">Cart ({cartCount})</span>
+              <span className={`transition-all duration-300 ${isUpdating ? 'animate-pulse' : ''}`}>
+                Cart ({cartCount})
+              </span>
             </h2>
           </div>
           <div className="flex items-center space-x-2">
+            <button
+              onClick={() => {
+                setIsUpdating(true);
+                refreshCart();
+                setTimeout(() => setIsUpdating(false), 500);
+              }}
+              className="p-2 hover:bg-gray-100 rounded-full hover-scale transition-colors duration-200 text-gray-500 hover:text-blue-600"
+              title="Refresh cart"
+            >
+              <svg className={`w-5 h-5 ${isUpdating ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full hover-scale transition-colors duration-200"
@@ -63,6 +91,11 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
               <X className="w-6 h-6 text-gray-500" />
             </button>
           </div>
+          
+          {/* Update indicator */}
+          {isUpdating && (
+            <div className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
+          )}
         </div>
 
         {/* Cart Items */}
@@ -78,7 +111,9 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
               {items.map((item) => (
                 <div 
                   key={item.product.id} 
-                  className="flex items-center space-x-4 bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-xl p-5 card-hover animate-fade-in glass"
+                  className={`flex items-center space-x-4 bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-xl p-5 card-hover animate-fade-in glass transition-all duration-300 ${
+                    isUpdating ? 'opacity-75 scale-98' : 'opacity-100 scale-100'
+                  }`}
                 >
                   <img
                     src={item.product.images?.[0] || '/placeholder-image.jpg'}
@@ -105,14 +140,20 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => handleQuantityChange(item.product.id, item.quantity - 1)}
-                        className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-red-200 rounded-full hover-scale shadow-soft"
+                        className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-red-200 rounded-full hover-scale shadow-soft transition-all duration-200"
+                        disabled={isUpdating}
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-10 text-center font-bold text-lg transition-all duration-300">{item.quantity}</span>
+                      <span className={`w-10 text-center font-bold text-lg transition-all duration-300 ${
+                        isUpdating ? 'animate-pulse' : ''
+                      }`}>
+                        {item.quantity}
+                      </span>
                       <button
                         onClick={() => handleQuantityChange(item.product.id, item.quantity + 1)}
-                        className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-green-200 rounded-full hover-scale shadow-soft"
+                        className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-green-200 rounded-full hover-scale shadow-soft transition-all duration-200"
+                        disabled={isUpdating}
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -121,7 +162,8 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                     {/* Remove Button */}
                     <button
                       onClick={() => removeItem(item.product.id)}
-                      className="text-red-500 hover:text-red-700 text-sm font-medium hover-scale bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full"
+                      className="text-red-500 hover:text-red-700 text-sm font-medium hover-scale bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full transition-all duration-200"
+                      disabled={isUpdating}
                     >
                       Remove
                     </button>
@@ -134,11 +176,18 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-gray-200 p-6 space-y-6 bg-gradient-to-r from-blue-50 to-purple-50">
+          <div className="border-t border-gray-200 p-6 space-y-6 bg-gradient-to-r from-blue-50 to-purple-50 relative">
             {/* Total */}
-            <div className="flex items-center justify-between text-xl font-bold transition-all duration-300">
+            <div className={`flex items-center justify-between text-xl font-bold transition-all duration-300 ${
+              isUpdating ? 'animate-pulse' : ''
+            }`}>
               <span className="text-gray-900">Total:</span>
               <span className="gradient-text animate-pulse-glow text-2xl">{cartTotal.toLocaleString()} د.ج</span>
+            </div>
+
+            {/* Last updated indicator */}
+            <div className="text-xs text-gray-500 text-center">
+              Last updated: {new Date(lastUpdated).toLocaleTimeString()}
             </div>
 
             {/* Note */}
@@ -150,11 +199,14 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
             <Button
               onClick={handleCheckout}
               size="lg"
+              disabled={isUpdating}
               icon={ArrowRight}
               iconPosition="right"
-              className="w-full hover-lift btn-primary shadow-medium text-lg py-4"
+              className={`w-full hover-lift btn-primary shadow-medium text-lg py-4 transition-all duration-300 ${
+                isUpdating ? 'opacity-75 cursor-not-allowed' : ''
+              }`}
             >
-              Reserve Items
+              {isUpdating ? 'Updating...' : 'Reserve Items'}
             </Button>
           </div>
         )}

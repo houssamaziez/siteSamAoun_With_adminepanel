@@ -15,6 +15,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault(); // Prevent any form submission or page refresh
     console.log('🛒 ProductCard: Adding to cart clicked for:', product.name);
     console.log('🛒 ProductCard: Current cart items before add:', getItem(product.id));
    
@@ -42,23 +43,26 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
     addItem(product, 1);
     console.log('🛒 ProductCard: addItem called successfully');
    
-   // Show visual feedback
-   const button = e.target as HTMLElement;
-   const buttonElement = button.closest('button');
-   if (buttonElement) {
-     console.log('✅ ProductCard: Showing visual feedback');
-     const originalText = buttonElement.textContent;
-     buttonElement.textContent = '✓ Added!';
-     buttonElement.style.backgroundColor = '#10b981';
-     buttonElement.style.borderColor = '#10b981';
-     buttonElement.style.color = 'white';
+   // Enhanced visual feedback with professional animations
+   const button = e.currentTarget as HTMLButtonElement;
+   if (button) {
+     console.log('✅ ProductCard: Showing enhanced visual feedback');
      
+     // Add success animation classes
+     button.classList.add('animate-pulse', 'bg-green-500', 'border-green-500', 'text-white');
+     
+     // Create floating success indicator
+     const successIndicator = document.createElement('div');
+     successIndicator.innerHTML = '✓ Added to Cart!';
+     successIndicator.className = 'absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full animate-bounce z-50 pointer-events-none';
+     button.style.position = 'relative';
+     button.appendChild(successIndicator);
+     
+     // Reset after animation
      setTimeout(() => {
-       if (buttonElement) {
-         buttonElement.textContent = originalText || 'Add to Cart';
-         buttonElement.style.backgroundColor = '';
-         buttonElement.style.borderColor = '';
-         buttonElement.style.color = '';
+       button.classList.remove('animate-pulse', 'bg-green-500', 'border-green-500', 'text-white');
+       if (successIndicator.parentNode) {
+         successIndicator.remove();
        }
      }, 2000);
    }
@@ -71,10 +75,13 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
   };
 
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     onViewDetails?.();
   };
 

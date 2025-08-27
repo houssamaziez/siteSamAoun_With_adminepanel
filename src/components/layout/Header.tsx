@@ -11,9 +11,10 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount, items, updateTrigger, getCacheStatus } = useCart();
+  const { getItemCount, items, updateTrigger, getCacheStatus, refreshCart } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
+  const [cartAnimation, setCartAnimation] = useState(false);
 
   // Use settings from database or fallback to defaults
   const siteData = settings || {
@@ -33,7 +34,19 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
     console.log('🔔 Header: Cart updated, count:', cartCount, 'items:', items.length);
     console.log('🔔 Header: Update trigger:', updateTrigger);
     console.log('🔔 Header: Cache status:', getCacheStatus());
+    
+    // Trigger cart animation when items are added
+    if (cartCount > 0) {
+      setCartAnimation(true);
+      setTimeout(() => setCartAnimation(false), 1000);
+    }
   }, [items, updateTrigger, cartCount, getCacheStatus]);
+
+  const handleCartClick = () => {
+    // Refresh cart before opening to ensure latest data
+    refreshCart();
+    onCartOpen();
+  };
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-soft">
@@ -121,20 +134,31 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
 
             {/* Cart */}
             <button
-              onClick={onCartOpen}
-              className="relative p-3 text-gray-600 hover:text-gray-900 transition-all duration-300 group hover-scale hover-glow rounded-full"
+              onClick={handleCartClick}
+              className={`relative p-3 text-gray-600 hover:text-gray-900 transition-all duration-300 group hover-scale hover-glow rounded-full ${
+                cartAnimation ? 'animate-bounce' : ''
+              }`}
             >
-              <ShoppingCart className="w-6 h-6 group-hover:animate-wiggle transition-transform duration-300" />
+              <ShoppingCart className={`w-6 h-6 group-hover:animate-wiggle transition-transform duration-300 ${
+                cartAnimation ? 'animate-pulse text-green-600' : ''
+              }`} />
               {cartCount > 0 && (
                 <span 
                   key={cartCount}
-                  className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-medium animate-cart-bounce transition-all duration-300"
+                  className={`absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-medium transition-all duration-300 ${
+                    cartAnimation ? 'animate-ping' : 'animate-cart-bounce'
+                  }`}
                   style={{
-                    animation: 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite'
+                    animation: cartAnimation ? 'ping 1s cubic-bezier(0, 0, 0.2, 1)' : 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite'
                   }}
                 >
                   {cartCount}
                 </span>
+              )}
+              
+              {/* Cart update indicator */}
+              {cartAnimation && (
+                <div className="absolute -top-3 -right-3 w-4 h-4 bg-green-500 rounded-full animate-ping"></div>
               )}
             </button>
 

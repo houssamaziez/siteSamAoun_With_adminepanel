@@ -71,6 +71,10 @@ export function SiteSettingsManager() {
     customJs: '',
     announcementText: '',
     announcementActive: false
+    mapUrl: '',
+    mapLatitude: '',
+    mapLongitude: '',
+    mapZoom: ''
   });
   
   const [saving, setSaving] = useState(false);
@@ -132,6 +136,10 @@ export function SiteSettingsManager() {
         customJs: settings.customJs || '',
         announcementText: settings.announcementText || '',
         announcementActive: settings.announcementActive || false
+        mapUrl: settings.mapUrl || '',
+        mapLatitude: settings.mapLatitude?.toString() || '',
+        mapLongitude: settings.mapLongitude?.toString() || '',
+        mapZoom: settings.mapZoom?.toString() || ''
       });
     }
   }, [settings]);
@@ -146,6 +154,9 @@ export function SiteSettingsManager() {
       ...formData,
       deliveryFee: formData.deliveryFee ? parseFloat(formData.deliveryFee) : 0,
       freeDeliveryThreshold: formData.freeDeliveryThreshold ? parseFloat(formData.freeDeliveryThreshold) : 0
+      mapLatitude: formData.mapLatitude ? parseFloat(formData.mapLatitude) : null,
+      mapLongitude: formData.mapLongitude ? parseFloat(formData.mapLongitude) : null,
+      mapZoom: formData.mapZoom ? parseInt(formData.mapZoom) : null
     };
 
     const result = await updateSettings(updates);
@@ -173,6 +184,7 @@ export function SiteSettingsManager() {
   const tabs = [
     { id: 'general', label: 'عام', icon: Globe },
     { id: 'hero', label: 'الصفحة الرئيسية', icon: Settings2 },
+    { id: 'location', label: 'الموقع والخريطة', icon: MapPin },
     { id: 'social', label: 'وسائل التواصل', icon: Share2 },
     { id: 'content', label: 'المحتوى', icon: Mail },
     { id: 'business', label: 'معلومات العمل', icon: DollarSign },

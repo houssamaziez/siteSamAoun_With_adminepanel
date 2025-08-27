@@ -129,4 +129,8 @@ export interface SiteSettings {
   statSupportAvailability: string;
   createdAt: string;
   updatedAt: string;
+  mapUrl?: string;
+  mapLatitude?: number;
+  mapLongitude?: number;
+  mapZoom?: number;
 }

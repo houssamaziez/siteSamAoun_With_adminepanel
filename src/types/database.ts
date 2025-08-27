@@ -233,6 +233,10 @@ export interface Database {
           stat_support_availability: string;
           created_at: string;
           updated_at: string;
+          map_url: string | null;
+          map_latitude: number | null;
+          map_longitude: number | null;
+          map_zoom: number | null;
         };
         Insert: {
           id?: string;
@@ -289,6 +293,10 @@ export interface Database {
           stat_support_availability?: string;
           created_at?: string;
           updated_at?: string;
+          map_url?: string | null;
+          map_latitude?: number | null;
+          map_longitude?: number | null;
+          map_zoom?: number | null;
         };
         Update: {
           id?: string;
@@ -345,6 +353,10 @@ export interface Database {
           stat_support_availability?: string;
           created_at?: string;
           updated_at?: string;
+          map_url?: string | null;
+          map_latitude?: number | null;
+          map_longitude?: number | null;
+          map_zoom?: number | null;
         };
       };
     };

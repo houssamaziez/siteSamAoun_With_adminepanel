@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Play, Shield, Truck, HeadphonesIcon } from 'lucide-react';
+import { ArrowRight, MapPin, Shield, Truck, HeadphonesIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -17,6 +17,11 @@ export function Hero({ onExploreProducts }: HeroProps) {
     heroDescription: 'From cutting-edge laptops to custom builds, we have everything you need.',
     statProductsCount: '500+',
     statCustomersCount: '99%'
+  };
+  
+  const handleFindUs = () => {
+    const mapUrl = settings?.mapUrl || 'https://maps.google.com/maps?q=36.7538,3.0588&z=15&output=embed';
+    window.open(mapUrl, '_blank');
   };
   
   return (
@@ -58,10 +63,11 @@ export function Hero({ onExploreProducts }: HeroProps) {
               <Button 
                 variant="outline" 
                 size="lg"
-                icon={Play}
+                icon={MapPin}
+                onClick={handleFindUs}
                 className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-gray-900 hover-lift glass"
               >
-                Watch Demo
+                Find Us
               </Button>
             </div>
 

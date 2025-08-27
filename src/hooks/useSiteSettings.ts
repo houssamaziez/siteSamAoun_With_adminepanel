@@ -96,6 +96,10 @@ export function useSiteSettings() {
           statSupportAvailability: data.stat_support_availability,
           createdAt: data.created_at,
           updatedAt: data.updated_at
+          mapUrl: data.map_url,
+          mapLatitude: data.map_latitude,
+          mapLongitude: data.map_longitude,
+          mapZoom: data.map_zoom
         };
         setSettings(formattedSettings);
       }
@@ -165,6 +169,10 @@ export function useSiteSettings() {
             stat_customers_count: updates.statCustomersCount,
             stat_satisfaction_rate: updates.statSatisfactionRate,
             stat_support_availability: updates.statSupportAvailability
+            map_url: updates.mapUrl,
+            map_latitude: updates.mapLatitude,
+            map_longitude: updates.mapLongitude,
+            map_zoom: updates.mapZoom
           });
 
         if (error) throw error;
@@ -224,6 +232,10 @@ export function useSiteSettings() {
             stat_customers_count: updates.statCustomersCount,
             stat_satisfaction_rate: updates.statSatisfactionRate,
             stat_support_availability: updates.statSupportAvailability
+            map_url: updates.mapUrl,
+            map_latitude: updates.mapLatitude,
+            map_longitude: updates.mapLongitude,
+            map_zoom: updates.mapZoom
           })
           .eq('id', settings.id);
 

@@ -128,10 +128,6 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
           throw error;
         }
         
-        if (!data || data.length === 0) {
-          throw new Error('Product update failed - no rows affected');
-        }
-        
         console.log('Product updated successfully:', data[0]);
       } else {
         // Create new product

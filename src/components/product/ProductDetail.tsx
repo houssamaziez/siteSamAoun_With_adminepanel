@@ -23,7 +23,7 @@ import {
 import { Button } from '../ui/Button';
 import { Product, Reservation } from '../../types';
 import { useCart } from '../../hooks/useCart';
-import { useReservation } from '../../hooks/useReservation';
+
 
 interface ProductDetailProps {
   product: Product;

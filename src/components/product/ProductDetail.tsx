@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, ShoppingCart, Heart, Share2, Star, Shield, Truck, RotateCcw, Check, Minus, Plus } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -22,35 +21,10 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     : 0;
 
   const handleAddToCart = () => {
-    console.log('🛒 ProductDetail: Adding to cart from detail page');
-    console.log('🛒 ProductDetail: Product:', product.name, 'Quantity:', quantity);
-    console.log('🛒 ProductDetail: Product data:', {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      stock: product.stock
-    });
-    
     if (cartItem) {
-      console.log('🔄 ProductDetail: Item exists in cart, updating quantity');
       updateItem(product.id, { quantity: cartItem.quantity + quantity });
     } else {
-      console.log('➕ ProductDetail: Adding new item to cart');
       addItem(product, quantity);
-    }
-    
-    // Add visual feedback with animation
-    const addButton = document.querySelector('[data-add-to-cart]') as HTMLElement;
-    if (addButton) {
-      console.log('✅ ProductDetail: Showing visual feedback');
-      addButton.classList.add('animate-pulse');
-      addButton.style.transform = 'scale(1.05)';
-      addButton.style.transition = 'all 0.3s ease';
-      
-      setTimeout(() => {
-        addButton.classList.remove('animate-pulse');
-        addButton.style.transform = '';
-      }, 1000);
     }
   };
 
@@ -75,7 +49,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         {/* Product Images */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden">
+          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
             <img
               src={product.images[selectedImageIndex]}
               alt={product.name}
@@ -177,7 +151,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
           </div>
 
-          {/* Quantity & Add to Cart */}
+          {/* Quantity & Buttons */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium text-gray-700">Quantity:</span>
@@ -200,7 +174,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
             </div>
 
+            {/* Action Buttons */}
             <div className="flex space-x-4">
+              {/* زر إضافة إلى السلة */}
               <Button
                 data-add-to-cart
                 onClick={handleAddToCart}
@@ -210,6 +186,17 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 className="flex-1 transition-all duration-300 hover:scale-105"
               >
                 {cartItem ? `Update Cart (${cartItem.quantity})` : 'Add to Cart'}
+              </Button>
+
+              {/* زر إضافة إلى الحجوزات */}
+              <Button
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+                icon={ShoppingCart}
+                size="lg"
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300 hover:scale-105"
+              >
+                إضافة إلى الحجوزات
               </Button>
             </div>
           </div>
@@ -246,63 +233,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Product Details Tabs */}
-      <div className="mt-16">
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8">
-            {[
-              { id: 'description', label: 'Description' },
-              { id: 'specifications', label: 'Specifications' },
-              { id: 'reviews', label: 'Reviews (127)' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        <div className="py-8">
-          {activeTab === 'description' && (
-            <div className="prose max-w-none">
-              <p className="text-gray-700 leading-relaxed text-lg">
-                {product.description || product.shortDescription}
-              </p>
-            </div>
-          )}
-
-          {activeTab === 'specifications' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Object.entries(product.specifications || {}).map(([key, value]) => (
-                <div key={key} className="flex justify-between py-3 border-b border-gray-200">
-                  <span className="font-medium text-gray-900">{key}</span>
-                  <span className="text-gray-600">{value}</span>
-                </div>
-              ))}
-              {Object.keys(product.specifications || {}).length === 0 && (
-                <p className="text-gray-500 col-span-2">No specifications available.</p>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'reviews' && (
-            <div className="space-y-6">
-              <div className="text-center py-12">
-                <p className="text-gray-500">Reviews feature coming soon!</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

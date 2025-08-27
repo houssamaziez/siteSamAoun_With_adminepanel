@@ -35,7 +35,7 @@ export const isAdmin = async (userId: string) => {
     .from('admins')
     .select('id, role')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
   
   return { isAdmin: !!data && !error, role: data?.role, error };
 };

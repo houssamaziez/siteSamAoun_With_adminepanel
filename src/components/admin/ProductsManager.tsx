@@ -58,30 +58,6 @@ export function ProductsManager() {
     setEditingProduct(null);
   };
 
-  const handleDeleteProduct = async (productId) => {
-    if (!window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', productId);
-
-      if (error) throw error;
-      
-      refetch();
-      alert('Product deleted successfully!');
-    } catch (err) {
-      alert(`Failed to delete product: ${err.message}`);
-    }
-  };
-
-  const handleCloseForm = () => {
-    setShowForm(false);
-    setEditingProduct(null);
-  };
 
   if (loading) {
     return (

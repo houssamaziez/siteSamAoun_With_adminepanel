@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Save, Upload, Globe, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { Save, Globe, MapPin, Phone, Mail, Clock, Palette, Share2, Settings2, DollarSign, TrendingUp } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export function SiteSettingsManager() {
   const { settings, loading, error, updateSettings } = useSiteSettings();
+  const [activeTab, setActiveTab] = useState<'general' | 'hero' | 'social' | 'content' | 'business' | 'theme'>('general');
   const [formData, setFormData] = useState({
+    // General Settings
     siteName: '',
     siteTagline: '',
     siteDescription: '',
@@ -14,8 +16,63 @@ export function SiteSettingsManager() {
     phone: '',
     whatsapp: '',
     email: '',
-    hours: ''
+    hours: '',
+    
+    // Hero Section
+    heroTitle: '',
+    heroSubtitle: '',
+    heroDescription: '',
+    
+    // Social Media
+    facebookUrl: '',
+    twitterUrl: '',
+    instagramUrl: '',
+    youtubeUrl: '',
+    linkedinUrl: '',
+    tiktokUrl: '',
+    
+    // Content Sections
+    aboutTitle: '',
+    aboutDescription: '',
+    servicesTitle: '',
+    servicesDescription: '',
+    contactTitle: '',
+    testimonialsTitle: '',
+    testimonialsDescription: '',
+    newsletterTitle: '',
+    newsletterDescription: '',
+    footerDescription: '',
+    copyrightText: '',
+    
+    // Business Information
+    emergencyPhone: '',
+    supportEmail: '',
+    salesEmail: '',
+    businessLicense: '',
+    taxNumber: '',
+    bankAccount: '',
+    deliveryFee: '',
+    freeDeliveryThreshold: '',
+    deliveryAreas: '',
+    
+    // Statistics
+    statProductsCount: '',
+    statCustomersCount: '',
+    statSatisfactionRate: '',
+    statSupportAvailability: '',
+    
+    // Theme & SEO
+    primaryColor: '',
+    secondaryColor: '',
+    accentColor: '',
+    metaKeywords: '',
+    metaAuthor: '',
+    customCss: '',
+    customJs: '',
+    announcementText: '',
+    announcementActive: false
   });
+  
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -24,15 +81,57 @@ export function SiteSettingsManager() {
   React.useEffect(() => {
     if (settings) {
       setFormData({
-        siteName: settings.siteName,
-        siteTagline: settings.siteTagline,
-        siteDescription: settings.siteDescription,
+        siteName: settings.siteName || '',
+        siteTagline: settings.siteTagline || '',
+        siteDescription: settings.siteDescription || '',
         logoUrl: settings.logoUrl || '',
-        address: settings.address,
-        phone: settings.phone,
-        whatsapp: settings.whatsapp,
-        email: settings.email,
-        hours: settings.hours
+        address: settings.address || '',
+        phone: settings.phone || '',
+        whatsapp: settings.whatsapp || '',
+        email: settings.email || '',
+        hours: settings.hours || '',
+        heroTitle: settings.heroTitle || '',
+        heroSubtitle: settings.heroSubtitle || '',
+        heroDescription: settings.heroDescription || '',
+        facebookUrl: settings.facebookUrl || '',
+        twitterUrl: settings.twitterUrl || '',
+        instagramUrl: settings.instagramUrl || '',
+        youtubeUrl: settings.youtubeUrl || '',
+        linkedinUrl: settings.linkedinUrl || '',
+        tiktokUrl: settings.tiktokUrl || '',
+        aboutTitle: settings.aboutTitle || '',
+        aboutDescription: settings.aboutDescription || '',
+        servicesTitle: settings.servicesTitle || '',
+        servicesDescription: settings.servicesDescription || '',
+        contactTitle: settings.contactTitle || '',
+        testimonialsTitle: settings.testimonialsTitle || '',
+        testimonialsDescription: settings.testimonialsDescription || '',
+        newsletterTitle: settings.newsletterTitle || '',
+        newsletterDescription: settings.newsletterDescription || '',
+        footerDescription: settings.footerDescription || '',
+        copyrightText: settings.copyrightText || '',
+        emergencyPhone: settings.emergencyPhone || '',
+        supportEmail: settings.supportEmail || '',
+        salesEmail: settings.salesEmail || '',
+        businessLicense: settings.businessLicense || '',
+        taxNumber: settings.taxNumber || '',
+        bankAccount: settings.bankAccount || '',
+        deliveryFee: settings.deliveryFee?.toString() || '',
+        freeDeliveryThreshold: settings.freeDeliveryThreshold?.toString() || '',
+        deliveryAreas: settings.deliveryAreas || '',
+        statProductsCount: settings.statProductsCount || '',
+        statCustomersCount: settings.statCustomersCount || '',
+        statSatisfactionRate: settings.statSatisfactionRate || '',
+        statSupportAvailability: settings.statSupportAvailability || '',
+        primaryColor: settings.primaryColor || '',
+        secondaryColor: settings.secondaryColor || '',
+        accentColor: settings.accentColor || '',
+        metaKeywords: settings.metaKeywords || '',
+        metaAuthor: settings.metaAuthor || '',
+        customCss: settings.customCss || '',
+        customJs: settings.customJs || '',
+        announcementText: settings.announcementText || '',
+        announcementActive: settings.announcementActive || false
       });
     }
   }, [settings]);
@@ -43,13 +142,17 @@ export function SiteSettingsManager() {
     setSaveError(null);
     setSaveSuccess(false);
 
-    const result = await updateSettings(formData);
+    const updates = {
+      ...formData,
+      deliveryFee: formData.deliveryFee ? parseFloat(formData.deliveryFee) : 0,
+      freeDeliveryThreshold: formData.freeDeliveryThreshold ? parseFloat(formData.freeDeliveryThreshold) : 0
+    };
+
+    const result = await updateSettings(updates);
     
     if (result.success) {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
-      // Force a page refresh to ensure all components get updated settings
-      window.location.reload();
     } else {
       setSaveError(result.error || 'Failed to save settings');
     }
@@ -58,15 +161,29 @@ export function SiteSettingsManager() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData(prev => ({ ...prev, [name]: checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
+
+  const tabs = [
+    { id: 'general', label: 'عام', icon: Globe },
+    { id: 'hero', label: 'الصفحة الرئيسية', icon: Settings2 },
+    { id: 'social', label: 'وسائل التواصل', icon: Share2 },
+    { id: 'content', label: 'المحتوى', icon: Mail },
+    { id: 'business', label: 'معلومات العمل', icon: DollarSign },
+    { id: 'theme', label: 'التصميم والألوان', icon: Palette }
+  ];
 
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Site Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-900">إعدادات الموقع</h1>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-8">
           <div className="animate-pulse space-y-4">
@@ -83,10 +200,10 @@ export function SiteSettingsManager() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Site Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-900">إعدادات الموقع</h1>
         </div>
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-          Error loading settings: {error}
+          خطأ في تحميل الإعدادات: {error}
         </div>
       </div>
     );
@@ -97,194 +214,802 @@ export function SiteSettingsManager() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Site Settings</h1>
-          <p className="text-gray-600">Manage your site's branding and contact information</p>
+          <h1 className="text-2xl font-bold text-gray-900">إعدادات الموقع الشاملة</h1>
+          <p className="text-gray-600">تحكم في جميع نصوص وإعدادات الموقع</p>
         </div>
       </div>
 
-      {/* Settings Form */}
+      {/* Tabs */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8 px-6">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center space-x-2 ${
+                    activeTab === tab.id
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6">
           {/* Success/Error Messages */}
           {saveSuccess && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-              Settings saved successfully!
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+              تم حفظ الإعدادات بنجاح!
             </div>
           )}
           
           {saveError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
               {saveError}
             </div>
           )}
 
-          {/* Site Branding */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <Globe className="w-5 h-5 mr-2" />
-              Site Branding
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* General Settings Tab */}
+          {activeTab === 'general' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Globe className="w-5 h-5 mr-2" />
+                الإعدادات العامة
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    اسم الموقع *
+                  </label>
+                  <input
+                    type="text"
+                    name="siteName"
+                    value={formData.siteName}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    شعار الموقع *
+                  </label>
+                  <input
+                    type="text"
+                    name="siteTagline"
+                    value={formData.siteTagline}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Site Name *
+                  وصف الموقع *
                 </label>
-                <input
-                  type="text"
-                  name="siteName"
-                  value={formData.siteName}
+                <textarea
+                  name="siteDescription"
+                  value={formData.siteDescription}
                   onChange={handleChange}
-                  required
+                  rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="TechHub Pro"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Site Tagline *
+                  رابط الشعار
                 </label>
-                <input
-                  type="text"
-                  name="siteTagline"
-                  value={formData.siteTagline}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Your Complete Technology Solution"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Site Description *
-              </label>
-              <textarea
-                name="siteDescription"
-                value={formData.siteDescription}
-                onChange={handleChange}
-                required
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Professional computer and technology store..."
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Logo URL
-              </label>
-              <div className="flex items-center space-x-3">
                 <input
                   type="url"
                   name="logoUrl"
                   value={formData.logoUrl}
                   onChange={handleChange}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/logo.png"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                {formData.logoUrl && (
-                  <img
-                    src={formData.logoUrl}
-                    alt="Logo preview"
-                    className="w-12 h-12 object-contain border border-gray-200 rounded"
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    رقم الهاتف *
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
-                )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    رقم الواتساب *
+                  </label>
+                  <input
+                    type="tel"
+                    name="whatsapp"
+                    value={formData.whatsapp}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Contact Information */}
-          <div className="space-y-4 border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <Phone className="w-5 h-5 mr-2" />
-              Contact Information
-            </h3>
-            
-            <div>
-              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                <MapPin className="w-4 h-4 mr-2" />
-                Address *
-              </label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="123 Tech Street, Digital City, DC 12345"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Phone Number *
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  البريد الإلكتروني *
                 </label>
                 <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
+                  type="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
-                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="+1 (555) 123-4567"
                 />
               </div>
 
               <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <Phone className="w-4 h-4 mr-2" />
-                  WhatsApp Number *
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  العنوان *
                 </label>
                 <input
-                  type="tel"
-                  name="whatsapp"
-                  value={formData.whatsapp}
+                  type="text"
+                  name="address"
+                  value={formData.address}
                   onChange={handleChange}
-                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="+1 (555) 123-4567"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  ساعات العمل *
+                </label>
+                <input
+                  type="text"
+                  name="hours"
+                  value={formData.hours}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
+          )}
 
-            <div>
-              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                <Mail className="w-4 h-4 mr-2" />
-                Email Address *
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="info@techhubpro.com"
-              />
-            </div>
+          {/* Hero Section Tab */}
+          {activeTab === 'hero' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Settings2 className="w-5 h-5 mr-2" />
+                إعدادات الصفحة الرئيسية
+              </h3>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  العنوان الرئيسي
+                </label>
+                <input
+                  type="text"
+                  name="heroTitle"
+                  value={formData.heroTitle}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
 
-            <div>
-              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                <Clock className="w-4 h-4 mr-2" />
-                Business Hours *
-              </label>
-              <input
-                type="text"
-                name="hours"
-                value={formData.hours}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM"
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  العنوان الفرعي
+                </label>
+                <input
+                  type="text"
+                  name="heroSubtitle"
+                  value={formData.heroSubtitle}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وصف الصفحة الرئيسية
+                </label>
+                <textarea
+                  name="heroDescription"
+                  value={formData.heroDescription}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عدد المنتجات
+                  </label>
+                  <input
+                    type="text"
+                    name="statProductsCount"
+                    value={formData.statProductsCount}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="500+"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عدد العملاء
+                  </label>
+                  <input
+                    type="text"
+                    name="statCustomersCount"
+                    value={formData.statCustomersCount}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="1000+"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    معدل الرضا
+                  </label>
+                  <input
+                    type="text"
+                    name="statSatisfactionRate"
+                    value={formData.statSatisfactionRate}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="99%"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    توفر الدعم
+                  </label>
+                  <input
+                    type="text"
+                    name="statSupportAvailability"
+                    value={formData.statSupportAvailability}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="24/7"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Social Media Tab */}
+          {activeTab === 'social' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Share2 className="w-5 h-5 mr-2" />
+                وسائل التواصل الاجتماعي
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    فيسبوك
+                  </label>
+                  <input
+                    type="url"
+                    name="facebookUrl"
+                    value={formData.facebookUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://facebook.com/yourpage"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    تويتر
+                  </label>
+                  <input
+                    type="url"
+                    name="twitterUrl"
+                    value={formData.twitterUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://twitter.com/yourhandle"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    إنستغرام
+                  </label>
+                  <input
+                    type="url"
+                    name="instagramUrl"
+                    value={formData.instagramUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://instagram.com/yourhandle"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    يوتيوب
+                  </label>
+                  <input
+                    type="url"
+                    name="youtubeUrl"
+                    value={formData.youtubeUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://youtube.com/yourchannel"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    لينكد إن
+                  </label>
+                  <input
+                    type="url"
+                    name="linkedinUrl"
+                    value={formData.linkedinUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://linkedin.com/company/yourcompany"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    تيك توك
+                  </label>
+                  <input
+                    type="url"
+                    name="tiktokUrl"
+                    value={formData.tiktokUrl}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://tiktok.com/@yourhandle"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Content Tab */}
+          {activeTab === 'content' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Mail className="w-5 h-5 mr-2" />
+                محتوى الأقسام
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عنوان قسم "من نحن"
+                  </label>
+                  <input
+                    type="text"
+                    name="aboutTitle"
+                    value={formData.aboutTitle}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عنوان قسم الخدمات
+                  </label>
+                  <input
+                    type="text"
+                    name="servicesTitle"
+                    value={formData.servicesTitle}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وصف قسم "من نحن"
+                </label>
+                <textarea
+                  name="aboutDescription"
+                  value={formData.aboutDescription}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وصف قسم الخدمات
+                </label>
+                <textarea
+                  name="servicesDescription"
+                  value={formData.servicesDescription}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عنوان قسم التقييمات
+                  </label>
+                  <input
+                    type="text"
+                    name="testimonialsTitle"
+                    value={formData.testimonialsTitle}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عنوان النشرة الإخبارية
+                  </label>
+                  <input
+                    type="text"
+                    name="newsletterTitle"
+                    value={formData.newsletterTitle}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وصف التقييمات
+                </label>
+                <textarea
+                  name="testimonialsDescription"
+                  value={formData.testimonialsDescription}
+                  onChange={handleChange}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وصف النشرة الإخبارية
+                </label>
+                <textarea
+                  name="newsletterDescription"
+                  value={formData.newsletterDescription}
+                  onChange={handleChange}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وصف الفوتر
+                </label>
+                <textarea
+                  name="footerDescription"
+                  value={formData.footerDescription}
+                  onChange={handleChange}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  نص حقوق الطبع والنشر
+                </label>
+                <input
+                  type="text"
+                  name="copyrightText"
+                  value={formData.copyrightText}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Business Tab */}
+          {activeTab === 'business' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <DollarSign className="w-5 h-5 mr-2" />
+                معلومات العمل
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    هاتف الطوارئ
+                  </label>
+                  <input
+                    type="tel"
+                    name="emergencyPhone"
+                    value={formData.emergencyPhone}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    بريد الدعم الفني
+                  </label>
+                  <input
+                    type="email"
+                    name="supportEmail"
+                    value={formData.supportEmail}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    بريد المبيعات
+                  </label>
+                  <input
+                    type="email"
+                    name="salesEmail"
+                    value={formData.salesEmail}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    رخصة العمل
+                  </label>
+                  <input
+                    type="text"
+                    name="businessLicense"
+                    value={formData.businessLicense}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الرقم الضريبي
+                  </label>
+                  <input
+                    type="text"
+                    name="taxNumber"
+                    value={formData.taxNumber}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    رقم الحساب البنكي
+                  </label>
+                  <input
+                    type="text"
+                    name="bankAccount"
+                    value={formData.bankAccount}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    رسوم التوصيل (د.ج)
+                  </label>
+                  <input
+                    type="number"
+                    name="deliveryFee"
+                    value={formData.deliveryFee}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    حد التوصيل المجاني (د.ج)
+                  </label>
+                  <input
+                    type="number"
+                    name="freeDeliveryThreshold"
+                    value={formData.freeDeliveryThreshold}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  مناطق التوصيل
+                </label>
+                <input
+                  type="text"
+                  name="deliveryAreas"
+                  value={formData.deliveryAreas}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="الجزائر، وهران، قسنطينة"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Theme Tab */}
+          {activeTab === 'theme' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Palette className="w-5 h-5 mr-2" />
+                التصميم والألوان
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    اللون الأساسي
+                  </label>
+                  <input
+                    type="color"
+                    name="primaryColor"
+                    value={formData.primaryColor}
+                    onChange={handleChange}
+                    className="w-full h-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    اللون الثانوي
+                  </label>
+                  <input
+                    type="color"
+                    name="secondaryColor"
+                    value={formData.secondaryColor}
+                    onChange={handleChange}
+                    className="w-full h-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    لون التمييز
+                  </label>
+                  <input
+                    type="color"
+                    name="accentColor"
+                    value={formData.accentColor}
+                    onChange={handleChange}
+                    className="w-full h-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الكلمات المفتاحية (SEO)
+                  </label>
+                  <input
+                    type="text"
+                    name="metaKeywords"
+                    value={formData.metaKeywords}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    المؤلف (SEO)
+                  </label>
+                  <input
+                    type="text"
+                    name="metaAuthor"
+                    value={formData.metaAuthor}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  CSS مخصص
+                </label>
+                <textarea
+                  name="customCss"
+                  value={formData.customCss}
+                  onChange={handleChange}
+                  rows={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  placeholder="/* أضف CSS مخصص هنا */"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  JavaScript مخصص
+                </label>
+                <textarea
+                  name="customJs"
+                  value={formData.customJs}
+                  onChange={handleChange}
+                  rows={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  placeholder="// أضف JavaScript مخصص هنا"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  نص الإعلان
+                </label>
+                <input
+                  type="text"
+                  name="announcementText"
+                  value={formData.announcementText}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="إعلان مهم للعملاء"
+                />
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="announcementActive"
+                  checked={formData.announcementActive}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label className="ml-2 block text-sm text-gray-700">
+                  تفعيل الإعلان
+                </label>
+              </div>
+            </div>
+          )}
 
           {/* Save Button */}
           <div className="flex justify-end pt-6 border-t border-gray-200">
@@ -294,7 +1019,7 @@ export function SiteSettingsManager() {
               icon={Save}
               size="lg"
             >
-              Save Settings
+              حفظ جميع الإعدادات
             </Button>
           </div>
         </form>

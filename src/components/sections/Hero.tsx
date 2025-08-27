@@ -12,8 +12,13 @@ export function Hero({ onExploreProducts }: HeroProps) {
   
   // Use settings from database or fallback to defaults
   const siteData = settings || {
-    siteDescription: 'Professional computer and technology store offering the latest hardware, components, and expert services.'
+    heroTitle: 'Your Complete Technology Solution',
+    heroSubtitle: 'Professional computer and technology store offering the latest hardware, components, and expert services.',
+    heroDescription: 'From cutting-edge laptops to custom builds, we have everything you need.',
+    statProductsCount: '500+',
+    statCustomersCount: '99%'
   };
+  
   return (
     <section className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 overflow-hidden">
       {/* Background Pattern */}
@@ -28,15 +33,15 @@ export function Hero({ onExploreProducts }: HeroProps) {
           {/* Content */}
           <div className="text-white">
             <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
-              Your Complete{' '}
+              {settings?.heroTitle || siteData.heroTitle}
               <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-                Technology
+                
               </span>{' '}
-              Solution
+              
             </h1>
             
             <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed">
-              {siteData.siteDescription} From cutting-edge laptops to custom builds, we've got everything you need.
+              {settings?.heroSubtitle || siteData.heroSubtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -111,12 +116,12 @@ export function Hero({ onExploreProducts }: HeroProps) {
               <div className="absolute bottom-6 left-6 bg-white bg-opacity-90 backdrop-blur-sm rounded-xl p-4 shadow-xl">
                 <div className="flex items-center space-x-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-900">500+</div>
+                    <div className="text-2xl font-bold text-gray-900">{settings?.statProductsCount || siteData.statProductsCount}</div>
                     <div className="text-sm text-gray-600">Products</div>
                   </div>
                   <div className="w-px h-12 bg-gray-300"></div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-900">99%</div>
+                    <div className="text-2xl font-bold text-gray-900">{settings?.statSatisfactionRate || siteData.statCustomersCount}</div>
                     <div className="text-sm text-gray-600">Satisfaction</div>
                   </div>
                 </div>

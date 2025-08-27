@@ -2,6 +2,7 @@ import React from 'react';
 import { Wrench, Shield, Truck, HeadphonesIcon, Settings, Award } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { store } from '../../data/mockData';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 const serviceIcons = [
   { icon: Wrench, color: 'text-blue-600 bg-blue-100' },
@@ -13,17 +14,23 @@ const serviceIcons = [
 ];
 
 export function Services() {
+  const { settings } = useSiteSettings();
+  
+  const siteData = settings || {
+    servicesTitle: 'Professional Services',
+    servicesDescription: 'Beyond just selling products, we provide comprehensive technology services to ensure you get the most out of your investment.'
+  };
+  
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Professional Services
+            {settings?.servicesTitle || siteData.servicesTitle}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Beyond just selling products, we provide comprehensive technology services 
-            to ensure you get the most out of your investment.
+            {settings?.servicesDescription || siteData.servicesDescription}
           </p>
         </div>
 

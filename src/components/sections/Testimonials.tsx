@@ -1,19 +1,30 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
 import { testimonials } from '../../data/mockData';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export function Testimonials() {
+  const { settings } = useSiteSettings();
+  
+  const siteData = settings || {
+    testimonialsTitle: 'What Our Customers Say',
+    testimonialsDescription: 'Don\'t just take our word for it. Here\'s what real customers have to say about their experience with TechHub Pro.',
+    statCustomersCount: '1000+',
+    statSatisfactionRate: '99%',
+    statProductsCount: '500+',
+    statSupportAvailability: '24/7'
+  };
+  
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            What Our Customers Say
+            {settings?.testimonialsTitle || siteData.testimonialsTitle}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Don't just take our word for it. Here's what real customers have to say 
-            about their experience with TechHub Pro.
+            {settings?.testimonialsDescription || siteData.testimonialsDescription}
           </p>
         </div>
 
@@ -60,19 +71,19 @@ export function Testimonials() {
         {/* Stats */}
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="text-center">
-            <div className="text-4xl font-bold text-blue-600 mb-2">1000+</div>
+            <div className="text-4xl font-bold text-blue-600 mb-2">{settings?.statCustomersCount || siteData.statCustomersCount}</div>
             <div className="text-gray-600">Happy Customers</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold text-green-600 mb-2">99%</div>
+            <div className="text-4xl font-bold text-green-600 mb-2">{settings?.statSatisfactionRate || siteData.statSatisfactionRate}</div>
             <div className="text-gray-600">Satisfaction Rate</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold text-purple-600 mb-2">500+</div>
+            <div className="text-4xl font-bold text-purple-600 mb-2">{settings?.statProductsCount || siteData.statProductsCount}</div>
             <div className="text-gray-600">Products Available</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold text-orange-600 mb-2">24/7</div>
+            <div className="text-4xl font-bold text-orange-600 mb-2">{settings?.statSupportAvailability || siteData.statSupportAvailability}</div>
             <div className="text-gray-600">Support Available</div>
           </div>
         </div>

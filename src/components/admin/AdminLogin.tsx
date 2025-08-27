@@ -130,18 +130,18 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
           </div>
 
           <div className="text-center animate-fade-in stagger-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <h4 className="font-semibold text-blue-900 mb-2">Default Admin Account</h4>
-              <p className="text-sm text-blue-800">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold text-green-900 mb-2">✅ Default Admin Account</h4>
+              <p className="text-sm text-green-800">
                 <strong>Email:</strong> admin@techhub.com<br/>
                 <strong>Password:</strong> admin123
               </p>
-              <p className="text-xs text-blue-600 mt-2">
-                Please change the password after first login for security
+              <p className="text-xs text-green-600 mt-2">
+                This account is automatically created. Change password after first login.
               </p>
             </div>
             <p className="text-sm text-gray-600">
-              Use the default account above or create additional users through the admin panel
+              If login fails, ensure the migration has been applied to create the admin user.
             </p>
           </div>
         </form>

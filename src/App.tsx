@@ -103,7 +103,6 @@ function AppContent() {
       <Header 
         onCartOpen={() => setIsCartOpen(true)}
         onMenuOpen={() => setIsMenuOpen(true)}
-        onAdminAccess={handleAdminAccess}
       />
 
       {/* Navigation - only show on home page */}

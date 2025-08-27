@@ -29,6 +29,19 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   };
 
+  const handleBuyNow = () => {
+    console.log('Buy Now clicked:', product.name, 'quantity:', quantity);
+    // First add to cart
+    if (cartItem) {
+      updateItem(product.id, { quantity: cartItem.quantity + quantity });
+    } else {
+      addItem(product, quantity);
+    }
+    // Then proceed to checkout/reservation
+    // You can add navigation to checkout page here
+    alert(`Added ${quantity} x ${product.name} to cart and proceeding to checkout!`);
+  };
+
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1 && newQuantity <= product.stock) {
       setQuantity(newQuantity);
@@ -188,6 +201,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               <Button
                 variant="outline"
                 size="lg"
+                onClick={handleBuyNow}
                 className="px-6"
               >
                 Buy Now

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Product } from '../../types';
 import { Button } from './Button';
-import { ShoppingCart, Eye, Heart, Star } from 'lucide-react';
+import { ShoppingCart, Eye, Heart, Star, Zap } from 'lucide-react';
 import { useCart } from '../../hooks/useCart';
 
 interface ProductCardProps {
@@ -52,6 +52,35 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
    }
   };
 
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Buy Now clicked:', product.name);
+    
+    // Validate product data
+    if (!product || !product.id) {
+      console.error('Invalid product data:', product);
+      return;
+    }
+    
+    // Check stock
+    if (product.stock <= 0) {
+      console.warn('Product out of stock:', product.name);
+      return;
+    }
+    
+    // Add to cart first
+    addItem(product, 1);
+    
+    // Show feedback and proceed to checkout
+    alert(`Added ${product.name} to cart! Proceeding to checkout...`);
+    
+    // You can add navigation to checkout/reservation here
+    // For now, just show the cart
+    setTimeout(() => {
+      // This would typically open the cart or navigate to checkout
+      console.log('Proceeding to checkout...');
+    }, 500);
+  };
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
     onViewDetails?.();
@@ -161,9 +190,20 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
             icon={ShoppingCart}
             onClick={handleAddToCart}
             disabled={product.stock === 0}
-            className="flex-1"
+            className="flex-1 text-xs"
           >
             {cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={Zap}
+            onClick={handleBuyNow}
+            disabled={product.stock === 0}
+            className="px-3"
+            title="Buy Now"
+          >
+            Buy
           </Button>
           <Button
             variant="outline"

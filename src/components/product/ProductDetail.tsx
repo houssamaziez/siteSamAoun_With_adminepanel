@@ -70,14 +70,12 @@ const reservationData = {
   proposed_date: formData.proposedDate,
   proposed_time: formData.proposedTime,
   notes: formData.notes,
-  items: [{ product, quantity }],
+  items: [{ product, quantity }], // بدون stringify
   total_amount: product.price * quantity
 };
 
 const { error } = await supabase.from('reservations').insert([reservationData]);
 
-
-      const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
       alert('تم إرسال الحجز بنجاح!');
       setShowReservationForm(false);

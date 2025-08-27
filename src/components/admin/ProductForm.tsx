@@ -114,7 +114,8 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         const { data, error } = await supabase
           .from('products')
           .update(productData)
-          .eq('id', editingProduct.id);
+          .eq('id', editingProduct.id)
+          .select();
         
         console.log('Update result:', { data, error });
         
@@ -122,11 +123,18 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
           console.error('Update error:', error);
           throw error;
         }
+        
+        if (!data || data.length === 0) {
+          throw new Error('Product update failed - no rows affected');
+        }
+        
+        console.log('Product updated successfully:', data[0]);
       } else {
         // Create new product
         const { data, error } = await supabase
           .from('products')
-          .insert(productData);
+          .insert(productData)
+          .select();
         
         console.log('Insert result:', { data, error });
         
@@ -134,8 +142,13 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
           console.error('Insert error:', error);
           throw error;
         }
+        
+        console.log('Product created successfully:', data[0]);
       }
 
+      // Force a small delay to ensure database consistency
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       onSuccess();
       onClose();
     } catch (err) {

@@ -84,9 +84,12 @@ export function ProductsManager() {
 
   const handleFormSuccess = () => {
     console.log('Product form success, refreshing data...');
+    console.log('=== REFRESHING PRODUCT LIST ===');
     // Force refresh after a small delay
     setTimeout(() => {
+      console.log('Calling refetch...');
       refetch();
+      console.log('Refetch called');
     }, 1000);
     handleCloseForm();
   };

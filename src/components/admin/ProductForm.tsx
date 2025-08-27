@@ -90,6 +90,10 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
     setError(null);
 
     try {
+      console.log('=== PRODUCT UPDATE DEBUG ===');
+      console.log('Editing product:', editingProduct);
+      console.log('Form data before processing:', formData);
+      
       const productData = {
         sku: formData.sku,
         name: formData.name,
@@ -110,42 +114,55 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         condition: formData.condition
       };
 
-      console.log('Updating product with data:', productData);
-      console.log('Product ID:', editingProduct?.id);
+      console.log('Processed product data:', productData);
+      console.log('Product ID to update:', editingProduct?.id);
 
       if (editingProduct) {
         // Update existing product
+        console.log('Executing UPDATE query...');
         const { data, error } = await supabase
           .from('products')
           .update(productData)
           .eq('id', editingProduct.id)
           .select();
         
-        console.log('Update result:', { data, error });
+        console.log('UPDATE RESULT:');
+        console.log('- Data returned:', data);
+        console.log('- Error:', error);
+        console.log('- Rows affected:', data?.length || 0);
         
         if (error) {
           console.error('Update error:', error);
           throw error;
         }
         
-        console.log('Product updated successfully:', data[0]);
+        if (data && data.length > 0) {
+          console.log('✅ Product updated successfully:', data[0]);
+        } else {
+          console.log('⚠️ No rows returned from update');
+        }
       } else {
         // Create new product
+        console.log('Executing INSERT query...');
         const { data, error } = await supabase
           .from('products')
           .insert(productData)
           .select();
         
-        console.log('Insert result:', { data, error });
+        console.log('INSERT RESULT:');
+        console.log('- Data returned:', data);
+        console.log('- Error:', error);
         
         if (error) {
           console.error('Insert error:', error);
           throw error;
         }
         
-        console.log('Product created successfully:', data[0]);
+        console.log('✅ Product created successfully:', data[0]);
       }
 
+      console.log('=== UPDATE COMPLETED SUCCESSFULLY ===');
+      
       // Force a small delay to ensure database consistency
       await new Promise(resolve => setTimeout(resolve, 500));
       

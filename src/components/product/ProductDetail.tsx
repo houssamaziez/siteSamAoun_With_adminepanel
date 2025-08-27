@@ -245,4 +245,4 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       )}
     </div>
   );
-}. 
+}

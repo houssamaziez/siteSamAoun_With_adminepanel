@@ -31,8 +31,9 @@ export function LocationPicker({ latitude, longitude, onLocationChange, apiKey }
         if (data.results && data.results.length > 0) {
           const location = data.results[0].geometry.location;
           onLocationChange(location.lat, location.lng);
+          setSearchQuery(''); // Clear search after successful result
         } else {
-          setError('لم يتم العثور على الموقع');
+          setError('Location not found. Try a different search term.');
         }
       } else {
         // Fallback to Nominatim (OpenStreetMap) - free but limited
@@ -43,12 +44,13 @@ export function LocationPicker({ latitude, longitude, onLocationChange, apiKey }
         
         if (data && data.length > 0) {
           onLocationChange(parseFloat(data[0].lat), parseFloat(data[0].lon));
+          setSearchQuery(''); // Clear search after successful result
         } else {
-          setError('لم يتم العثور على الموقع');
+          setError('Location not found. Try a different search term.');
         }
       }
     } catch (err) {
-      setError('خطأ في البحث عن الموقع');
+      setError('Error searching for location. Please try again.');
     } finally {
       setIsLoading(false);
     }

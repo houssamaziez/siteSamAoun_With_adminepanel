@@ -1,240 +1,260 @@
-import React, { useState } from 'react';
-import {
-  ArrowLeft,
-  ShoppingCart,
-  Heart,
-  Share2,
-  Star,
-  Shield,
-  Truck,
-  RotateCcw,
-  Check,
-  Minus,
-  Plus,
-  BookmarkPlus,
-} from 'lucide-react';
-import { Button } from '../ui/Button';
-import { Product } from '../../types';
-import { useCart } from '../../hooks/useCart';
-import { useReservation } from '../../hooks/useReservation';
+import React, { useState } from "react";
+import { Calendar, Clock, User, Phone, MapPin, MessageSquare, X } from "lucide-react";
+import { Button } from "../ui/Button";
+import { Reservation } from "../../types";
 
-
-interface ProductDetailProps {
-  product: Product;
-  onBack: () => void;
+interface ReservationFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    image?: string;
+  };
+  onSubmit: (reservation: Omit<Reservation, "id" | "createdAt" | "status">) => Promise<void>;
 }
 
-export function ProductDetail({ product, onBack }: ProductDetailProps) {
-  const { addItem, getItem, updateItem } = useCart();
-  const { addReservation } = useReservation();
+export function ReservationForm2({ isOpen, onClose, product, onSubmit }: ReservationFormProps) {
+  const [formData, setFormData] = useState({
+    customerName: "",
+    customerPhone: "",
+    pickupBranch: "main-store",
+    proposedDate: "",
+    proposedTime: "",
+    notes: ""
+  });
 
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [showReservationForm, setShowReservationForm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const cartItem = getItem(product.id);
+  const branches = [
+    { value: "main-store", label: "Main Store - Downtown" },
+    { value: "tech-plaza", label: "Tech Plaza Branch" },
+    { value: "mall-location", label: "Shopping Mall Location" },
+  ];
 
-  const discountPercent = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
+  const timeSlots = [
+    "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+    "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM",
+    "5:00 PM", "6:00 PM"
+  ];
 
-  const handleAddToCart = () => {
-    if (cartItem) {
-      updateItem(product.id, { quantity: cartItem.quantity + quantity });
-    } else {
-      addItem(product, quantity);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const reservation: Omit<Reservation, "id" | "createdAt" | "status"> = {
+        referenceNumber: `RES-${Date.now()}`,
+        ...formData,
+        items: [
+          {
+            product,
+            quantity: 1
+          }
+        ],
+        totalAmount: product.price,
+      };
+
+      await onSubmit(reservation);
+      onClose();
+
+      // Reset form after submission
+      setFormData({
+        customerName: "",
+        customerPhone: "",
+        pickupBranch: "main-store",
+        proposedDate: "",
+        proposedTime: "",
+        notes: ""
+      });
+    } catch (error) {
+      console.error("Failed to submit reservation:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleOpenReservationForm = () => {
-    setShowReservationForm(true);
-  };
-
-  const handleSubmitReservation = (reservationData: any) => {
-    // يمكنك هنا إضافة المنتج المحدد والكمية إلى بيانات الفورم
-    const itemWithQuantity = {
-      product,
-      quantity
-    };
-    addReservation({ ...reservationData, items: [itemWithQuantity] });
-  };
-
-  const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= product.stock) {
-      setQuantity(newQuantity);
-    }
-  };
+  if (!isOpen) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* زر العودة */}
-      <button
-        onClick={onBack}
-        className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors duration-200"
-      >
-        <ArrowLeft className="w-5 h-5 mr-2" />
-        Back to Products
-      </button>
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 transition-opacity bg-black bg-opacity-50"
+          onClick={onClose}
+        />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* صور المنتج */}
-        <div className="space-y-4">
-          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
-            <img
-              src={product.images[selectedImageIndex]}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-            {discountPercent > 0 && (
-              <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
-                -{discountPercent}%
-              </div>
-            )}
+        {/* Modal */}
+        <div className="inline-block w-full max-w-lg my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Reserve {product.name}
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+            >
+              <X className="w-6 h-6 text-gray-500" />
+            </button>
           </div>
 
-          {product.images.length > 1 && (
-            <div className="flex space-x-2 overflow-x-auto">
-              {product.images.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImageIndex(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors duration-200 ${
-                    selectedImageIndex === index
-                      ? 'border-blue-500'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <img
-                    src={image}
-                    alt={`${product.name} ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* تفاصيل المنتج */}
-        <div className="space-y-6">
-          {/* العنوان */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-blue-600">{product.brand}</span>
-              <div className="flex items-center space-x-2">
-                <button className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors duration-200">
-                  <Heart className="w-5 h-5" />
-                </button>
-                <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50 transition-colors duration-200">
-                  <Share2 className="w-5 h-5" />
-                </button>
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* Product Summary */}
+            <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-4">
+              {product.image && (
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-20 h-20 object-cover rounded-lg shadow"
+                />
+              )}
+              <div>
+                <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                <p className="text-blue-600 font-bold">{product.price.toLocaleString()} د.ج</p>
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
 
-            {/* التقييم */}
-            <div className="flex items-center mb-4">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-5 h-5 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                  />
+            {/* Customer Info */}
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <User className="w-4 h-4 mr-2" />
+                Full Name *
+              </label>
+              <input
+                type="text"
+                name="customerName"
+                value={formData.customerName}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <Phone className="w-4 h-4 mr-2" />
+                Phone Number *
+              </label>
+              <input
+                type="tel"
+                name="customerPhone"
+                value={formData.customerPhone}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Your phone number"
+              />
+            </div>
+
+            {/* Pickup Branch */}
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MapPin className="w-4 h-4 mr-2" />
+                Pickup Branch *
+              </label>
+              <select
+                name="pickupBranch"
+                value={formData.pickupBranch}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {branches.map(branch => (
+                  <option key={branch.value} value={branch.value}>
+                    {branch.label}
+                  </option>
                 ))}
+              </select>
+            </div>
+
+            {/* Date & Time */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Preferred Date *
+                </label>
+                <input
+                  type="date"
+                  name="proposedDate"
+                  value={formData.proposedDate}
+                  onChange={handleChange}
+                  required
+                  min={new Date().toISOString().split("T")[0]}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
-              <span className="text-sm text-gray-600 ml-2">(4.2) • 127 reviews</span>
-            </div>
 
-            <p className="text-gray-600 text-lg leading-relaxed">{product.shortDescription}</p>
-          </div>
-
-          {/* السعر */}
-          <div className="border-t border-b border-gray-200 py-6">
-            <div className="flex items-center space-x-4">
-              <span className="text-4xl font-bold text-gray-900">{product.price.toLocaleString()} د.ج</span>
-              {product.originalPrice && (
-                <span className="text-xl text-gray-500 line-through">
-                  {product.originalPrice.toLocaleString()} د.ج
-                </span>
-              )}
-              {discountPercent > 0 && (
-                <span className="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
-                  وفر {discountPercent}%
-                </span>
-              )}
-            </div>
-
-            {/* حالة المخزون */}
-            <div className="mt-3">
-              {product.stock > 0 ? (
-                <div className="flex items-center text-green-600">
-                  <Check className="w-5 h-5 mr-2" />
-                  <span className="font-medium">متوفر ({product.stock} قطعة)</span>
-                </div>
-              ) : (
-                <div className="flex items-center text-red-600">
-                  <Minus className="w-5 h-5 mr-2" />
-                  <span className="font-medium">غير متوفر</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* الكمية والأزرار */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700">الكمية:</span>
-              <div className="flex items-center border border-gray-300 rounded-lg">
-                <button
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                  disabled={quantity <= 1}
-                  className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              <div>
+                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                  <Clock className="w-4 h-4 mr-2" />
+                  Preferred Time *
+                </label>
+                <select
+                  name="proposedTime"
+                  value={formData.proposedTime}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="px-4 py-2 font-medium">{quantity}</span>
-                <button
-                  onClick={() => handleQuantityChange(quantity + 1)}
-                  disabled={quantity >= product.stock}
-                  className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
+                  <option value="">Select time</option>
+                  {timeSlots.map(time => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
-            {/* الأزرار */}
-            <div className="flex space-x-4">
-              <Button
-                onClick={handleAddToCart}
-                disabled={product.stock === 0}
-                icon={ShoppingCart}
-                size="lg"
-                className="flex-1 transition-all duration-300 hover:scale-105"
-              >
-                {cartItem ? `تحديث السلة (${cartItem.quantity})` : 'إضافة إلى السلة'}
-              </Button>
+            {/* Notes */}
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Additional Notes
+              </label>
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={handleChange}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Any special requests or questions..."
+              />
+            </div>
 
+            {/* Actions */}
+            <div className="flex gap-4">
               <Button
-                onClick={handleOpenReservationForm}
-                disabled={product.stock === 0}
-                icon={BookmarkPlus}
-                size="lg"
-                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300 hover:scale-105"
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
               >
-                إضافة إلى الحجوزات
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                loading={loading}
+                className="flex-1"
+              >
+                Confirm Reservation
               </Button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
-
-      {/* Reservation Form */}
-      <ReservationForm
-        isOpen={showReservationForm}
-        onClose={() => setShowReservationForm(false)}
-        onSubmit={handleSubmitReservation}
-      />
     </div>
   );
 }

@@ -25,14 +25,12 @@ interface ProductDetailProps {
 
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const { addItem, getItem, updateItem } = useCart();
-  const {
-    addReservation,
-    getReservationItem,
-    updateReservation,
-  } = useReservation();
+  const { addReservation, getReservationItem, updateReservation } = useReservation();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [showReservationForm, setShowReservationForm] = useState(false);
+
   const cartItem = getItem(product.id);
   const reservationItem = getReservationItem(product.id);
 
@@ -135,9 +133,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-5 h-5 ${
-                      i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                    }`}
+                    className={`w-5 h-5 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                   />
                 ))}
               </div>
@@ -150,9 +146,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           {/* السعر */}
           <div className="border-t border-b border-gray-200 py-6">
             <div className="flex items-center space-x-4">
-              <span className="text-4xl font-bold text-gray-900">
-                {product.price.toLocaleString()} د.ج
-              </span>
+              <span className="text-4xl font-bold text-gray-900">{product.price.toLocaleString()} د.ج</span>
               {product.originalPrice && (
                 <span className="text-xl text-gray-500 line-through">
                   {product.originalPrice.toLocaleString()} د.ج
@@ -170,9 +164,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               {product.stock > 0 ? (
                 <div className="flex items-center text-green-600">
                   <Check className="w-5 h-5 mr-2" />
-                  <span className="font-medium">
-                    متوفر ({product.stock} قطعة)
-                  </span>
+                  <span className="font-medium">متوفر ({product.stock} قطعة)</span>
                 </div>
               ) : (
                 <div className="flex items-center text-red-600">
@@ -215,21 +207,17 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 size="lg"
                 className="flex-1 transition-all duration-300 hover:scale-105"
               >
-                {cartItem
-                  ? `تحديث السلة (${cartItem.quantity})`
-                  : 'إضافة إلى السلة'}
+                {cartItem ? `تحديث السلة (${cartItem.quantity})` : 'إضافة إلى السلة'}
               </Button>
 
               <Button
-                onClick={handleAddToReservation}
+                onClick={() => setShowReservationForm(true)}
                 disabled={product.stock === 0}
                 icon={BookmarkPlus}
                 size="lg"
                 className="flex-1 bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300 hover:scale-105"
               >
-                {reservationItem
-                  ? `تحديث الحجز (${reservationItem.quantity})`
-                  : 'إضافة إلى الحجوزات'}
+                {reservationItem ? `تحديث الحجز (${reservationItem.quantity})` : 'إضافة إلى الحجوزات'}
               </Button>
             </div>
           </div>
@@ -268,6 +256,45 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           </div>
         </div>
       </div>
+
+      {/* نموذج الحجز */}
+      {showReservationForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+            <h2 className="text-xl font-bold mb-4">نموذج الحجز</h2>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2">الكمية:</label>
+              <input
+                type="number"
+                min={1}
+                max={product.stock}
+                value={quantity}
+                onChange={(e) => handleQuantityChange(Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-lg p-2"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                onClick={() => setShowReservationForm(false)}
+                className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+              >
+                إلغاء
+              </Button>
+              <Button
+                onClick={() => {
+                  handleAddToReservation();
+                  setShowReservationForm(false);
+                }}
+                className="bg-purple-600 text-white hover:bg-purple-700"
+              >
+                تأكيد الحجز
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-} 
+}

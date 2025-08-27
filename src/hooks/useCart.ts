@@ -217,6 +217,8 @@ export function useCart() {
       
       return newItems;
     });
+  }
+  )
 
   const updateItem = useCallback((productId: string, updates: Partial<Pick<CartItem, 'quantity' | 'notes'>>) => {
     console.log('🔄 Updating cart item:', productId, updates);

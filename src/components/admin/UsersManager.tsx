@@ -330,8 +330,24 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
                   placeholder="Enter Supabase User ID"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Create the user in Supabase Auth first, then enter their User ID here
+                  First create the user in Supabase Authentication, then copy their User ID here
                 </p>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="text-sm font-semibold text-blue-900 mb-2">How to create a user in Supabase:</h4>
+                  <ol className="text-xs text-blue-800 space-y-1">
+                    <li><strong>1.</strong> Go to your Supabase project dashboard</li>
+                    <li><strong>2.</strong> Navigate to Authentication → Users</li>
+                    <li><strong>3.</strong> Click "Add user" button</li>
+                    <li><strong>4.</strong> Enter email and password</li>
+                    <li><strong>5.</strong> Click "Create user"</li>
+                    <li><strong>6.</strong> Copy the generated User ID and paste it above</li>
+                  </ol>
+                  <div className="mt-2 pt-2 border-t border-blue-200">
+                    <p className="text-xs text-blue-700">
+                      <strong>Note:</strong> The User ID is a UUID format like: 12345678-1234-1234-1234-123456789abc
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 

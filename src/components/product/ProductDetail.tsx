@@ -18,7 +18,9 @@ import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
 import { useReservation } from '../../hooks/useReservation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/Dialog';
-import { ReservationForm } from '../reservation/ReservationForm';
+
+// ✅ Use default import instead of named import
+import ReservationForm from '../reservation/ReservationForm';
 
 interface ProductDetailProps {
   product: Product;
@@ -27,11 +29,7 @@ interface ProductDetailProps {
 
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const { addItem, getItem, updateItem } = useCart();
-  const {
-    addReservation,
-    getReservationItem,
-    updateReservation,
-  } = useReservation();
+  const { addReservation, getReservationItem, updateReservation } = useReservation();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);

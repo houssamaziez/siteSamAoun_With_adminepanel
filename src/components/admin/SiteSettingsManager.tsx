@@ -544,15 +544,6 @@ export function SiteSettingsManager() {
                 </p>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-3">كيفية الحصول على رابط Google Maps:</h4>
-                <ol className="text-sm text-blue-800 space-y-1">
-                  <li><strong>1.</strong> Go to <a href="https://maps.google.com" target=\"_blank" rel="noopener noreferrer\" className="underline">Google Maps</a></li>
-                  <li><strong>2.</strong> Search for your store location</li>
-                  <li><strong>3.</strong> Click on "Share"</li>
-                  <li><strong>4.</strong> Copy the link and paste it in the field above</li>
-                </ol>
-              </div>
 
               <div className="flex items-center">
                 <input

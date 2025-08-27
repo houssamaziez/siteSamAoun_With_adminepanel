@@ -70,7 +70,7 @@ const reservationData = {
   proposed_date: formData.proposedDate,
   proposed_time: formData.proposedTime,
   notes: formData.notes,
-  items: [{ product, quantity }], // بدون stringify
+  items: [{ product, quantity }],
   total_amount: product.price * quantity
 };
 

@@ -7,9 +7,10 @@ import { useSiteSettings } from '../../hooks/useSiteSettings';
 interface HeaderProps {
   onCartOpen: () => void;
   onMenuOpen: () => void;
+  onAdminAccess: () => void;
 }
 
-export function Header({ onCartOpen, onMenuOpen }: HeaderProps) {
+export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   const { getItemCount, items, forceUpdate } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');

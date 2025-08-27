@@ -135,7 +135,7 @@ export function SiteSettingsManager() {
         customCss: settings.customCss || '',
         customJs: settings.customJs || '',
         announcementText: settings.announcementText || '',
-        announcementActive: settings.announcementActive || false
+        announcementActive: settings.announcementActive || false,
         mapUrl: settings.mapUrl || '',
         mapLatitude: settings.mapLatitude?.toString() || '',
         mapLongitude: settings.mapLongitude?.toString() || '',

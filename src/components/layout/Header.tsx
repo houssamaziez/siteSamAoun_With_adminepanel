@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount, items, updateTrigger, getCacheStatus, refreshCart } = useCart();
+  const { getItemCount, items, updateTrigger, getCacheStatus, refreshCart, isUpdating } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
   const [cartAnimation, setCartAnimation] = useState(false);
@@ -136,20 +136,21 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             <button
               onClick={handleCartClick}
               className={`relative p-3 text-gray-600 hover:text-gray-900 transition-all duration-300 group hover-scale hover-glow rounded-full ${
-                cartAnimation ? 'animate-bounce' : ''
+                cartAnimation || isUpdating ? 'animate-bounce' : ''
               }`}
+              disabled={isUpdating}
             >
               <ShoppingCart className={`w-6 h-6 group-hover:animate-wiggle transition-transform duration-300 ${
-                cartAnimation ? 'animate-pulse text-green-600' : ''
+                cartAnimation || isUpdating ? 'animate-pulse text-green-600' : ''
               }`} />
               {cartCount > 0 && (
                 <span 
                   key={cartCount}
                   className={`absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-medium transition-all duration-300 ${
-                    cartAnimation ? 'animate-ping' : 'animate-cart-bounce'
+                    cartAnimation || isUpdating ? 'animate-ping' : 'animate-cart-bounce'
                   }`}
                   style={{
-                    animation: cartAnimation ? 'ping 1s cubic-bezier(0, 0, 0.2, 1)' : 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite'
+                    animation: (cartAnimation || isUpdating) ? 'ping 1s cubic-bezier(0, 0, 0.2, 1)' : 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite'
                   }}
                 >
                   {cartCount}
@@ -157,7 +158,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
               )}
               
               {/* Cart update indicator */}
-              {cartAnimation && (
+              {(cartAnimation || isUpdating) && (
                 <div className="absolute -top-3 -right-3 w-4 h-4 bg-green-500 rounded-full animate-ping"></div>
               )}
             </button>

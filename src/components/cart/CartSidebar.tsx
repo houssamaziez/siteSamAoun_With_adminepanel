@@ -10,13 +10,14 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
-  const { items, updateItem, removeItem, getTotalAmount, getItemCount, updateTrigger, refreshCart, getCacheStatus } = useCart();
-  const [isUpdating, setIsUpdating] = useState(false);
+  const { items, updateItem, removeItem, getTotalAmount, getItemCount, updateTrigger, refreshCart, getCacheStatus, isUpdating: cartIsUpdating } = useCart();
+  const [localUpdating, setLocalUpdating] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(Date.now());
   
   // Get current values directly
   const cartCount = getItemCount();
   const cartTotal = getTotalAmount();
+  const isUpdating = cartIsUpdating || localUpdating;
 
   // Debug: Log cart items
   useEffect(() => {
@@ -39,13 +40,13 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
   if (!isOpen) return null;
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
-    setIsUpdating(true);
+    setLocalUpdating(true);
     if (newQuantity <= 0) {
       removeItem(productId);
     } else {
       updateItem(productId, { quantity: newQuantity });
     }
-    setTimeout(() => setIsUpdating(false), 300);
+    setTimeout(() => setLocalUpdating(false), 300);
   };
 
   const handleCheckout = () => {
@@ -73,9 +74,9 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => {
-                setIsUpdating(true);
+                setLocalUpdating(true);
                 refreshCart();
-                setTimeout(() => setIsUpdating(false), 500);
+                setTimeout(() => setLocalUpdating(false), 500);
               }}
               className="p-2 hover:bg-gray-100 rounded-full hover-scale transition-colors duration-200 text-gray-500 hover:text-blue-600"
               title="Refresh cart"
@@ -206,7 +207,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                 isUpdating ? 'opacity-75 cursor-not-allowed' : ''
               }`}
             >
-              {isUpdating ? 'Updating...' : 'Reserve Items'}
+              {isUpdating ? 'Updating...' : '🛒 Reserve Items'}
             </Button>
           </div>
         )}

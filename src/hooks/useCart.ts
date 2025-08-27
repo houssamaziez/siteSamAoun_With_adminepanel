@@ -13,6 +13,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [isUpdating, setIsUpdating] = useState(false);
   const isInitialized = useRef(false);
   const saveTimeout = useRef<NodeJS.Timeout>();
 
@@ -156,12 +157,15 @@ export function useCart() {
   const addItem = useCallback((product: Product, quantity: number = 1, notes?: string) => {
     console.log('🛒 ADD TO CART - Product:', product.name, 'Quantity:', quantity);
     console.log('🛒 Product details:', { id: product.id, price: product.price, stock: product.stock });
-    console.log('🛒 Current cart state before adding:', items);
+    console.log('🛒 Current cart state before adding:', items.length, 'items');
+    
+    setIsUpdating(true);
     
     // Validate product
     if (!product || !product.id) {
       console.error('❌ Invalid product data:', product);
       alert('Invalid product data');
+      setIsUpdating(false);
       return;
     }
     
@@ -169,12 +173,13 @@ export function useCart() {
     if (product.stock <= 0) {
       console.warn('⚠️ Product out of stock:', product.name);
       alert('This product is out of stock');
+      setIsUpdating(false);
       return;
     }
     
     setItems(prev => {
       console.log('🛒 Processing add to cart...');
-      console.log('🛒 Previous cart items:', prev);
+      console.log('🛒 Previous cart items:', prev.length);
       
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
       console.log('🔍 Existing item index:', existingIndex);
@@ -196,19 +201,26 @@ export function useCart() {
         newItems = [...prev, newItem];
       }
       
-      console.log('✅ New cart state:', newItems);
+      console.log('✅ New cart state:', newItems.length, 'items');
       console.log('✅ Total items in cart:', newItems.reduce((sum, item) => sum + item.quantity, 0));
       
       // Immediate memory cache update
       memoryCache = [...newItems];
       cacheTimestamp = Date.now();
       
+      // Force trigger update
+      setTimeout(() => {
+        setUpdateTrigger(prev => prev + 1);
+        setIsUpdating(false);
+        console.log('🔔 Cart update trigger fired');
+      }, 100);
+      
       return newItems;
     });
-  }, [items]);
 
   const updateItem = useCallback((productId: string, updates: Partial<Pick<CartItem, 'quantity' | 'notes'>>) => {
     console.log('🔄 Updating cart item:', productId, updates);
+    setIsUpdating(true);
     setItems(prev => {
       const updated = prev.map(item => 
         item.product.id === productId 
@@ -216,15 +228,24 @@ export function useCart() {
           : item
       );
       console.log('✅ Cart after update:', updated);
+      setTimeout(() => {
+        setUpdateTrigger(prev => prev + 1);
+        setIsUpdating(false);
+      }, 100);
       return updated;
     });
   }, []);
 
   const removeItem = useCallback((productId: string) => {
     console.log('🗑️ Removing item from cart:', productId);
+    setIsUpdating(true);
     setItems(prev => {
       const filtered = prev.filter(item => item.product.id !== productId);
       console.log('✅ Cart after removal:', filtered);
+      setTimeout(() => {
+        setUpdateTrigger(prev => prev + 1);
+        setIsUpdating(false);
+      }, 100);
       return filtered;
     });
   }, []);
@@ -287,6 +308,7 @@ export function useCart() {
   return {
     items,
     updateTrigger,
+    isUpdating,
     addItem,
     updateItem,
     removeItem,

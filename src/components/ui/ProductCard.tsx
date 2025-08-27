@@ -10,7 +10,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onViewDetails }: ProductCardProps) {
-  const { addItem, getItem } = useCart();
+  const { addItem, getItem, isUpdating } = useCart();
   const cartItem = getItem(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -188,10 +188,11 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
             size="sm"
             icon={ShoppingCart}
             onClick={handleAddToCart}
-            disabled={product.stock === 0}
+            disabled={product.stock === 0 || isUpdating}
+            loading={isUpdating}
             className="flex-1 text-sm font-semibold hover-lift btn-primary shadow-medium"
           >
-            {cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
+            {isUpdating ? 'Adding...' : cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
           </Button>
           <Button
             variant="outline"

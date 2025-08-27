@@ -221,7 +221,7 @@ interface UserFormProps {
 function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    userId: '',
     name: '',
     role: 'staff' as 'admin' | 'manager' | 'staff'
   });
@@ -232,14 +232,14 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
     if (editingUser) {
       setFormData({
         email: editingUser.email,
-        password: '',
+        userId: editingUser.id,
         name: editingUser.name,
         role: editingUser.role
       });
     } else {
       setFormData({
         email: '',
-        password: '',
+        userId: '',
         name: '',
         role: 'staff'
       });
@@ -265,23 +265,11 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
 
         if (error) throw error;
       } else {
-        // First create the user in Supabase Auth
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            emailRedirectTo: undefined // Disable email confirmation
-          }
-        });
-
-        if (authError) throw authError;
-        if (!authData.user) throw new Error('Failed to create user');
-
-        // Then create admin user entry with the new user ID
+        // Create admin user entry with the provided user ID
         const { error } = await supabase
           .from('admins')
           .insert({
-            id: authData.user.id,
+            id: formData.userId,
             email: formData.email,
             name: formData.name,
             role: formData.role

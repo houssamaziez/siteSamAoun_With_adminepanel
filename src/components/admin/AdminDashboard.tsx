@@ -30,6 +30,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [currentView, setCurrentView] = useState<AdminView>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userRole, setUserRole] = useState<'admin' | 'manager' | 'staff' | null>(null);
+  const [userName, setUserName] = useState<string>('Admin');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,6 +43,18 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
       if (user) {
         const { role } = await isAdmin(user.id);
         setUserRole(role);
+        
+        // Get user name from admins table
+        const { supabase } = await import('../../lib/supabase');
+        const { data: adminData } = await supabase
+          .from('admins')
+          .select('name')
+          .eq('id', user.id)
+          .single();
+        
+        if (adminData?.name) {
+          setUserName(adminData.name);
+        }
       }
     } catch (error) {
       console.error('Failed to check user role:', error);
@@ -163,8 +176,17 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
             
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600">
-                Welcome back, Admin
+                Welcome back, {userName}
               </div>
+              {userRole && (
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  userRole === 'admin' ? 'bg-red-100 text-red-800' :
+                  userRole === 'manager' ? 'bg-blue-100 text-blue-800' :
+                  'bg-green-100 text-green-800'
+                }`}>
+                  {userRole}
+                </span>
+              )}
             </div>
           </div>
         </header>

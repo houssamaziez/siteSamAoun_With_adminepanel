@@ -21,16 +21,27 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     : 0;
 
   const handleAddToCart = () => {
-    console.log('Adding to cart from detail:', product.name, 'quantity:', quantity); // Debug log
+    console.log('🛒 ProductDetail: Adding to cart from detail page');
+    console.log('🛒 ProductDetail: Product:', product.name, 'Quantity:', quantity);
+    console.log('🛒 ProductDetail: Product data:', {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      stock: product.stock
+    });
+    
     if (cartItem) {
+      console.log('🔄 ProductDetail: Item exists in cart, updating quantity');
       updateItem(product.id, { quantity: cartItem.quantity + quantity });
     } else {
+      console.log('➕ ProductDetail: Adding new item to cart');
       addItem(product, quantity);
     }
     
     // Add visual feedback with animation
     const addButton = document.querySelector('[data-add-to-cart]') as HTMLElement;
     if (addButton) {
+      console.log('✅ ProductDetail: Showing visual feedback');
       addButton.classList.add('animate-pulse');
       addButton.style.transform = 'scale(1.05)';
       addButton.style.transition = 'all 0.3s ease';

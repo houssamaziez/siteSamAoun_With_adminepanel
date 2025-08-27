@@ -30,8 +30,8 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   
   // Log cart changes for debugging
   useEffect(() => {
-    console.log('Header: Cart updated, count:', cartCount, 'items:', items.length);
-  }, [items, forceUpdate, cartCount]);
+    console.log('🔔 Header: Cart updated, count:', cartCount, 'items:', items.length);
+  }, [items, updateTrigger, cartCount]);
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-soft">

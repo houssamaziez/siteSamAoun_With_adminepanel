@@ -18,8 +18,6 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
 
   // Debug: Log cart items
   useEffect(() => {
-    console.log('CartSidebar: Cart items updated:', items, 'count:', cartCount);
-  }, [items, forceUpdate, cartCount]);
 
   if (!isOpen) return null;
 

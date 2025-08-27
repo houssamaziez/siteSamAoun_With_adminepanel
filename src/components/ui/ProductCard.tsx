@@ -15,26 +15,34 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log('Adding to cart:', product.name); // Debug log
+    console.log('🛒 ProductCard: Adding to cart clicked for:', product.name);
    
    // Validate product data
    if (!product || !product.id) {
-     console.error('Invalid product data:', product);
+     console.error('❌ ProductCard: Invalid product data:', product);
      return;
    }
    
    // Check stock
    if (product.stock <= 0) {
-     console.warn('Product out of stock:', product.name);
+     console.warn('⚠️ ProductCard: Product out of stock:', product.name);
      return;
    }
    
+    console.log('🛒 ProductCard: Calling addItem with product:', {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      stock: product.stock
+    });
+    
     addItem(product, 1);
    
    // Show visual feedback
    const button = e.target as HTMLElement;
    const buttonElement = button.closest('button');
    if (buttonElement) {
+     console.log('✅ ProductCard: Showing visual feedback');
      const originalText = buttonElement.textContent;
      buttonElement.textContent = '✓ Added!';
      buttonElement.style.backgroundColor = '#10b981';

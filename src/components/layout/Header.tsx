@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount, items, updateTrigger } = useCart();
+  const { getItemCount, items, updateTrigger, getCacheStatus } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -32,8 +32,8 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   useEffect(() => {
     console.log('🔔 Header: Cart updated, count:', cartCount, 'items:', items.length);
     console.log('🔔 Header: Update trigger:', updateTrigger);
-    console.log('🔔 Header: Cart items:', items);
-  }, [items, updateTrigger, cartCount]);
+    console.log('🔔 Header: Cache status:', getCacheStatus());
+  }, [items, updateTrigger, cartCount, getCacheStatus]);
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-soft">

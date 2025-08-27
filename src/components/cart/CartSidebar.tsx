@@ -10,7 +10,7 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
-  const { items, updateItem, removeItem, getTotalAmount, getItemCount, forceUpdate } = useCart();
+  const { items, updateItem, removeItem, getTotalAmount, getItemCount, updateTrigger, refreshCart, getCacheStatus } = useCart();
   
   // Get current values directly
   const cartCount = getItemCount();
@@ -18,7 +18,12 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
 
   // Debug: Log cart items
   useEffect(() => {
-  }, []);
+    console.log('🛒 CartSidebar: Cart updated');
+    console.log('🛒 CartSidebar: Items:', items.length);
+    console.log('🛒 CartSidebar: Count:', cartCount);
+    console.log('🛒 CartSidebar: Total:', cartTotal);
+    console.log('🛒 CartSidebar: Cache status:', getCacheStatus());
+  }, [items, updateTrigger, cartCount, cartTotal, getCacheStatus]);
 
   if (!isOpen) return null;
 

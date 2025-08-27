@@ -1,49 +1,157 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { CartItem, Product } from '../types';
 
 const CART_STORAGE_KEY = 'techhub_cart';
+const CART_SESSION_KEY = 'techhub_cart_session';
+const CART_BACKUP_KEY = 'techhub_cart_backup';
+
+// In-memory cache for faster access
+let memoryCache: CartItem[] = [];
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [updateTrigger, setUpdateTrigger] = useState(0);
+  const isInitialized = useRef(false);
+  const saveTimeout = useRef<NodeJS.Timeout>();
 
-  // Load cart from localStorage on mount
-  useEffect(() => {
+  // Enhanced cache management
+  const getCachedCart = useCallback((): CartItem[] => {
+    const now = Date.now();
+    
+    // Check memory cache first (fastest)
+    if (memoryCache.length > 0 && (now - cacheTimestamp) < CACHE_DURATION) {
+      console.log('🚀 Using memory cache for cart data');
+      return memoryCache;
+    }
+
+    // Try sessionStorage (faster than localStorage)
     try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      console.log('🔄 Loading cart from localStorage:', savedCart);
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        console.log('📦 Parsed cart data:', parsedCart);
-        if (Array.isArray(parsedCart)) {
-          setItems(parsedCart);
-          console.log('✅ Cart loaded successfully:', parsedCart.length, 'items');
-        } else {
-          console.warn('⚠️ Invalid cart data format, resetting cart');
-          setItems([]);
+      const sessionData = sessionStorage.getItem(CART_SESSION_KEY);
+      if (sessionData) {
+        const parsed = JSON.parse(sessionData);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log('⚡ Using session storage for cart data');
+          memoryCache = parsed;
+          cacheTimestamp = now;
+          return parsed;
         }
-      } else {
-        console.log('📭 No saved cart found, starting with empty cart');
-        setItems([]);
       }
     } catch (error) {
-      console.error('❌ Failed to load cart from localStorage:', error);
-      setItems([]);
+      console.warn('⚠️ Session storage read failed:', error);
     }
+
+    // Try localStorage (persistent)
+    try {
+      const localData = localStorage.getItem(CART_STORAGE_KEY);
+      if (localData) {
+        const parsed = JSON.parse(localData);
+        if (Array.isArray(parsed)) {
+          console.log('💾 Using local storage for cart data');
+          memoryCache = parsed;
+          cacheTimestamp = now;
+          // Sync to session storage
+          sessionStorage.setItem(CART_SESSION_KEY, localData);
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Local storage read failed:', error);
+    }
+
+    // Try backup storage
+    try {
+      const backupData = localStorage.getItem(CART_BACKUP_KEY);
+      if (backupData) {
+        const parsed = JSON.parse(backupData);
+        if (Array.isArray(parsed)) {
+          console.log('🔄 Using backup storage for cart data');
+          memoryCache = parsed;
+          cacheTimestamp = now;
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Backup storage read failed:', error);
+    }
+
+    console.log('📭 No cached cart found, starting fresh');
+    return [];
   }, []);
 
-  // Save cart to localStorage whenever items change
-  useEffect(() => {
-    try {
-      console.log('💾 Saving cart to localStorage:', items);
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-      // Trigger update to notify components
-      setUpdateTrigger(prev => prev + 1);
-      console.log('✅ Cart saved successfully, trigger updated to:', updateTrigger + 1);
-    } catch (error) {
-      console.error('❌ Failed to save cart to localStorage:', error);
+  // Enhanced save with multiple storage layers
+  const saveCartToCache = useCallback((cartItems: CartItem[]) => {
+    const cartData = JSON.stringify(cartItems);
+    const now = Date.now();
+
+    // Update memory cache immediately
+    memoryCache = [...cartItems];
+    cacheTimestamp = now;
+
+    // Debounced save to storage
+    if (saveTimeout.current) {
+      clearTimeout(saveTimeout.current);
     }
-  }, [items]);
+
+    saveTimeout.current = setTimeout(() => {
+      try {
+        // Save to localStorage (primary)
+        localStorage.setItem(CART_STORAGE_KEY, cartData);
+        console.log('💾 Cart saved to localStorage');
+
+        // Save to sessionStorage (faster access)
+        sessionStorage.setItem(CART_SESSION_KEY, cartData);
+        console.log('⚡ Cart saved to sessionStorage');
+
+        // Save backup
+        localStorage.setItem(CART_BACKUP_KEY, cartData);
+        console.log('🔄 Cart backup saved');
+
+        // Trigger update
+        setUpdateTrigger(prev => prev + 1);
+        console.log('✅ Cart cache updated successfully');
+      } catch (error) {
+        console.error('❌ Failed to save cart to cache:', error);
+        
+        // Try alternative storage if main fails
+        try {
+          localStorage.setItem(CART_BACKUP_KEY, cartData);
+          console.log('🆘 Cart saved to backup storage only');
+        } catch (backupError) {
+          console.error('❌ Backup save also failed:', backupError);
+        }
+      }
+    }, 100); // 100ms debounce
+  }, []);
+
+  // Load cart from cache on mount
+  useEffect(() => {
+    if (!isInitialized.current) {
+      console.log('🔄 Initializing cart from cache...');
+      const cachedCart = getCachedCart();
+      setItems(cachedCart);
+      isInitialized.current = true;
+      console.log('✅ Cart initialized with', cachedCart.length, 'items');
+    }
+  }, [getCachedCart]);
+
+  // Save cart whenever items change
+  useEffect(() => {
+    if (isInitialized.current) {
+      console.log('💾 Saving cart changes to cache:', items.length, 'items');
+      saveCartToCache(items);
+    }
+  }, [items, saveCartToCache]);
+
+  // Clear cache timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeout.current) {
+        clearTimeout(saveTimeout.current);
+      }
+    };
+  }, []);
 
   const addItem = useCallback((product: Product, quantity: number = 1, notes?: string) => {
     console.log('🛒 ADD TO CART - Product:', product.name, 'Quantity:', quantity);
@@ -53,6 +161,7 @@ export function useCart() {
     // Validate product
     if (!product || !product.id) {
       console.error('❌ Invalid product data:', product);
+      alert('Invalid product data');
       return;
     }
     
@@ -64,11 +173,13 @@ export function useCart() {
     }
     
     setItems(prev => {
-      console.log('🛒 Current cart items:', prev);
-      console.log('🛒 Cart is empty:', prev.length === 0);
+      console.log('🛒 Processing add to cart...');
+      console.log('🛒 Previous cart items:', prev);
+      
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
       console.log('🔍 Existing item index:', existingIndex);
-      let newItems;
+      
+      let newItems: CartItem[];
       
       if (existingIndex >= 0) {
         console.log('🔄 Item exists, updating quantity from', prev[existingIndex].quantity, 'to', prev[existingIndex].quantity + quantity);
@@ -88,17 +199,13 @@ export function useCart() {
       console.log('✅ New cart state:', newItems);
       console.log('✅ Total items in cart:', newItems.reduce((sum, item) => sum + item.quantity, 0));
       
-      // Force immediate localStorage save
-      try {
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(newItems));
-        console.log('💾 Immediate save to localStorage completed');
-      } catch (error) {
-        console.error('❌ Failed immediate save:', error);
-      }
+      // Immediate memory cache update
+      memoryCache = [...newItems];
+      cacheTimestamp = Date.now();
       
       return newItems;
     });
-  }, []);
+  }, [items]);
 
   const updateItem = useCallback((productId: string, updates: Partial<Pick<CartItem, 'quantity' | 'notes'>>) => {
     console.log('🔄 Updating cart item:', productId, updates);
@@ -123,11 +230,30 @@ export function useCart() {
   }, []);
 
   const clearCart = useCallback(() => {
-    console.log('🧹 Clearing cart');
+    console.log('🧹 Clearing cart and all caches');
     setItems([]);
-    localStorage.removeItem(CART_STORAGE_KEY);
-    console.log('✅ Cart cleared and localStorage cleaned');
+    
+    // Clear all caches
+    memoryCache = [];
+    cacheTimestamp = 0;
+    
+    try {
+      localStorage.removeItem(CART_STORAGE_KEY);
+      localStorage.removeItem(CART_BACKUP_KEY);
+      sessionStorage.removeItem(CART_SESSION_KEY);
+      console.log('✅ All cart caches cleared');
+    } catch (error) {
+      console.error('❌ Failed to clear some caches:', error);
+    }
   }, []);
+
+  const refreshCart = useCallback(() => {
+    console.log('🔄 Refreshing cart from cache...');
+    const cachedCart = getCachedCart();
+    setItems(cachedCart);
+    setUpdateTrigger(prev => prev + 1);
+    console.log('✅ Cart refreshed with', cachedCart.length, 'items');
+  }, [getCachedCart]);
 
   const getItemCount = useCallback(() => {
     const count = items.reduce((total, item) => total + item.quantity, 0);
@@ -145,15 +271,30 @@ export function useCart() {
     return items.find(item => item.product.id === productId);
   }, [items]);
 
+  // Cache status for debugging
+  const getCacheStatus = useCallback(() => {
+    const now = Date.now();
+    return {
+      memoryCache: memoryCache.length,
+      memoryCacheAge: now - cacheTimestamp,
+      isMemoryCacheValid: (now - cacheTimestamp) < CACHE_DURATION,
+      localStorage: !!localStorage.getItem(CART_STORAGE_KEY),
+      sessionStorage: !!sessionStorage.getItem(CART_SESSION_KEY),
+      backup: !!localStorage.getItem(CART_BACKUP_KEY)
+    };
+  }, []);
+
   return {
     items,
-    updateTrigger, // Expose update trigger for components that need to track changes
+    updateTrigger,
     addItem,
     updateItem,
     removeItem,
     clearCart,
+    refreshCart,
     getItemCount,
     getTotalAmount,
-    getItem
+    getItem,
+    getCacheStatus // For debugging
   };
 }

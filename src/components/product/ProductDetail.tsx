@@ -4,7 +4,7 @@ import { ArrowLeft, ShoppingCart, Heart, Share2, Star, Minus, Plus, BookmarkPlus
 import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
-import CartSidebar from './components/cart/CartSidebar';
+import CartSidebar from "../cart/CartSidebar";
 
 // Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;

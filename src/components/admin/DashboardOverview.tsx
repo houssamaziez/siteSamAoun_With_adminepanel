@@ -1,5 +1,8 @@
 import React from 'react';
-import { Package, Calendar, DollarSign, TrendingUp, Users, AlertCircle } from 'lucide-react';
+import { 
+  Package, Calendar, DollarSign, TrendingUp, Users, AlertCircle, 
+  ShoppingCart, Star, Eye, Activity, BarChart3, PieChart 
+} from 'lucide-react';
 import { useProducts, useReservations } from '../../hooks/useSupabaseData';
 
 export function DashboardOverview() {
@@ -12,36 +15,84 @@ export function DashboardOverview() {
       value: productsLoading ? '...' : products.length.toString(),
       icon: Package,
       color: 'bg-blue-500',
-      change: '+12%',
-      changeType: 'positive'
+      change: `${products.filter(p => p.featured).length} featured`,
+      changeType: 'neutral'
     },
     {
-      name: 'Pending Reservations',
-      value: reservationsLoading ? '...' : reservations.filter(r => r.status === 'pending').length.toString(),
+      name: 'Active Products',
+      value: productsLoading ? '...' : products.filter(p => p.status === 'active').length.toString(),
+      icon: Eye,
+      color: 'bg-green-500',
+      change: `${products.filter(p => p.status === 'inactive').length} inactive`,
+      changeType: 'neutral'
+    },
+    {
+      name: 'Low Stock Items',
+      value: productsLoading ? '...' : products.filter(p => p.stock <= 5 && p.stock > 0).length.toString(),
+      icon: AlertCircle,
+      color: 'bg-orange-500',
+      change: `${products.filter(p => p.stock === 0).length} out of stock`,
+      changeType: 'negative'
+    },
+    {
+      name: 'Total Reservations',
+      value: reservationsLoading ? '...' : reservations.length.toString(),
       icon: Calendar,
-      color: 'bg-yellow-500',
-      change: '+5%',
+      color: 'bg-purple-500',
+      change: `${reservations.filter(r => r.status === 'pending').length} pending`,
+      changeType: 'neutral'
+    },
+    {
+      name: 'Confirmed Orders',
+      value: reservationsLoading ? '...' : reservations.filter(r => r.status === 'confirmed').length.toString(),
+      icon: ShoppingCart,
+      color: 'bg-indigo-500',
+      change: `${reservations.filter(r => r.status === 'completed').length} completed`,
       changeType: 'positive'
     },
     {
       name: 'Total Revenue',
-      value: reservationsLoading ? '...' : `${reservations.reduce((sum, r) => sum + r.totalAmount, 0).toLocaleString()} د.ج`,
+      value: reservationsLoading ? '...' : `${reservations.filter(r => r.status === 'completed').reduce((sum, r) => sum + r.totalAmount, 0).toLocaleString()} د.ج`,
       icon: DollarSign,
-      color: 'bg-green-500',
-      change: '+18%',
+      color: 'bg-green-600',
+      change: `${reservations.filter(r => r.status === 'pending').reduce((sum, r) => sum + r.totalAmount, 0).toLocaleString()} د.ج pending`,
       changeType: 'positive'
     },
     {
-      name: 'Low Stock Items',
-      value: productsLoading ? '...' : products.filter(p => p.stock <= 5).length.toString(),
-      icon: AlertCircle,
-      color: 'bg-red-500',
-      change: '-2%',
-      changeType: 'negative'
+      name: 'Average Order Value',
+      value: reservationsLoading ? '...' : reservations.filter(r => r.status === 'pending').length.toString(),
+      icon: TrendingUp,
+      color: 'bg-teal-500',
+      change: reservations.length > 0 ? `${Math.round(reservations.reduce((sum, r) => sum + r.totalAmount, 0) / reservations.length).toLocaleString()} د.ج avg` : '0 د.ج avg',
+      changeType: 'positive'
+    },
+    {
+      name: 'Top Category',
+      value: productsLoading ? '...' : (() => {
+        const categoryCount = {};
+        products.forEach(p => {
+          categoryCount[p.category.name] = (categoryCount[p.category.name] || 0) + 1;
+        });
+        const topCategory = Object.entries(categoryCount).sort(([,a], [,b]) => b - a)[0];
+        return topCategory ? topCategory[0] : 'None';
+      })(),
+      icon: BarChart3,
+      color: 'bg-pink-500',
+      change: productsLoading ? '...' : (() => {
+        const categoryCount = {};
+        products.forEach(p => {
+          categoryCount[p.category.name] = (categoryCount[p.category.name] || 0) + 1;
+        });
+        const topCategory = Object.entries(categoryCount).sort(([,a], [,b]) => b - a)[0];
+        return topCategory ? `${topCategory[1]} products` : '0 products';
+      })(),
+      changeType: 'positive'
     }
   ];
 
   const recentReservations = reservations.slice(0, 5);
+  const lowStockProducts = products.filter(p => p.stock <= 5).slice(0, 5);
+  const topSellingProducts = products.filter(p => p.featured).slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -68,10 +119,10 @@ export function DashboardOverview() {
               <div className="mt-4 flex items-center">
                 <span className={`text-sm font-medium ${
                   stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
+                  stat.changeType === 'negative' ? 'text-red-600' :
+                  'text-gray-600'
                   {stat.change}
                 </span>
-                <span className="text-sm text-gray-500 ml-2">from last month</span>
               </div>
             </div>
           );
@@ -79,7 +130,7 @@ export function DashboardOverview() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Reservations */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100">
@@ -139,7 +190,7 @@ export function DashboardOverview() {
               </div>
             ) : (
               <div className="space-y-4">
-                {products.filter(p => p.stock <= 5).slice(0, 5).map((product) => (
+                {lowStockProducts.map((product) => (
                   <div key={product.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
                     <div>
                       <p className="font-medium text-gray-900">{product.name}</p>
@@ -159,6 +210,77 @@ export function DashboardOverview() {
                 )}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Top Products */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">Featured Products</h3>
+          </div>
+          <div className="p-6">
+            {productsLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {topSellingProducts.map((product) => (
+                  <div key={product.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="w-10 h-10 rounded-lg object-cover"
+                      />
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">{product.name}</p>
+                        <p className="text-xs text-gray-600">{product.brand}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium text-blue-600 text-sm">{product.price.toLocaleString()} د.ج</p>
+                      <p className="text-xs text-gray-500">{product.stock} in stock</p>
+                    </div>
+                  </div>
+                ))}
+                {topSellingProducts.length === 0 && (
+                  <p className="text-gray-500 text-center py-8">No featured products</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-blue-50 rounded-lg p-4 text-center hover:bg-blue-100 transition-colors cursor-pointer">
+            <Package className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+            <p className="font-medium text-blue-900">Add Product</p>
+            <p className="text-sm text-blue-600">Create new product</p>
+          </div>
+          <div className="bg-green-50 rounded-lg p-4 text-center hover:bg-green-100 transition-colors cursor-pointer">
+            <Calendar className="w-8 h-8 text-green-600 mx-auto mb-2" />
+            <p className="font-medium text-green-900">View Orders</p>
+            <p className="text-sm text-green-600">Manage reservations</p>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-4 text-center hover:bg-purple-100 transition-colors cursor-pointer">
+            <BarChart3 className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+            <p className="font-medium text-purple-900">Analytics</p>
+            <p className="text-sm text-purple-600">View reports</p>
+          </div>
+          <div className="bg-orange-50 rounded-lg p-4 text-center hover:bg-orange-100 transition-colors cursor-pointer">
+            <AlertCircle className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+            <p className="font-medium text-orange-900">Stock Alert</p>
+            <p className="text-sm text-orange-600">Check inventory</p>
           </div>
         </div>
       </div>

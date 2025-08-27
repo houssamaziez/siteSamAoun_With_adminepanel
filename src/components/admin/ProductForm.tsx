@@ -8,9 +8,10 @@ interface ProductFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  editingProduct?: any;
 }
 
-export function ProductForm({ isOpen, onClose, onSuccess }: ProductFormProps) {
+export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: ProductFormProps) {
   const { categories } = useCategories();
   const [formData, setFormData] = useState({
     sku: '',
@@ -33,15 +34,57 @@ export function ProductForm({ isOpen, onClose, onSuccess }: ProductFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Update form data when editing product changes
+  React.useEffect(() => {
+    if (editingProduct) {
+      setFormData({
+        sku: editingProduct.sku || '',
+        name: editingProduct.name || '',
+        slug: editingProduct.slug || '',
+        brand: editingProduct.brand || '',
+        price: editingProduct.price?.toString() || '',
+        originalPrice: editingProduct.originalPrice?.toString() || '',
+        currency: editingProduct.currency || 'DZD',
+        images: editingProduct.images || [''],
+        categoryId: editingProduct.category?.id || '',
+        shortDescription: editingProduct.shortDescription || '',
+        description: editingProduct.description || '',
+        stock: editingProduct.stock?.toString() || '0',
+        status: editingProduct.status || 'active',
+        featured: editingProduct.featured || false,
+        warranty: editingProduct.warranty || '',
+        condition: editingProduct.condition || 'new'
+      });
+    } else {
+      // Reset form for new product
+      setFormData({
+        sku: '',
+        name: '',
+        slug: '',
+        brand: '',
+        price: '',
+        originalPrice: '',
+        currency: 'DZD',
+        images: [''],
+        categoryId: '',
+        shortDescription: '',
+        description: '',
+        stock: '0',
+        status: 'active',
+        featured: false,
+        warranty: '',
+        condition: 'new'
+      });
+    }
+  }, [editingProduct]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase
-        .from('products')
-        .insert({
+      const productData = {
           sku: formData.sku,
           name: formData.name,
           slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
@@ -58,33 +101,30 @@ export function ProductForm({ isOpen, onClose, onSuccess }: ProductFormProps) {
           featured: formData.featured,
           warranty: formData.warranty,
           condition: formData.condition
-        });
+      };
+
+      let error;
+      if (editingProduct) {
+        // Update existing product
+        const result = await supabase
+          .from('products')
+          .update(productData)
+          .eq('id', editingProduct.id);
+        error = result.error;
+      } else {
+        // Create new product
+        const result = await supabase
+          .from('products')
+          .insert(productData);
+        error = result.error;
+      }
 
       if (error) throw error;
 
       onSuccess();
       onClose();
-      // Reset form
-      setFormData({
-        sku: '',
-        name: '',
-        slug: '',
-        brand: '',
-        price: '',
-        originalPrice: '',
-        currency: 'USD',
-        images: [''],
-        categoryId: '',
-        shortDescription: '',
-        description: '',
-        stock: '0',
-        status: 'active',
-        featured: false,
-        warranty: '',
-        condition: 'new'
-      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create product');
+      setError(err instanceof Error ? err.message : `Failed to ${editingProduct ? 'update' : 'create'} product`);
     } finally {
       setLoading(false);
     }
@@ -134,7 +174,9 @@ export function ProductForm({ isOpen, onClose, onSuccess }: ProductFormProps) {
         
         <div className="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Add New Product</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {editingProduct ? 'Edit Product' : 'Add New Product'}
+            </h2>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
               <X className="w-5 h-5 text-gray-500" />
             </button>
@@ -398,7 +440,7 @@ export function ProductForm({ isOpen, onClose, onSuccess }: ProductFormProps) {
               loading={loading}
               className="flex-1"
             >
-              Create Product
+              {editingProduct ? 'Update Product' : 'Create Product'}
             </Button>
           </div>
         </div>

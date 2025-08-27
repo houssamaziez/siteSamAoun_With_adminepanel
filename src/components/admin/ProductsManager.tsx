@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Eye, Package } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Package, AlertTriangle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useProducts } from '../../hooks/useSupabaseData';
 import { ProductForm } from './ProductForm';
+import { supabase } from '../../lib/supabase';
 
 export function ProductsManager() {
   const { products, loading, error, refetch } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showForm, setShowForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [viewingProduct, setViewingProduct] = useState(null);
+  const [deletingProduct, setDeletingProduct] = useState(null);
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -19,6 +23,40 @@ export function ProductsManager() {
     
     return matchesSearch && matchesCategory;
   });
+
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setShowForm(true);
+  };
+
+  const handleViewProduct = (product) => {
+    setViewingProduct(product);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', productId);
+
+      if (error) throw error;
+      
+      refetch();
+      alert('Product deleted successfully!');
+    } catch (err) {
+      alert(`Failed to delete product: ${err.message}`);
+    }
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setEditingProduct(null);
+  };
 
   if (loading) {
     return (
@@ -156,11 +194,17 @@ export function ProductsManager() {
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-2">
                       <button className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                        title="View product details"
+                        onClick={() => handleViewProduct(product)}
                         <Eye className="w-4 h-4" />
+                        onClick={() => handleEditProduct(product)}
                       </button>
+                        title="Edit product"
                       <button className="p-2 text-gray-400 hover:text-green-600 rounded-lg hover:bg-green-50">
                         <Edit className="w-4 h-4" />
+                        onClick={() => handleDeleteProduct(product.id)}
                       </button>
+                        title="Delete product"
                       <button className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50">
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -183,12 +227,98 @@ export function ProductsManager() {
 
       <ProductForm
         isOpen={showForm}
-        onClose={() => setShowForm(false)}
+        onClose={handleCloseForm}
         onSuccess={() => {
           refetch();
-          setShowForm(false);
+          handleCloseForm();
         }}
+        editingProduct={editingProduct}
       />
+
+      {/* Product View Modal */}
+      {viewingProduct && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-black bg-opacity-50" onClick={() => setViewingProduct(null)} />
+            
+            <div className="inline-block w-full max-w-4xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Product Details</h2>
+                <button onClick={() => setViewingProduct(null)} className="p-2 hover:bg-gray-100 rounded-full">
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="p-6 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <img
+                      src={viewingProduct.images[0]}
+                      alt={viewingProduct.name}
+                      className="w-full h-64 object-cover rounded-lg"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900">{viewingProduct.name}</h3>
+                      <p className="text-lg text-gray-600">{viewingProduct.brand}</p>
+                    </div>
+                    <div>
+                      <span className="text-3xl font-bold text-blue-600">
+                        {viewingProduct.price.toLocaleString()} د.ج
+                      </span>
+                      {viewingProduct.originalPrice && (
+                        <span className="ml-2 text-lg text-gray-500 line-through">
+                          {viewingProduct.originalPrice.toLocaleString()} د.ج
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium">SKU:</span> {viewingProduct.sku}
+                      </div>
+                      <div>
+                        <span className="font-medium">Stock:</span> {viewingProduct.stock}
+                      </div>
+                      <div>
+                        <span className="font-medium">Category:</span> {viewingProduct.category.name}
+                      </div>
+                      <div>
+                        <span className="font-medium">Status:</span> 
+                        <span className={`ml-1 px-2 py-1 text-xs rounded-full ${
+                          viewingProduct.status === 'active' ? 'bg-green-100 text-green-800' :
+                          viewingProduct.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {viewingProduct.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Description</h4>
+                      <p className="text-gray-600">{viewingProduct.description || viewingProduct.shortDescription}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {viewingProduct.specifications && Object.keys(viewingProduct.specifications).length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="font-medium text-gray-900 mb-3">Specifications</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {Object.entries(viewingProduct.specifications).map(([key, value]) => (
+                        <div key={key} className="flex justify-between py-2 border-b border-gray-200">
+                          <span className="font-medium text-gray-700">{key}</span>
+                          <span className="text-gray-600">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

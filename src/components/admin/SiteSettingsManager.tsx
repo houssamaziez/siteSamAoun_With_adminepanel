@@ -336,11 +336,16 @@ export function SiteSettingsManager() {
                   <li>3. انقر بالزر الأيمن على الموقع</li>
                   <li>4. انسخ الإحداثيات (الرقم الأول = خط العرض، الثاني = خط الطول)</li>
                 </ol>
+                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                  <p className="text-sm text-yellow-800">
+                    <strong>ملاحظة:</strong> للحصول على أفضل أداء للخرائط، تأكد من إدخال Google Maps API Key في الأسفل.
+                  </p>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Google Maps API Key (للخرائط التفاعلية)
+                  Google Maps API Key *
                 </label>
                 <input
                   type="text"
@@ -348,11 +353,16 @@ export function SiteSettingsManager() {
                   value={formData.googleMapsApiKey}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="AIzaSyDV0zNlb2O-blUSUJF6XgOmeJ-QeC2qeos"
+                  placeholder="AIzaSy..."
                 />
-                <p className="text-xs text-blue-600 mt-1">
-                  مطلوب لميزات البحث والاتجاهات المتقدمة. الخرائط الأساسية تعمل بدونه.
+                <p className="text-xs text-gray-600 mt-1">
+                  مطلوب لعرض الخرائط بشكل صحيح. احصل عليه من Google Cloud Console.
                 </p>
+                {formData.googleMapsApiKey && (
+                  <div className="mt-2 text-xs text-green-600 bg-green-50 border border-green-200 rounded px-2 py-1">
+                    ✓ API Key محفوظ ومفعل
+                  </div>
+                )}
               </div>
 
               <div>
@@ -952,6 +962,54 @@ export function SiteSettingsManager() {
                 </p>
               </h3>
               
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    خط العرض (Latitude)
+                  </label>
+                  <input
+                    type="number"
+                    name="mapLatitude"
+                    value={formData.mapLatitude}
+                    onChange={handleChange}
+                    step="0.000001"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="36.7538"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    خط الطول (Longitude)
+                  </label>
+                  <input
+                    type="number"
+                    name="mapLongitude"
+                    value={formData.mapLongitude}
+                    onChange={handleChange}
+                    step="0.000001"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="3.0588"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    مستوى التكبير (Zoom)
+                  </label>
+                  <input
+                    type="number"
+                    name="mapZoom"
+                    value={formData.mapZoom}
+                    onChange={handleChange}
+                    min="1"
+                    max="20"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="15"
+                  />
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

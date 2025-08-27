@@ -295,4 +295,4 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       </Dialog>
     </div>
   );
-} update to work 
+} 

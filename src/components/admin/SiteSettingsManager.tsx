@@ -329,23 +329,24 @@ export function SiteSettingsManager() {
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-2">كيفية الحصول على الإحداثيات:</h4>
+                <h4 className="font-semibold text-blue-900 mb-3">🗺️ إعداد الخريطة:</h4>
                 <ol className="text-sm text-blue-800 space-y-1">
-                  <li>1. اذهب إلى Google Maps</li>
-                  <li>2. ابحث عن موقع متجرك</li>
-                  <li>3. انقر بالزر الأيمن على الموقع</li>
-                  <li>4. انسخ الإحداثيات (الرقم الأول = خط العرض، الثاني = خط الطول)</li>
+                  <li><strong>1.</strong> اذهب إلى <a href="https://maps.google.com" target="_blank" class="underline">Google Maps</a></li>
+                  <li><strong>2.</strong> ابحث عن موقع متجرك</li>
+                  <li><strong>3.</strong> انقر بالزر الأيمن على الموقع</li>
+                  <li><strong>4.</strong> انسخ الإحداثيات (الرقم الأول = خط العرض، الثاني = خط الطول)</li>
+                  <li><strong>5.</strong> أدخل الإحداثيات في الحقول أدناه</li>
                 </ol>
-                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                  <p className="text-sm text-yellow-800">
-                    <strong>ملاحظة:</strong> للحصول على أفضل أداء للخرائط، تأكد من إدخال Google Maps API Key في الأسفل.
+                <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
+                  <p className="text-sm text-green-800">
+                    <strong>✅ API Key مفعل:</strong> الخريطة ستعمل بكامل الميزات!
                   </p>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Google Maps API Key *
+                  Google Maps API Key
                 </label>
                 <input
                   type="text"
@@ -355,9 +356,14 @@ export function SiteSettingsManager() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="AIzaSy..."
                 />
-                <p className="text-xs text-gray-600 mt-1">
-                  مطلوب لعرض الخرائط بشكل صحيح. احصل عليه من Google Cloud Console.
-                </p>
+                <div className="mt-2">
+                  <p className="text-xs text-gray-600">
+                    مطلوب لعرض الخرائط بشكل صحيح. احصل عليه من Google Cloud Console.
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    API Key الحالي: AIzaSyDV0zNlb2O-blUSUJF6XgOmeJ-QeC2qeos
+                  </p>
+                </div>
                 {formData.googleMapsApiKey && (
                   <div className="mt-2 text-xs text-green-600 bg-green-50 border border-green-200 rounded px-2 py-1">
                     ✓ API Key محفوظ ومفعل

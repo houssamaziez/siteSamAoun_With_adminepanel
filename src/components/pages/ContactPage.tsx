@@ -39,18 +39,18 @@ export function ContactPage() {
   const getEmbedMapUrl = () => {
     if (settings?.mapLatitude && settings?.mapLongitude) {
       if (settings?.googleMapsApiKey) {
-        // Use Embed API with API key for better functionality
-        return `https://www.google.com/maps/embed/v1/place?key=${settings.googleMapsApiKey}&q=${settings.mapLatitude},${settings.mapLongitude}&zoom=${settings.mapZoom || 15}`;
+        // Use Maps Embed API with proper place parameter
+        return `https://www.google.com/maps/embed/v1/place?key=${settings.googleMapsApiKey}&q=${settings.mapLatitude},${settings.mapLongitude}&zoom=${settings.mapZoom || 15}&maptype=roadmap`;
       } else {
-        // Use basic embed URL without API key
-        return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.398!2d${settings.mapLongitude}!3d${settings.mapLatitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s`;
+        // Use basic Google Maps embed without API key
+        return `https://maps.google.com/maps?q=${settings.mapLatitude},${settings.mapLongitude}&t=&z=${settings.mapZoom || 15}&ie=UTF8&iwloc=&output=embed`;
       }
     } else {
-      // Default fallback map (Algiers, Algeria)
+      // Default fallback map for Algiers, Algeria
       if (settings?.googleMapsApiKey) {
-        return `https://www.google.com/maps/embed/v1/place?key=${settings.googleMapsApiKey}&q=Algiers,Algeria&zoom=12`;
+        return `https://www.google.com/maps/embed/v1/place?key=${settings.googleMapsApiKey}&q=36.7538,3.0588&zoom=12&maptype=roadmap`;
       } else {
-        return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.398!2d3.0588!3d36.7538!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s';
+        return 'https://maps.google.com/maps?q=36.7538,3.0588&t=&z=12&ie=UTF8&iwloc=&output=embed';
       }
     }
   };
@@ -140,14 +140,14 @@ export function ContactPage() {
               <div className="aspect-video">
                 <iframe
                   src={getEmbedMapUrl()}
-                  title="Store Location Map"
+                  title="خريطة موقع المتجر"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  className="w-full h-full rounded-lg"
+                  className="w-full h-full"
                 ></iframe>
               </div>
               

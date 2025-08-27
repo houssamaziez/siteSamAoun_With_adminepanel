@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
@@ -60,17 +60,9 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
     { id: 'products', name: 'Products', icon: Package },
     { id: 'categories', name: 'Categories', icon: FolderOpen },
     { id: 'reservations', name: 'Reservations', icon: Calendar },
-    ...(userRole === 'admin' ? [{ id: 'users', name: 'Users', icon: Users }] : []),
-    ...(userRole === 'admin' || userRole === 'manager' ? [{ id: 'settings', name: 'Settings', icon: Settings }] : []),
+    { id: 'users', name: 'Users', icon: Users },
+    { id: 'settings', name: 'Settings', icon: Settings }
   ];
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
 
   const renderContent = () => {
     switch (currentView) {
@@ -171,7 +163,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
             
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600">
-                Welcome back, {userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : 'User'}
+                Welcome back, Admin
               </div>
             </div>
           </div>

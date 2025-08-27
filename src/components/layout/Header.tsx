@@ -11,10 +11,9 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const { getItemCount, items, version } = useCart();
+  const { getItemCount, items, forceUpdate } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
-  const [cartCount, setCartCount] = useState(0);
 
   // Use settings from database or fallback to defaults
   const siteData = settings || {
@@ -26,12 +25,13 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
     logoUrl: undefined, // fallback: avoids undefined property
   };
 
-  // Update cart count when cart changes
+  // Get current cart count
+  const cartCount = getItemCount();
+  
+  // Log cart changes for debugging
   useEffect(() => {
-    const count = getItemCount();
-    console.log('Header: Updating cart count to:', count);
-    setCartCount(count);
-  }, [items, version, getItemCount]);
+    console.log('Header: Cart updated, count:', cartCount, 'items:', items.length);
+  }, [items, forceUpdate, cartCount]);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">

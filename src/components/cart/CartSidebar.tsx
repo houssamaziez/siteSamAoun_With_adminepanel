@@ -10,23 +10,16 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
-  const { items, updateItem, removeItem, getTotalAmount, getItemCount, version } = useCart();
-  const [cartCount, setCartCount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
-
-  // Update cart values when cart changes
-  useEffect(() => {
-    const count = getItemCount();
-    const total = getTotalAmount();
-    console.log('CartSidebar: Updating count to', count, 'and total to', total);
-    setCartCount(count);
-    setCartTotal(total);
-  }, [items, version, getItemCount, getTotalAmount]);
+  const { items, updateItem, removeItem, getTotalAmount, getItemCount, forceUpdate } = useCart();
+  
+  // Get current values directly
+  const cartCount = getItemCount();
+  const cartTotal = getTotalAmount();
 
   // Debug: Log cart items
   useEffect(() => {
-    console.log('Cart items:', items);
-  }, [items]);
+    console.log('CartSidebar: Cart items updated:', items, 'count:', cartCount);
+  }, [items, forceUpdate, cartCount]);
 
   if (!isOpen) return null;
 

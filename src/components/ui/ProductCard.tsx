@@ -36,17 +36,19 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
    const buttonElement = button.closest('button');
    if (buttonElement) {
      const originalText = buttonElement.textContent;
-     buttonElement.innerHTML = '✓ Added!';
+     buttonElement.textContent = '✓ Added!';
      buttonElement.style.backgroundColor = '#10b981';
      buttonElement.style.borderColor = '#10b981';
+     buttonElement.style.color = 'white';
      
      setTimeout(() => {
        if (buttonElement) {
-         buttonElement.innerHTML = originalText || 'Add to Cart';
+         buttonElement.textContent = originalText || 'Add to Cart';
          buttonElement.style.backgroundColor = '';
          buttonElement.style.borderColor = '';
+         buttonElement.style.color = '';
        }
-     }, 1500);
+     }, 2000);
    }
   };
 

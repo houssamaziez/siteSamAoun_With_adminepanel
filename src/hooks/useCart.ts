@@ -5,8 +5,7 @@ const CART_STORAGE_KEY = 'techhub_cart';
 
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [version, setVersion] = useState(0);
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -19,24 +18,20 @@ export function useCart() {
       }
     } catch (error) {
       console.error('Failed to load cart from localStorage:', error);
-    } finally {
-      setIsLoaded(true);
     }
   }, []);
 
-  // Save cart to localStorage whenever items change (but only after initial load)
+  // Save cart to localStorage whenever items change
   useEffect(() => {
-    if (isLoaded) {
-      try {
-        console.log('Saving cart to localStorage:', items);
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-        // Force version update to trigger re-renders
-        setVersion(prev => prev + 1);
-      } catch (error) {
-        console.error('Failed to save cart to localStorage:', error);
-      }
+    try {
+      console.log('Saving cart to localStorage:', items);
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      // Force update to trigger re-renders in all components
+      setForceUpdate(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error);
     }
-  }, [items, isLoaded]);
+  }, [items]);
 
   const addItem = useCallback((product: Product, quantity: number = 1, notes?: string) => {
     console.log('useCart addItem called:', product.name, 'quantity:', quantity);
@@ -109,15 +104,13 @@ export function useCart() {
 
   return {
     items,
-    itemCount: getItemCount(),
-    version, // Expose version for components that need to track changes
+    forceUpdate, // Expose forceUpdate for components that need to track changes
     addItem,
     updateItem,
     removeItem,
     clearCart,
     getItemCount,
     getTotalAmount,
-    getItem,
-    isLoaded
+    getItem
   };
 }

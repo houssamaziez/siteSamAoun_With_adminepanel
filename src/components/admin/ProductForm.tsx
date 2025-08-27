@@ -153,7 +153,19 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
       onClose();
     } catch (err) {
       console.error('Form submission error:', err);
-      setError(err instanceof Error ? err.message : `Failed to ${editingProduct ? 'update' : 'create'} product`);
+      
+      // Handle specific Supabase errors
+      if (err instanceof Error) {
+        if (err.message.includes('duplicate key value violates unique constraint "products_sku_key"')) {
+          setError('This SKU already exists. Please use a unique SKU for this product.');
+        } else if (err.message.includes('Product update failed - no rows affected')) {
+          setError('Product update failed. The product may have been deleted or you may not have permission to update it.');
+        } else {
+          setError(err.message);
+        }
+      } else {
+        setError(`Failed to ${editingProduct ? 'update' : 'create'} product`);
+      }
     } finally {
       setLoading(false);
     }

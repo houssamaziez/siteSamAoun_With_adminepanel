@@ -41,12 +41,12 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
      buttonElement.classList.remove('bg-blue-600', 'hover:bg-blue-700');
      
      setTimeout(() => {
-       if (buttonElement.textContent === 'Added!') {
+       if (buttonElement && buttonElement.textContent === 'Added!') {
          buttonElement.textContent = originalText;
          buttonElement.classList.remove('bg-green-500', 'hover:bg-green-600');
          buttonElement.classList.add('bg-blue-600', 'hover:bg-blue-700');
        }
-     }, 1500);
+     }, 2000);
    }
   };
 

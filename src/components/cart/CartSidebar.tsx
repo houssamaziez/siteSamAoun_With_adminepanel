@@ -10,7 +10,7 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
-  const { items, updateItem, removeItem, getTotalAmount, getItemCount, itemCount } = useCart();
+  const { items, updateItem, removeItem, getTotalAmount, getItemCount, updateTrigger } = useCart();
   const [displayCount, setDisplayCount] = useState(0);
   const [displayTotal, setDisplayTotal] = useState(0);
 
@@ -18,7 +18,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
   useEffect(() => {
     setDisplayCount(getItemCount());
     setDisplayTotal(getTotalAmount());
-  }, [items, getItemCount, getTotalAmount]);
+  }, [items, updateTrigger, getItemCount, getTotalAmount]);
 
   // Debug: Log cart items
   useEffect(() => {

@@ -18,6 +18,7 @@ import { ReservationsManager } from './ReservationsManager';
 import { SiteSettingsManager } from './SiteSettingsManager';
 import { UsersManager } from './UsersManager';
 import { signOut } from '../../lib/supabase';
+import { getCurrentUser, isAdmin } from '../../lib/supabase';
 
 type AdminView = 'overview' | 'products' | 'categories' | 'reservations' | 'users' | 'settings';
 
@@ -28,6 +29,26 @@ interface AdminDashboardProps {
 export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [currentView, setCurrentView] = useState<AdminView>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userRole, setUserRole] = useState<'admin' | 'manager' | 'staff' | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkUserRole();
+  }, []);
+
+  const checkUserRole = async () => {
+    try {
+      const { user } = await getCurrentUser();
+      if (user) {
+        const { role } = await isAdmin(user.id);
+        setUserRole(role);
+      }
+    } catch (error) {
+      console.error('Failed to check user role:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     await signOut();
@@ -39,9 +60,17 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
     { id: 'products', name: 'Products', icon: Package },
     { id: 'categories', name: 'Categories', icon: FolderOpen },
     { id: 'reservations', name: 'Reservations', icon: Calendar },
-    { id: 'users', name: 'Users', icon: Users },
-    { id: 'settings', name: 'Settings', icon: Settings },
+    ...(userRole === 'admin' ? [{ id: 'users', name: 'Users', icon: Users }] : []),
+    ...(userRole === 'admin' || userRole === 'manager' ? [{ id: 'settings', name: 'Settings', icon: Settings }] : []),
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   const renderContent = () => {
     switch (currentView) {
@@ -142,7 +171,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
             
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600">
-                Welcome back, Admin
+                Welcome back, {userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : 'User'}
               </div>
             </div>
           </div>

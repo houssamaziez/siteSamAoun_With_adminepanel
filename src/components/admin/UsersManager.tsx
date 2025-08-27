@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, User, Shield, UserCheck, X, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { supabase } from '../../lib/supabase';
+import { supabase, getCurrentUser, isAdmin } from '../../lib/supabase';
 
 interface AdminUser {
   id: string;
@@ -18,10 +18,24 @@ export function UsersManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+  const [currentUserRole, setCurrentUserRole] = useState<'admin' | 'manager' | 'staff' | null>(null);
 
   useEffect(() => {
     fetchUsers();
+    checkCurrentUserRole();
   }, []);
+
+  const checkCurrentUserRole = async () => {
+    try {
+      const { user } = await getCurrentUser();
+      if (user) {
+        const { role } = await isAdmin(user.id);
+        setCurrentUserRole(role);
+      }
+    } catch (error) {
+      console.error('Failed to check user role:', error);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -46,6 +60,11 @@ export function UsersManager() {
   );
 
   const handleDeleteUser = async (userId: string) => {
+    if (currentUserRole !== 'admin') {
+      alert('Only administrators can delete users.');
+      return;
+    }
+
     if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
@@ -66,6 +85,10 @@ export function UsersManager() {
   };
 
   const handleEditUser = (user: AdminUser) => {
+    if (currentUserRole !== 'admin') {
+      alert('Only administrators can edit users.');
+      return;
+    }
     setEditingUser(user);
     setShowForm(true);
   };
@@ -94,10 +117,17 @@ export function UsersManager() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Users Management</h1>
           <p className="text-gray-600">Manage admin users and their roles</p>
+          {currentUserRole !== 'admin' && (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg mt-2">
+              <p className="text-sm">⚠️ Only administrators can manage users.</p>
+            </div>
+          )}
         </div>
-        <Button icon={Plus} onClick={() => setShowForm(true)}>
-          Add User
-        </Button>
+        {currentUserRole === 'admin' && (
+          <Button icon={Plus} onClick={() => setShowForm(true)}>
+            Add User
+          </Button>
+        )}
       </div>
 
       {error && (
@@ -194,19 +224,21 @@ export function UsersManager() {
       </div>
 
       {/* User Form Modal */}
-      <UserForm
-        isOpen={showForm}
-        onClose={() => {
-          setShowForm(false);
-          setEditingUser(null);
-        }}
-        onSuccess={() => {
-          fetchUsers();
-          setShowForm(false);
-          setEditingUser(null);
-        }}
-        editingUser={editingUser}
-      />
+      {currentUserRole === 'admin' && (
+        <UserForm
+          isOpen={showForm}
+          onClose={() => {
+            setShowForm(false);
+            setEditingUser(null);
+          }}
+          onSuccess={() => {
+            fetchUsers();
+            setShowForm(false);
+            setEditingUser(null);
+          }}
+          editingUser={editingUser}
+        />
+      )}
     </div>
   );
 }

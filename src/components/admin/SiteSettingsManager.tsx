@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Save, Globe, MapPin, Phone, Mail, Clock, Palette, Share2, Settings2, DollarSign, TrendingUp } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { LocationPicker } from '../ui/LocationPicker';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export function SiteSettingsManager() {
@@ -74,7 +75,10 @@ export function SiteSettingsManager() {
     mapUrl: '',
     mapLatitude: '',
     mapLongitude: '',
-    mapZoom: ''
+    mapZoom: '',
+    googleMapsApiKey: '',
+    mapType: 'google' as 'google' | 'openstreetmap',
+    enableDirections: false
   });
   
   const [saving, setSaving] = useState(false);
@@ -139,7 +143,10 @@ export function SiteSettingsManager() {
         mapUrl: settings.mapUrl || '',
         mapLatitude: settings.mapLatitude?.toString() || '',
         mapLongitude: settings.mapLongitude?.toString() || '',
-        mapZoom: settings.mapZoom?.toString() || ''
+        mapZoom: settings.mapZoom?.toString() || '',
+        googleMapsApiKey: settings.googleMapsApiKey || '',
+        mapType: settings.mapType || 'google',
+        enableDirections: settings.enableDirections || false
       });
     }
   }, [settings]);
@@ -156,7 +163,10 @@ export function SiteSettingsManager() {
       freeDeliveryThreshold: formData.freeDeliveryThreshold ? parseFloat(formData.freeDeliveryThreshold) : 0,
       mapLatitude: formData.mapLatitude ? parseFloat(formData.mapLatitude) : null,
       mapLongitude: formData.mapLongitude ? parseFloat(formData.mapLongitude) : null,
-      mapZoom: formData.mapZoom ? parseInt(formData.mapZoom) : null
+      mapZoom: formData.mapZoom ? parseInt(formData.mapZoom) : null,
+      googleMapsApiKey: formData.googleMapsApiKey,
+      mapType: formData.mapType,
+      enableDirections: formData.enableDirections
     };
 
     const result = await updateSettings(updates);
@@ -316,6 +326,48 @@ export function SiteSettingsManager() {
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">كيفية الحصول على الإحداثيات:</h4>
+                <ol className="text-sm text-blue-800 space-y-1">
+                  <li>1. اذهب إلى Google Maps</li>
+                  <li>2. ابحث عن موقع متجرك</li>
+                  <li>3. انقر بالزر الأيمن على الموقع</li>
+                  <li>4. انسخ الإحداثيات (الرقم الأول = خط العرض، الثاني = خط الطول)</li>
+                </ol>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Google Maps API Key
+                </label>
+                <input
+                  type="text"
+                  name="googleMapsApiKey"
+                  value={formData.googleMapsApiKey}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="AIzaSyC4R6AN7SmxjPUIGKdyBDqqBFTbXcM_..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  احصل على API Key من Google Cloud Console لتفعيل الخرائط التفاعلية
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  نوع الخريطة
+                </label>
+                <select
+                  name="mapType"
+                  value={formData.mapType}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="google">Google Maps</option>
+                  <option value="openstreetmap">OpenStreetMap (مجاني)</option>
+                </select>
               </div>
 
               <div>
@@ -895,6 +947,9 @@ export function SiteSettingsManager() {
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Palette className="w-5 h-5 mr-2" />
                 التصميم والألوان
+                <p className="text-xs text-gray-500 mt-1">
+                  رابط Google Maps للتضمين في الموقع
+                </p>
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1019,6 +1074,53 @@ export function SiteSettingsManager() {
                 <label className="ml-2 block text-sm text-gray-700">
                   تفعيل الإعلان
                 </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="enableDirections"
+                  checked={formData.enableDirections}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label className="ml-2 block text-sm text-gray-700">
+                  تفعيل الاتجاهات والملاحة
+                </label>
+              </div>
+
+              {formData.mapLatitude && formData.mapLongitude && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-green-900 mb-2">معاينة الموقع:</h4>
+                  <p className="text-sm text-green-800">
+                    الإحداثيات: {formData.mapLatitude}, {formData.mapLongitude}
+                  </p>
+                  <a
+                    href={`https://www.google.com/maps?q=${formData.mapLatitude},${formData.mapLongitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 text-sm underline"
+                  >
+                    عرض في Google Maps
+                  </a>
+                </div>
+              )}
+
+              {/* Location Picker Tool */}
+              <div className="border-t border-gray-200 pt-6">
+                <h4 className="font-semibold text-gray-900 mb-4">أداة تحديد الموقع</h4>
+                <LocationPicker
+                  latitude={formData.mapLatitude ? parseFloat(formData.mapLatitude) : undefined}
+                  longitude={formData.mapLongitude ? parseFloat(formData.mapLongitude) : undefined}
+                  apiKey={formData.googleMapsApiKey}
+                  onLocationChange={(lat, lng) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      mapLatitude: lat.toString(),
+                      mapLongitude: lng.toString()
+                    }));
+                  }}
+                />
               </div>
             </div>
           )}

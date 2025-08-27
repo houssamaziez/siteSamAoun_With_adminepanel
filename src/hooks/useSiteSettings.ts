@@ -99,7 +99,10 @@ export function useSiteSettings() {
           mapUrl: data.map_url,
           mapLatitude: data.map_latitude,
           mapLongitude: data.map_longitude,
-          mapZoom: data.map_zoom
+          mapZoom: data.map_zoom,
+          googleMapsApiKey: data.google_maps_api_key,
+          mapType: data.map_type || 'google',
+          enableDirections: data.enable_directions
         };
         setSettings(formattedSettings);
       }
@@ -172,7 +175,10 @@ export function useSiteSettings() {
             map_url: updates.mapUrl,
             map_latitude: updates.mapLatitude,
             map_longitude: updates.mapLongitude,
-            map_zoom: updates.mapZoom
+            map_zoom: updates.mapZoom,
+            google_maps_api_key: updates.googleMapsApiKey,
+            map_type: updates.mapType,
+            enable_directions: updates.enableDirections
           });
 
         if (error) throw error;
@@ -235,7 +241,10 @@ export function useSiteSettings() {
             map_url: updates.mapUrl,
             map_latitude: updates.mapLatitude,
             map_longitude: updates.mapLongitude,
-            map_zoom: updates.mapZoom
+            map_zoom: updates.mapZoom,
+            google_maps_api_key: updates.googleMapsApiKey,
+            map_type: updates.mapType,
+            enable_directions: updates.enableDirections
           })
           .eq('id', settings.id);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, MessageSquare, Navigation } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 
@@ -14,6 +14,15 @@ export function ContactPage() {
     email: 'info@techhubpro.com',
     hours: 'Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM',
     mapUrl: 'https://maps.google.com/maps?q=36.7538,3.0588&z=15&output=embed'
+  };
+
+  const handleGetDirections = () => {
+    if (settings?.mapLatitude && settings?.mapLongitude) {
+      const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${settings.mapLatitude},${settings.mapLongitude}`;
+      window.open(directionsUrl, '_blank');
+    } else {
+      handleFindUs();
+    }
   };
 
   return (
@@ -116,10 +125,20 @@ export function ContactPage() {
                   onClick={() => window.open(settings?.mapUrl || siteData.mapUrl, '_blank')}
                   icon={MapPin}
                   variant="outline"
-                  className="w-full hover-lift"
+                  className="w-full hover-lift mb-3"
                 >
                   Open in Google Maps
                 </Button>
+                
+                {settings?.enableDirections && (
+                  <Button
+                    onClick={handleGetDirections}
+                    icon={Navigation}
+                    className="w-full hover-lift"
+                  >
+                    Get Directions
+                  </Button>
+                )}
               </div>
             </div>
           </div>

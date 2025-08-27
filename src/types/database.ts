@@ -237,6 +237,9 @@ export interface Database {
           map_latitude: number | null;
           map_longitude: number | null;
           map_zoom: number | null;
+          google_maps_api_key: string | null;
+          map_type: 'google' | 'openstreetmap' | null;
+          enable_directions: boolean;
         };
         Insert: {
           id?: string;
@@ -297,6 +300,9 @@ export interface Database {
           map_latitude?: number | null;
           map_longitude?: number | null;
           map_zoom?: number | null;
+          google_maps_api_key?: string | null;
+          map_type?: 'google' | 'openstreetmap' | null;
+          enable_directions?: boolean;
         };
         Update: {
           id?: string;
@@ -357,6 +363,9 @@ export interface Database {
           map_latitude?: number | null;
           map_longitude?: number | null;
           map_zoom?: number | null;
+          google_maps_api_key?: string | null;
+          map_type?: 'google' | 'openstreetmap' | null;
+          enable_directions?: boolean;
         };
       };
     };

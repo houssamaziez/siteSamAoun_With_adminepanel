@@ -133,4 +133,7 @@ export interface SiteSettings {
   mapLatitude?: number;
   mapLongitude?: number;
   mapZoom?: number;
+  googleMapsApiKey?: string;
+  mapType?: 'google' | 'openstreetmap';
+  enableDirections?: boolean;
 }

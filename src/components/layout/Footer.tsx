@@ -69,16 +69,36 @@ export function Footer() {
             
             {/* Social Links */}
             <div className="flex space-x-4">
-              <a href={settings?.facebookUrl || "#"} className="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors duration-200">
+              <a 
+                href={settings?.facebookUrl || "#"} 
+                target={settings?.facebookUrl ? "_blank" : "_self"}
+                rel={settings?.facebookUrl ? "noopener noreferrer" : undefined}
+                className="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors duration-200"
+              >
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href={settings?.twitterUrl || "#"} className="w-10 h-10 bg-gray-800 hover:bg-blue-400 rounded-full flex items-center justify-center transition-colors duration-200">
+              <a 
+                href={settings?.twitterUrl || "#"} 
+                target={settings?.twitterUrl ? "_blank" : "_self"}
+                rel={settings?.twitterUrl ? "noopener noreferrer" : undefined}
+                className="w-10 h-10 bg-gray-800 hover:bg-blue-400 rounded-full flex items-center justify-center transition-colors duration-200"
+              >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href={settings?.instagramUrl || "#"} className="w-10 h-10 bg-gray-800 hover:bg-pink-600 rounded-full flex items-center justify-center transition-colors duration-200">
+              <a 
+                href={settings?.instagramUrl || "#"} 
+                target={settings?.instagramUrl ? "_blank" : "_self"}
+                rel={settings?.instagramUrl ? "noopener noreferrer" : undefined}
+                className="w-10 h-10 bg-gray-800 hover:bg-pink-600 rounded-full flex items-center justify-center transition-colors duration-200"
+              >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href={settings?.youtubeUrl || "#"} className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors duration-200">
+              <a 
+                href={settings?.youtubeUrl || "#"} 
+                target={settings?.youtubeUrl ? "_blank" : "_self"}
+                rel={settings?.youtubeUrl ? "noopener noreferrer" : undefined}
+                className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors duration-200"
+              >
                 <Youtube className="w-5 h-5" />
               </a>
             </div>

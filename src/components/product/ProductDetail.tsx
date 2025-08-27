@@ -17,6 +17,8 @@ import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
 import { useReservation } from '../../hooks/useReservation';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/Dialog';
+import { ReservationForm } from '../reservation/ReservationForm';
 
 interface ProductDetailProps {
   product: Product;
@@ -33,6 +35,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+
   const cartItem = getItem(product.id);
   const reservationItem = getReservationItem(product.id);
 
@@ -48,12 +52,17 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   };
 
-  const handleAddToReservation = () => {
+  const handleOpenReservationModal = () => {
+    setIsReservationModalOpen(true);
+  };
+
+  const handleConfirmReservation = (customerData: any) => {
     if (reservationItem) {
       updateReservation(product.id, reservationItem.quantity + quantity);
     } else {
-      addReservation(product, quantity);
+      addReservation(product, quantity, customerData);
     }
+    setIsReservationModalOpen(false);
   };
 
   const handleQuantityChange = (newQuantity: number) => {
@@ -64,7 +73,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* زر العودة */}
+      {/* Back button */}
       <button
         onClick={onBack}
         className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors duration-200"
@@ -74,7 +83,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* صور المنتج */}
+        {/* Product images */}
         <div className="space-y-4">
           <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
             <img
@@ -112,9 +121,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           )}
         </div>
 
-        {/* تفاصيل المنتج */}
+        {/* Product details */}
         <div className="space-y-6">
-          {/* العنوان */}
+          {/* Title */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-blue-600">{product.brand}</span>
@@ -129,7 +138,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
 
-            {/* التقييم */}
+            {/* Rating */}
             <div className="flex items-center mb-4">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
@@ -147,7 +156,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             <p className="text-gray-600 text-lg leading-relaxed">{product.shortDescription}</p>
           </div>
 
-          {/* السعر */}
+          {/* Price */}
           <div className="border-t border-b border-gray-200 py-6">
             <div className="flex items-center space-x-4">
               <span className="text-4xl font-bold text-gray-900">
@@ -165,7 +174,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               )}
             </div>
 
-            {/* حالة المخزون */}
+            {/* Stock status */}
             <div className="mt-3">
               {product.stock > 0 ? (
                 <div className="flex items-center text-green-600">
@@ -183,7 +192,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
           </div>
 
-          {/* الكمية والأزرار */}
+          {/* Quantity & Buttons */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <span className="text-sm font-medium text-gray-700">الكمية:</span>
@@ -206,7 +215,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
             </div>
 
-            {/* الأزرار */}
+            {/* Action buttons */}
             <div className="flex space-x-4">
               <Button
                 onClick={handleAddToCart}
@@ -221,7 +230,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </Button>
 
               <Button
-                onClick={handleAddToReservation}
+                onClick={handleOpenReservationModal}
                 disabled={product.stock === 0}
                 icon={BookmarkPlus}
                 size="lg"
@@ -234,7 +243,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
           </div>
 
-          {/* المميزات */}
+          {/* Features */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -268,6 +277,22 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           </div>
         </div>
       </div>
+
+      {/* Reservation Modal */}
+      <Dialog open={isReservationModalOpen} onOpenChange={setIsReservationModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-center">
+              حجز المنتج
+            </DialogTitle>
+          </DialogHeader>
+          <ReservationForm
+            product={product}
+            onConfirm={handleConfirmReservation}
+            onClose={() => setIsReservationModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

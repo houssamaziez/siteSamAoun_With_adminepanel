@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   ArrowLeft,
   ShoppingCart,
@@ -12,15 +12,18 @@ import {
   Minus,
   Plus,
   BookmarkPlus,
-} from 'lucide-react';
-import { Button } from '../ui/Button';
-import { Product } from '../../types';
-import { useCart } from '../../hooks/useCart';
-import { useReservation } from '../../hooks/useReservation';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/Dialog';
-
-// ✅ Use default import instead of named import
-import ReservationForm from '../reservation/ReservationForm';
+} from "lucide-react";
+import { Button } from "../ui/Button";
+import { Product } from "../../types";
+import { useCart } from "../../hooks/useCart";
+import { useReservation } from "../../hooks/useReservation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"; // ✅ FIXED PATH
+import ReservationForm from "@/components/reservation/ReservationForm"; // ✅ FIXED PATH
 
 interface ProductDetailProps {
   product: Product;
@@ -29,7 +32,8 @@ interface ProductDetailProps {
 
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const { addItem, getItem, updateItem } = useCart();
-  const { addReservation, getReservationItem, updateReservation } = useReservation();
+  const { addReservation, getReservationItem, updateReservation } =
+    useReservation();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -39,7 +43,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const reservationItem = getReservationItem(product.id);
 
   const discountPercent = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      )
     : 0;
 
   const handleAddToCart = () => {
@@ -48,10 +54,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     } else {
       addItem(product, quantity);
     }
-  };
-
-  const handleOpenReservationModal = () => {
-    setIsReservationModalOpen(true);
   };
 
   const handleConfirmReservation = (customerData: any) => {
@@ -77,7 +79,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors duration-200"
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
-        Back to Products
+        العودة للمنتجات
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -104,8 +106,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                   onClick={() => setSelectedImageIndex(index)}
                   className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors duration-200 ${
                     selectedImageIndex === index
-                      ? 'border-blue-500'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? "border-blue-500"
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
                   <img
@@ -124,7 +126,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           {/* Title */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-blue-600">{product.brand}</span>
+              <span className="text-sm font-medium text-blue-600">
+                {product.brand}
+              </span>
               <div className="flex items-center space-x-2">
                 <button className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors duration-200">
                   <Heart className="w-5 h-5" />
@@ -134,7 +138,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 </button>
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              {product.name}
+            </h1>
 
             {/* Rating */}
             <div className="flex items-center mb-4">
@@ -143,15 +149,19 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                   <Star
                     key={i}
                     className={`w-5 h-5 ${
-                      i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                      i < 4 ? "text-yellow-400 fill-current" : "text-gray-300"
                     }`}
                   />
                 ))}
               </div>
-              <span className="text-sm text-gray-600 ml-2">(4.2) • 127 reviews</span>
+              <span className="text-sm text-gray-600 ml-2">
+                (4.2) • 127 مراجعة
+              </span>
             </div>
 
-            <p className="text-gray-600 text-lg leading-relaxed">{product.shortDescription}</p>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              {product.shortDescription}
+            </p>
           </div>
 
           {/* Price */}
@@ -224,11 +234,11 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               >
                 {cartItem
                   ? `تحديث السلة (${cartItem.quantity})`
-                  : 'إضافة إلى السلة'}
+                  : "إضافة إلى السلة"}
               </Button>
 
               <Button
-                onClick={handleOpenReservationModal}
+                onClick={() => setIsReservationModalOpen(true)}
                 disabled={product.stock === 0}
                 icon={BookmarkPlus}
                 size="lg"
@@ -236,7 +246,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               >
                 {reservationItem
                   ? `تحديث الحجز (${reservationItem.quantity})`
-                  : 'إضافة إلى الحجوزات'}
+                  : "إضافة إلى الحجوزات"}
               </Button>
             </div>
           </div>
@@ -249,7 +259,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </div>
               <div>
                 <p className="font-medium text-gray-900">الضمان</p>
-                <p className="text-sm text-gray-600">{product.warranty || 'سنة واحدة'}</p>
+                <p className="text-sm text-gray-600">
+                  {product.warranty || "سنة واحدة"}
+                </p>
               </div>
             </div>
 

@@ -70,7 +70,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       alert('هذا المنتج غير متوفر في المخزون!');
       return;
     }
-
     addItem(product, quantity);
     alert(`تمت إضافة ${quantity} من ${product.name} إلى السلة`);
   };
@@ -96,7 +95,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
         total_amount: product.price * quantity
       };
-
       const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
 

@@ -39,6 +39,12 @@ export const getCurrentUser = async () => {
 
 // Check if user is admin
 export const isAdmin = async (userId: string) => {
+  // Validate UUID format
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!userId || !uuidRegex.test(userId)) {
+    return { isAdmin: false, role: null, error: new Error('Invalid user ID format') };
+  }
+
   const { data, error } = await supabase
     .from('admins')
     .select('id, role')

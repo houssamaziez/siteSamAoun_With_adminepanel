@@ -61,18 +61,19 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     e.preventDefault();
     setLoading(true);
     try {
-      const reservationData = {
-        reference_number: `REF-${Date.now()}`,
-        customer_name: formData.customerName,
-        customer_phone: formData.customerPhone,
-        customer_whatsapp: formData.customerWhatsApp,
-        pickup_branch: formData.pickupBranch,
-        proposed_date: formData.proposedDate,
-        proposed_time: formData.proposedTime,
-        notes: formData.notes,
-        items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
-        total_amount: product.price * quantity
-      };
+   const reservationData = {
+  reference_number: `REF-${Date.now()}`,
+  customer_name: formData.customerName,
+  customer_phone: formData.customerPhone,
+  customer_whatsapp: formData.customerWhatsApp,
+  pickup_branch: formData.pickupBranch,
+  proposed_date: formData.proposedDate,
+  proposed_time: formData.proposedTime,
+  notes: formData.notes,
+  items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
+  total_amount: product.price * quantity
+};
+
       const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
       alert('تم إرسال الحجز بنجاح!');

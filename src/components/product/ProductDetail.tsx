@@ -24,6 +24,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"; // ✅ FIXED PATH
 import ReservationForm from "@/components/reservation/ReservationForm"; // ✅ FIXED PATH
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface ProductDetailProps {
   product: Product;

@@ -340,7 +340,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Google Maps API Key *
+                  Google Maps API Key (للخرائط التفاعلية)
                 </label>
                 <input
                   type="text"
@@ -350,8 +350,8 @@ export function SiteSettingsManager() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="AIzaSyDV0zNlb2O-blUSUJF6XgOmeJ-QeC2qeos"
                 />
-                <p className="text-xs text-green-600 mt-1 font-medium">
-                  ✅ API Key محفوظ ومفعل - يمكنك الآن استخدام جميع ميزات الخرائط
+                <p className="text-xs text-blue-600 mt-1">
+                  مطلوب لميزات البحث والاتجاهات المتقدمة. الخرائط الأساسية تعمل بدونه.
                 </p>
               </div>
 

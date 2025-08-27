@@ -33,7 +33,7 @@ export function LocationPicker({ latitude, longitude, onLocationChange, apiKey }
           onLocationChange(location.lat, location.lng);
           setSearchQuery(''); // Clear search after successful result
         } else {
-          setError('Location not found. Try a different search term.');
+          setError('الموقع غير موجود. جرب مصطلح بحث مختلف.');
         }
       } else {
         // Fallback to Nominatim (OpenStreetMap) - free but limited
@@ -46,11 +46,11 @@ export function LocationPicker({ latitude, longitude, onLocationChange, apiKey }
           onLocationChange(parseFloat(data[0].lat), parseFloat(data[0].lon));
           setSearchQuery(''); // Clear search after successful result
         } else {
-          setError('Location not found. Try a different search term.');
+          setError('الموقع غير موجود. جرب مصطلح بحث مختلف.');
         }
       }
     } catch (err) {
-      setError('Error searching for location. Please try again.');
+      setError('خطأ في البحث عن الموقع. حاول مرة أخرى.');
     } finally {
       setIsLoading(false);
     }

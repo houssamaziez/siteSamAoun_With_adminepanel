@@ -21,7 +21,30 @@ export function ContactPage() {
       const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${settings.mapLatitude},${settings.mapLongitude}`;
       window.open(directionsUrl, '_blank');
     } else {
-      handleFindUs();
+      // Fallback to general map view
+      window.open('https://www.google.com/maps', '_blank');
+    }
+  };
+
+  const handleFindUs = () => {
+    if (settings?.mapLatitude && settings?.mapLongitude) {
+      const mapUrl = `https://www.google.com/maps?q=${settings.mapLatitude},${settings.mapLongitude}&z=15`;
+      window.open(mapUrl, '_blank');
+    } else {
+      window.open('https://www.google.com/maps', '_blank');
+    }
+  };
+
+  // Generate proper Google Maps Embed URL
+  const getEmbedMapUrl = () => {
+    if (settings?.mapLatitude && settings?.mapLongitude && settings?.googleMapsApiKey) {
+      return `https://www.google.com/maps/embed/v1/place?key=${settings.googleMapsApiKey}&q=${settings.mapLatitude},${settings.mapLongitude}&zoom=15`;
+    } else if (settings?.mapLatitude && settings?.mapLongitude) {
+      // Fallback to basic embed without API key (limited functionality)
+      return `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3048.398!2d${settings.mapLongitude}!3d${settings.mapLatitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s`;
+    } else {
+      // Default fallback map
+      return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.398!2d3.0588!3d36.7538!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s';
     }
   };
 
@@ -109,7 +132,7 @@ export function ContactPage() {
               
               <div className="aspect-video">
                 <iframe
-                  src={settings?.mapUrl || siteData.mapUrl}
+                  src={getEmbedMapUrl()}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -122,7 +145,7 @@ export function ContactPage() {
               
               <div className="p-6">
                 <Button
-                  onClick={() => window.open(settings?.mapUrl || siteData.mapUrl, '_blank')}
+                  onClick={handleFindUs}
                   icon={MapPin}
                   variant="outline"
                   className="w-full hover-lift mb-3"

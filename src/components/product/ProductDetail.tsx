@@ -3,17 +3,16 @@ import {
   ArrowLeft,
   ShoppingCart,
   Heart,
-  Share2,
-  Star,
+  BookmarkPlus,
   Minus,
   Plus,
-  BookmarkPlus,
+  Star,
   X
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { createClient } from '@supabase/supabase-js';
 
-// إعداد Supabase باستخدام متغيرات البيئة
+// Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -39,11 +38,10 @@ interface CartItem {
   quantity: number;
 }
 
-let cartItems: CartItem[] = [];
-
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showReservationForm, setShowReservationForm] = useState(false);
   const [formData, setFormData] = useState({
     customerName: '',
@@ -60,26 +58,23 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
-  const branches = [
-    { value: 'main-store', label: 'Main Store - Downtown' },
-    { value: 'tech-plaza', label: 'Tech Plaza Branch' },
-    { value: 'mall-location', label: 'Shopping Mall Location' }
-  ];
-
-  const timeSlots = [
-    '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-    '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
-    '5:00 PM', '6:00 PM'
-  ];
-
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1 && newQuantity <= product.stock) setQuantity(newQuantity);
   };
 
   const addToCart = () => {
-    const existing = cartItems.find(item => item.product.id === product.id);
-    if (existing) existing.quantity += quantity;
-    else cartItems.push({ product, quantity });
+    setCartItems(prev => {
+      const existing = prev.find(item => item.product.id === product.id);
+      if (existing) {
+        return prev.map(item =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        return [...prev, { product, quantity }];
+      }
+    });
     alert('تمت إضافة المنتج إلى السلة!');
   };
 
@@ -91,21 +86,19 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-    const reservationData = {
-  reference_number: `REF-${Date.now()}`,
-  customer_name: formData.customerName,
-  customer_phone: formData.customerPhone,
-  customer_whatsapp: formData.customerWhatsApp,
-  pickup_branch: formData.pickupBranch,
-  proposed_date: formData.proposedDate,
-  proposed_time: formData.proposedTime,
-  notes: formData.notes,
-  items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
-  total_amount: product.price * quantity
-};
-
+      const reservationData = {
+        reference_number: `REF-${Date.now()}`,
+        customer_name: formData.customerName,
+        customer_phone: formData.customerPhone,
+        customer_whatsapp: formData.customerWhatsApp,
+        pickup_branch: formData.pickupBranch,
+        proposed_date: formData.proposedDate,
+        proposed_time: formData.proposedTime,
+        notes: formData.notes,
+        items: JSON.stringify([{ productId: product.id, name: product.name, quantity, price: product.price }]),
+        total_amount: product.price * quantity
+      };
 
       const { data, error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
@@ -158,10 +151,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-blue-600">{product.brand}</span>
-              <div className="flex items-center space-x-2">
-                <button className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50"><Heart className="w-5 h-5"/></button>
-                <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50"><Share2 className="w-5 h-5"/></button>
-              </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
             <div className="flex items-center mb-4">
@@ -181,65 +170,12 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
 
             <div className="flex space-x-4">
-              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1">إضافة إلى السلة</Button>
+              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1">إضافة إلى السلة ({cartItems.find(i=>i.product.id===product.id)?.quantity || 0})</Button>
               <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">حجز الآن</Button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Reservation Modal */}
-      {showReservationForm && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-semibold">Reserve Your Items</h2>
-              <button onClick={()=>setShowReservationForm(false)}><X className="w-6 h-6 text-gray-500"/></button>
-            </div>
-            <form onSubmit={handleReservationSubmit} className="space-y-4">
-              <div>
-                <label>Full Name *</label>
-                <input name="customerName" value={formData.customerName} onChange={handleFormChange} required className="w-full border p-2 rounded"/>
-              </div>
-              <div>
-                <label>Phone *</label>
-                <input name="customerPhone" value={formData.customerPhone} onChange={handleFormChange} required className="w-full border p-2 rounded"/>
-              </div>
-              <div>
-                <label>WhatsApp (Optional)</label>
-                <input name="customerWhatsApp" value={formData.customerWhatsApp} onChange={handleFormChange} className="w-full border p-2 rounded"/>
-              </div>
-              <div>
-                <label>Pickup Branch *</label>
-                <select name="pickupBranch" value={formData.pickupBranch} onChange={handleFormChange} className="w-full border p-2 rounded">
-                  {branches.map(b=><option key={b.value} value={b.value}>{b.label}</option>)}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label>Preferred Date *</label>
-                  <input type="date" name="proposedDate" value={formData.proposedDate} onChange={handleFormChange} min={new Date().toISOString().split('T')[0]} className="w-full border p-2 rounded" required/>
-                </div>
-                <div>
-                  <label>Preferred Time *</label>
-                  <select name="proposedTime" value={formData.proposedTime} onChange={handleFormChange} required className="w-full border p-2 rounded">
-                    <option value="">Select</option>
-                    {timeSlots.map(t=><option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label>Notes (Optional)</label>
-                <textarea name="notes" value={formData.notes} onChange={handleFormChange} rows={3} className="w-full border p-2 rounded"/>
-              </div>
-              <div className="flex gap-4">
-                <Button type="button" onClick={()=>setShowReservationForm(false)} className="flex-1">Cancel</Button>
-                <Button type="submit" loading={loading} className="flex-1">Submit Reservation</Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

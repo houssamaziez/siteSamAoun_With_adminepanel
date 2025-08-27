@@ -14,7 +14,7 @@ export function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
 
   const currentCategory = categories.find(cat => cat.slug === category);
 
@@ -89,19 +89,19 @@ export function ProductsPage() {
               className="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Home
+              العودة إلى الرئيسية
             </Link>
           </div>
           <h1 className="text-3xl font-bold text-gray-900">
-            {currentCategory ? currentCategory.name : 'All Products'}
+            {currentCategory ? currentCategory.name : 'كل المنتجات'}
           </h1>
           <p className="text-gray-600 mt-2">
-            {currentCategory ? currentCategory.description : 'Discover our comprehensive range of technology products'}
+            {currentCategory ? currentCategory.description : 'اكتشف مجموعتنا الواسعة من المنتجات التقنية'}
           </p>
         </div>
         
         <div className="text-sm text-gray-500">
-          {filteredProducts.length} products found
+          {filteredProducts.length} منتج{filteredProducts.length !== 1 ? '' : ''}
         </div>
       </div>
 
@@ -114,7 +114,7 @@ export function ProductsPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="ابحث عن المنتجات..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -129,10 +129,10 @@ export function ProductsPage() {
               onChange={(e) => setSortBy(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="name">Sort by Name</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="brand">Sort by Brand</option>
+              <option value="name">الترتيب حسب الاسم</option>
+              <option value="price-low">السعر: من الأقل للأعلى</option>
+              <option value="price-high">السعر: من الأعلى للأقل</option>
+              <option value="brand">الترتيب حسب العلامة التجارية</option>
             </select>
           </div>
 
@@ -160,13 +160,13 @@ export function ProductsPage() {
         {/* Price Range */}
         <div className="mt-4 pt-4 border-t border-gray-200">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Price Range: ${priceRange[0]} - ${priceRange[1]}
+            نطاق السعر: {priceRange[0].toLocaleString()} دج - {priceRange[1].toLocaleString()} دج
           </label>
           <div className="flex items-center space-x-4">
             <input
               type="range"
               min="0"
-              max="10000"
+              max="100000"
               step="100"
               value={priceRange[0]}
               onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
@@ -175,7 +175,7 @@ export function ProductsPage() {
             <input
               type="range"
               min="0"
-              max="10000"
+              max="100000"
               step="100"
               value={priceRange[1]}
               onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
@@ -195,7 +195,10 @@ export function ProductsPage() {
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
-              product={product}
+              product={{
+                ...product,
+                price: `${product.price.toLocaleString()} دج`
+              }}
               onViewDetails={() => handleProductView(product.id)}
             />
           ))}
@@ -205,15 +208,15 @@ export function ProductsPage() {
           <div className="text-gray-400 mb-4">
             <Filter className="w-16 h-16 mx-auto" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">لا توجد منتجات</h3>
           <p className="text-gray-600 mb-6">
-            Try adjusting your search criteria or browse different categories
+            جرّب تعديل معايير البحث أو تصفّح فئات مختلفة
           </p>
           <Button onClick={() => {
             setSearchQuery('');
-            setPriceRange([0, 10000]);
+            setPriceRange([0, 100000]);
           }}>
-            Clear Filters
+            إعادة تعيين الفلاتر
           </Button>
         </div>
       )}

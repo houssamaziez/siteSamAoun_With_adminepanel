@@ -83,9 +83,6 @@ export const getCurrentUser = async () => {
     return { user: null, error: { message: 'Network connection failed. Please check your internet connection and Supabase configuration.' } };
   }
 };
-  return { data, error };
-};
-
 
 // Check if user is admin
 export const isAdmin = async (userId: string) => {

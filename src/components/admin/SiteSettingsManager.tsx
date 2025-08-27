@@ -153,7 +153,7 @@ export function SiteSettingsManager() {
     const updates = {
       ...formData,
       deliveryFee: formData.deliveryFee ? parseFloat(formData.deliveryFee) : 0,
-      freeDeliveryThreshold: formData.freeDeliveryThreshold ? parseFloat(formData.freeDeliveryThreshold) : 0
+      freeDeliveryThreshold: formData.freeDeliveryThreshold ? parseFloat(formData.freeDeliveryThreshold) : 0,
       mapLatitude: formData.mapLatitude ? parseFloat(formData.mapLatitude) : null,
       mapLongitude: formData.mapLongitude ? parseFloat(formData.mapLongitude) : null,
       mapZoom: formData.mapZoom ? parseInt(formData.mapZoom) : null

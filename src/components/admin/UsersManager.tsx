@@ -221,8 +221,8 @@ interface UserFormProps {
 function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
   const [formData, setFormData] = useState({
     email: '',
-    userId: '',
     name: '',
+    password: '',
     role: 'staff' as 'admin' | 'manager' | 'staff'
   });
   const [loading, setLoading] = useState(false);
@@ -232,15 +232,15 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
     if (editingUser) {
       setFormData({
         email: editingUser.email,
-        userId: editingUser.id,
         name: editingUser.name,
+        password: '',
         role: editingUser.role
       });
     } else {
       setFormData({
         email: '',
-        userId: '',
         name: '',
+        password: '',
         role: 'staff'
       });
     }
@@ -265,11 +265,23 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
 
         if (error) throw error;
       } else {
-        // Create admin user entry with the provided user ID
+        // First create user in Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: undefined // Disable email confirmation
+          }
+        });
+
+        if (authError) throw authError;
+        if (!authData.user) throw new Error('Failed to create user');
+
+        // Then create admin user entry with the generated user ID
         const { error } = await supabase
           .from('admins')
           .insert({
-            id: formData.userId,
+            id: authData.user.id,
             email: formData.email,
             name: formData.name,
             role: formData.role
@@ -315,42 +327,6 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
               </div>
             )}
 
-            {!editingUser && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Supabase User ID *
-                </label>
-                <input
-                  type="text"
-                  name="userId"
-                  value={formData.userId}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter Supabase User ID"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  First create the user in Supabase Authentication, then copy their User ID here
-                </p>
-                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h4 className="text-sm font-semibold text-blue-900 mb-2">How to create a user in Supabase:</h4>
-                  <ol className="text-xs text-blue-800 space-y-1">
-                    <li><strong>1.</strong> Go to your Supabase project dashboard</li>
-                    <li><strong>2.</strong> Navigate to Authentication → Users</li>
-                    <li><strong>3.</strong> Click "Add user" button</li>
-                    <li><strong>4.</strong> Enter email and password</li>
-                    <li><strong>5.</strong> Click "Create user"</li>
-                    <li><strong>6.</strong> Copy the generated User ID and paste it above</li>
-                  </ol>
-                  <div className="mt-2 pt-2 border-t border-blue-200">
-                    <p className="text-xs text-blue-700">
-                      <strong>Note:</strong> The User ID is a UUID format like: 12345678-1234-1234-1234-123456789abc
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Full Name *
@@ -380,6 +356,27 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
                 placeholder="john@example.com"
               />
             </div>
+
+            {!editingUser && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password *
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  minLength={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter password (min 6 characters)"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Password must be at least 6 characters long
+                </p>
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

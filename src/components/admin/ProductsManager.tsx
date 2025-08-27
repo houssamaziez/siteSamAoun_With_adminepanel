@@ -129,9 +129,9 @@ export function ProductsManager() {
                   <td className="py-4 px-6 text-sm text-gray-900">{product.category.name}</td>
                   <td className="py-4 px-6">
                     <div className="text-sm">
-                      <p className="font-medium text-gray-900">${product.price.toLocaleString()}</p>
+                      <p className="font-medium text-gray-900">{product.price.toLocaleString()} د.ج</p>
                       {product.originalPrice && (
-                        <p className="text-gray-500 line-through">${product.originalPrice.toLocaleString()}</p>
+                        <p className="text-gray-500 line-through">{product.originalPrice.toLocaleString()} د.ج</p>
                       )}
                     </div>
                   </td>

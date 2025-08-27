@@ -72,7 +72,7 @@ export const products: Product[] = [
     brand: "Apple",
     price: 1999,
     originalPrice: 2299,
-    currency: "USD",
+    currency: "DZD",
     images: [
       "https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -104,7 +104,7 @@ export const products: Product[] = [
     slug: "nvidia-rtx-4080",
     brand: "NVIDIA",
     price: 1199,
-    currency: "USD",
+    currency: "DZD",
     images: [
       "https://images.pexels.com/photos/2399840/pexels-photo-2399840.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1200"
@@ -136,7 +136,7 @@ export const products: Product[] = [
     slug: "mechanical-gaming-keyboard-rgb",
     brand: "SteelSeries",
     price: 149,
-    currency: "USD",
+    currency: "DZD",
     images: [
       "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -169,7 +169,7 @@ export const products: Product[] = [
     brand: "ASUS",
     price: 699,
     originalPrice: 799,
-    currency: "USD",
+    currency: "DZD",
     images: [
       "https://images.pexels.com/photos/777001/pexels-photo-777001.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -201,7 +201,7 @@ export const products: Product[] = [
     slug: "amd-ryzen-9-7900x",
     brand: "AMD",
     price: 549,
-    currency: "USD",
+    currency: "DZD",
     images: [
       "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/2399840/pexels-photo-2399840.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -233,7 +233,7 @@ export const products: Product[] = [
     slug: "gaming-headset-surround",
     brand: "Logitech",
     price: 199,
-    currency: "USD",
+    currency: "DZD",
     images: [
       "https://images.pexels.com/photos/7915483/pexels-photo-7915483.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/4226140/pexels-photo-4226140.jpeg?auto=compress&cs=tinysrgb&w=1200"

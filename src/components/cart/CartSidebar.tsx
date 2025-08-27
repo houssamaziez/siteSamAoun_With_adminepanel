@@ -90,7 +90,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                     </h3>
                     <p className="text-sm text-gray-600">{item.product.brand}</p>
                     <p className="text-lg font-semibold text-blue-600">
-                      ${item.product.price.toLocaleString()}
+                      {item.product.price.toLocaleString()} د.ج
                     </p>
                   </div>
 
@@ -132,7 +132,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
             {/* Total */}
             <div className="flex items-center justify-between text-lg font-semibold transition-all duration-300">
               <span>Total:</span>
-              <span className="text-blue-600 animate-pulse">${cartTotal.toLocaleString()}</span>
+              <span className="text-blue-600 animate-pulse">{cartTotal.toLocaleString()} د.ج</span>
             </div>
 
             {/* Note */}

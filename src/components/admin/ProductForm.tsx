@@ -19,7 +19,7 @@ export function ProductForm({ isOpen, onClose, onSuccess }: ProductFormProps) {
     brand: '',
     price: '',
     originalPrice: '',
-    currency: 'USD',
+    currency: 'DZD',
     images: [''],
     categoryId: '',
     shortDescription: '',

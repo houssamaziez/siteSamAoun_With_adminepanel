@@ -25,7 +25,7 @@ export function DashboardOverview() {
     },
     {
       name: 'Total Revenue',
-      value: reservationsLoading ? '...' : `$${reservations.reduce((sum, r) => sum + r.totalAmount, 0).toLocaleString()}`,
+      value: reservationsLoading ? '...' : `${reservations.reduce((sum, r) => sum + r.totalAmount, 0).toLocaleString()} د.ج`,
       icon: DollarSign,
       color: 'bg-green-500',
       change: '+18%',
@@ -102,7 +102,7 @@ export function DashboardOverview() {
                     <div>
                       <p className="font-medium text-gray-900">{reservation.customerName}</p>
                       <p className="text-sm text-gray-600">
-                        {reservation.referenceNumber} • ${reservation.totalAmount.toLocaleString()}
+                        {reservation.referenceNumber} • {reservation.totalAmount.toLocaleString()} د.ج
                       </p>
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${

@@ -141,11 +141,11 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-gray-900">
-              ${product.price.toLocaleString()}
+              {product.price.toLocaleString()} د.ج
             </span>
             {product.originalPrice && (
               <span className="text-sm text-gray-500 line-through">
-                ${product.originalPrice.toLocaleString()}
+                {product.originalPrice.toLocaleString()} د.ج
               </span>
             )}
           </div>

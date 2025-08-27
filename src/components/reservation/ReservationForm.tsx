@@ -103,13 +103,13 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
                 {items.map((item) => (
                   <div key={item.product.id} className="flex justify-between items-center text-sm">
                     <span>{item.product.name} x{item.quantity}</span>
-                    <span className="font-medium">${(item.product.price * item.quantity).toLocaleString()}</span>
+                    <span className="font-medium">{(item.product.price * item.quantity).toLocaleString()} د.ج</span>
                   </div>
                 ))}
               </div>
               <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-semibold">
                 <span>Total:</span>
-                <span className="text-blue-600">${getTotalAmount().toLocaleString()}</span>
+                <span className="text-blue-600">{getTotalAmount().toLocaleString()} د.ج</span>
               </div>
             </div>
 

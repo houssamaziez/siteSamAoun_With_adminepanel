@@ -130,7 +130,7 @@ export function ReservationsManager() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Total Amount</p>
-                      <p className="font-medium text-blue-600">${reservation.totalAmount.toLocaleString()}</p>
+                      <p className="font-medium text-blue-600">{reservation.totalAmount.toLocaleString()} د.ج</p>
                     </div>
                   </div>
 
@@ -139,7 +139,7 @@ export function ReservationsManager() {
                     <div className="space-y-1">
                       {reservation.items.slice(0, 3).map((item: any, index: number) => (
                         <p key={index} className="text-sm text-gray-900">
-                          {item.product.name} x{item.quantity} - ${(item.product.price * item.quantity).toLocaleString()}
+                          {item.product.name} x{item.quantity} - {(item.product.price * item.quantity).toLocaleString()} د.ج
                         </p>
                       ))}
                       {reservation.items.length > 3 && (

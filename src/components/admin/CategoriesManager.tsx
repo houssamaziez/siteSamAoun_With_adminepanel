@@ -3,11 +3,64 @@ import { Plus, Edit, Trash2, FolderOpen } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCategories } from '../../hooks/useSupabaseData';
 import { CategoryForm } from './CategoryForm';
+import { supabase } from '../../lib/supabase';
 
 export function CategoriesManager() {
   const { categories, loading, error, refetch } = useCategories();
   const [showForm, setShowForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
 
+  const handleEditCategory = (category) => {
+    console.log('Editing category:', category);
+    setEditingCategory(category);
+    setShowForm(true);
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    if (!window.confirm('Are you sure you want to delete this category? This action cannot be undone and may affect products in this category.')) {
+      return;
+    }
+
+    try {
+      // Check if category has products
+      const { data: products, error: checkError } = await supabase
+        .from('products')
+        .select('id')
+        .eq('category_id', categoryId)
+        .limit(1);
+
+      if (checkError) throw checkError;
+
+      if (products && products.length > 0) {
+        alert('Cannot delete category: There are products assigned to this category. Please reassign or delete the products first.');
+        return;
+      }
+
+      // Delete the category
+      const { error } = await supabase
+        .from('categories')
+        .delete()
+        .eq('id', categoryId);
+
+      if (error) throw error;
+      
+      refetch();
+      alert('Category deleted successfully!');
+    } catch (err) {
+      console.error('Delete category error:', err);
+      alert(`Failed to delete category: ${err.message}`);
+    }
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setEditingCategory(null);
+  };
+
+  const handleFormSuccess = () => {
+    refetch();
+    handleCloseForm();
+  };
   if (loading) {
     return (
       <div className="space-y-6">
@@ -66,10 +119,18 @@ export function CategoriesManager() {
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
                 <div className="flex items-center space-x-2">
-                  <button className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                  <button 
+                    className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50"
+                    onClick={() => handleEditCategory(category)}
+                    title="Edit category"
+                  >
                     <Edit className="w-4 h-4" />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50">
+                  <button 
+                    className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
+                    onClick={() => handleDeleteCategory(category.id)}
+                    title="Delete category"
+                  >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -97,11 +158,9 @@ export function CategoriesManager() {
 
       <CategoryForm
         isOpen={showForm}
-        onClose={() => setShowForm(false)}
-        onSuccess={() => {
-          refetch();
-          setShowForm(false);
-        }}
+        onClose={handleCloseForm}
+        onSuccess={handleFormSuccess}
+        editingCategory={editingCategory}
       />
     </div>
   );

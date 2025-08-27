@@ -7,9 +7,10 @@ interface CategoryFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  editingCategory?: any;
 }
 
-export function CategoryForm({ isOpen, onClose, onSuccess }: CategoryFormProps) {
+export function CategoryForm({ isOpen, onClose, onSuccess, editingCategory }: CategoryFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -20,6 +21,28 @@ export function CategoryForm({ isOpen, onClose, onSuccess }: CategoryFormProps) 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Update form data when editing category changes
+  React.useEffect(() => {
+    if (editingCategory) {
+      console.log('Setting form data for editing category:', editingCategory);
+      setFormData({
+        name: editingCategory.name || '',
+        slug: editingCategory.slug || '',
+        description: editingCategory.description || '',
+        image: editingCategory.image || '',
+        icon: editingCategory.icon || 'Package'
+      });
+    } else {
+      // Reset form for new category
+      setFormData({
+        name: '',
+        slug: '',
+        description: '',
+        image: '',
+        icon: 'Package'
+      });
+    }
+  }, [editingCategory, isOpen]);
   const iconOptions = [
     'Package', 'Laptop', 'Monitor', 'Cpu', 'Keyboard', 'Mouse', 
     'Gamepad2', 'Wifi', 'Smartphone', 'Tablet', 'Camera', 'Headphones'
@@ -31,29 +54,49 @@ export function CategoryForm({ isOpen, onClose, onSuccess }: CategoryFormProps) 
     setError(null);
 
     try {
-      const { error } = await supabase
-        .from('categories')
-        .insert({
-          name: formData.name,
-          slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
-          description: formData.description,
-          image: formData.image,
-          icon: formData.icon
-        });
+      const categoryData = {
+        name: formData.name,
+        slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        description: formData.description,
+        image: formData.image,
+        icon: formData.icon
+      };
 
-      if (error) throw error;
+      if (editingCategory) {
+        // Update existing category
+        console.log('Updating category:', editingCategory.id, categoryData);
+        const { error } = await supabase
+          .from('categories')
+          .update(categoryData)
+          .eq('id', editingCategory.id);
+
+        if (error) throw error;
+        console.log('Category updated successfully');
+      } else {
+        // Create new category
+        console.log('Creating new category:', categoryData);
+        const { error } = await supabase
+          .from('categories')
+          .insert(categoryData);
+
+        if (error) throw error;
+        console.log('Category created successfully');
+      }
+
 
       onSuccess();
       onClose();
-      setFormData({
-        name: '',
-        slug: '',
-        description: '',
-        image: '',
-        icon: 'Package'
-      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create category');
+      console.error('Category form error:', err);
+      if (err instanceof Error) {
+        if (err.message.includes('duplicate key value violates unique constraint "categories_slug_key"')) {
+          setError('This category slug already exists. Please use a unique name or modify the slug.');
+        } else {
+          setError(err.message);
+        }
+      } else {
+        setError(`Failed to ${editingCategory ? 'update' : 'create'} category`);
+      }
     } finally {
       setLoading(false);
     }
@@ -82,7 +125,9 @@ export function CategoryForm({ isOpen, onClose, onSuccess }: CategoryFormProps) 
         
         <div className="inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Add New Category</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {editingCategory ? 'Edit Category' : 'Add New Category'}
+            </h2>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
               <X className="w-5 h-5 text-gray-500" />
             </button>
@@ -183,7 +228,7 @@ export function CategoryForm({ isOpen, onClose, onSuccess }: CategoryFormProps) 
                 loading={loading}
                 className="flex-1"
               >
-                Create Category
+                {editingCategory ? 'Update Category' : 'Create Category'}
               </Button>
             </div>
           </form>

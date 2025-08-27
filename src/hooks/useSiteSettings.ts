@@ -168,7 +168,7 @@ export function useSiteSettings() {
             stat_products_count: updates.statProductsCount,
             stat_customers_count: updates.statCustomersCount,
             stat_satisfaction_rate: updates.statSatisfactionRate,
-            stat_support_availability: updates.statSupportAvailability
+            stat_support_availability: updates.statSupportAvailability,
             map_url: updates.mapUrl,
             map_latitude: updates.mapLatitude,
             map_longitude: updates.mapLongitude,
@@ -231,7 +231,7 @@ export function useSiteSettings() {
             stat_products_count: updates.statProductsCount,
             stat_customers_count: updates.statCustomersCount,
             stat_satisfaction_rate: updates.statSatisfactionRate,
-            stat_support_availability: updates.statSupportAvailability
+            stat_support_availability: updates.statSupportAvailability,
             map_url: updates.mapUrl,
             map_latitude: updates.mapLatitude,
             map_longitude: updates.mapLongitude,

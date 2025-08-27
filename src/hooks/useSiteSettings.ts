@@ -95,7 +95,7 @@ export function useSiteSettings() {
           statSatisfactionRate: data.stat_satisfaction_rate,
           statSupportAvailability: data.stat_support_availability,
           createdAt: data.created_at,
-          updatedAt: data.updated_at
+          updatedAt: data.updated_at,
           mapUrl: data.map_url,
           mapLatitude: data.map_latitude,
           mapLongitude: data.map_longitude,

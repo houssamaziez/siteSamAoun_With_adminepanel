@@ -70,7 +70,7 @@ export function SiteSettingsManager() {
     customCss: '',
     customJs: '',
     announcementText: '',
-    announcementActive: false
+    announcementActive: false,
     mapUrl: '',
     mapLatitude: '',
     mapLongitude: '',

@@ -70,7 +70,7 @@ const reservationData = {
   proposed_date: formData.proposedDate,
   proposed_time: formData.proposedTime,
   notes: formData.notes,
-  items: JSON.stringify([{ product, quantity }]), // هنا نخزن كل بيانات المنتج كاملة
+  items: JSON.stringify([{ product, quantity }]), 
   total_amount: product.price * quantity
 };
 

@@ -5,27 +5,17 @@ import {
   Heart,
   Share2,
   Star,
-  Shield,
-  Truck,
-  RotateCcw,
-  Check,
   Minus,
   Plus,
   BookmarkPlus,
-  Calendar,
-  Clock,
-  User,
-  Phone,
-  MapPin,
-  MessageSquare,
   X
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { createClient } from '@supabase/supabase-js';
 
-// إعداد Supabase
-const supabaseUrl = 'https://YOUR_SUPABASE_URL.supabase.co';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+// إعداد Supabase باستخدام متغيرات البيئة
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface Product {
@@ -36,7 +26,6 @@ interface Product {
   price: number;
   originalPrice?: number;
   stock: number;
-  warranty?: string;
   shortDescription: string;
 }
 
@@ -45,11 +34,11 @@ interface ProductDetailProps {
   onBack: () => void;
 }
 
-// لتخزين السلة محلياً
 interface CartItem {
   product: Product;
   quantity: number;
 }
+
 let cartItems: CartItem[] = [];
 
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
@@ -84,9 +73,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   ];
 
   const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= product.stock) {
-      setQuantity(newQuantity);
-    }
+    if (newQuantity >= 1 && newQuantity <= product.stock) setQuantity(newQuantity);
   };
 
   const addToCart = () => {
@@ -119,25 +106,22 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       };
 
       const { data, error } = await supabase.from('reservations').insert([reservationData]);
-      if (error) {
-        console.error(error);
-        alert('حدث خطأ أثناء إرسال الحجز!');
-      } else {
-        alert('تم إرسال الحجز بنجاح!');
-        setShowReservationForm(false);
-        setFormData({
-          customerName: '',
-          customerPhone: '',
-          customerWhatsApp: '',
-          pickupBranch: 'main-store',
-          proposedDate: '',
-          proposedTime: '',
-          notes: ''
-        });
-      }
+      if (error) throw error;
+
+      alert('تم إرسال الحجز بنجاح!');
+      setShowReservationForm(false);
+      setFormData({
+        customerName: '',
+        customerPhone: '',
+        customerWhatsApp: '',
+        pickupBranch: 'main-store',
+        proposedDate: '',
+        proposedTime: '',
+        notes: ''
+      });
     } catch (err) {
       console.error(err);
-      alert('حدث خطأ غير متوقع.');
+      alert('حدث خطأ أثناء إرسال الحجز!');
     } finally {
       setLoading(false);
     }
@@ -195,7 +179,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             </div>
 
             <div className="flex space-x-4">
-              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1">{'إضافة إلى السلة'}</Button>
+              <Button onClick={addToCart} disabled={product.stock===0} icon={ShoppingCart} className="flex-1">إضافة إلى السلة</Button>
               <Button onClick={()=>setShowReservationForm(true)} disabled={product.stock===0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">حجز الآن</Button>
             </div>
           </div>

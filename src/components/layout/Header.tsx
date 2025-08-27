@@ -7,10 +7,9 @@ import { useSiteSettings } from '../../hooks/useSiteSettings';
 interface HeaderProps {
   onCartOpen: () => void;
   onMenuOpen: () => void;
-  onAdminAccess?: () => void;
 }
 
-export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
+export function Header({ onCartOpen, onMenuOpen }: HeaderProps) {
   const { getItemCount, items, forceUpdate } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
@@ -135,6 +134,13 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
                 </span>
               )}
             </button>
+
+            {/* CTA Button */}
+            <div className="hidden sm:block">
+              <Button size="sm" onClick={onAdminAccess} className="hover-lift btn-primary">
+                Admin
+              </Button>
+            </div>
           </div>
         </div>
       </div>

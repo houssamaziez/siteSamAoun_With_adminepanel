@@ -46,6 +46,9 @@ export function ProductsManager() {
   });
 
   const handleEditProduct = (product) => {
+    console.log('Editing product:', product);
+    console.log('Product category:', product.category);
+    console.log('Product category_id:', product.category_id);
     setEditingProduct(product);
     setShowForm(true);
   };

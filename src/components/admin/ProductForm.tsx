@@ -37,6 +37,7 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
   // Update form data when editing product changes
   React.useEffect(() => {
     if (editingProduct) {
+      console.log('Setting form data for editing product:', editingProduct);
       setFormData({
         sku: editingProduct.sku || '',
         name: editingProduct.name || '',
@@ -45,8 +46,8 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         price: editingProduct.price?.toString() || '',
         originalPrice: editingProduct.originalPrice?.toString() || '',
         currency: editingProduct.currency || 'DZD',
-        images: editingProduct.images || [''],
-        categoryId: editingProduct.category?.id || '',
+        images: Array.isArray(editingProduct.images) && editingProduct.images.length > 0 ? editingProduct.images : [''],
+        categoryId: editingProduct.category_id || editingProduct.category?.id || '',
         shortDescription: editingProduct.shortDescription || '',
         description: editingProduct.description || '',
         stock: editingProduct.stock?.toString() || '0',
@@ -55,8 +56,10 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         warranty: editingProduct.warranty || '',
         condition: editingProduct.condition || 'new'
       });
+      console.log('Form data set to:', formData);
     } else {
       // Reset form for new product
+      console.log('Resetting form for new product');
       setFormData({
         sku: '',
         name: '',
@@ -76,7 +79,7 @@ export function ProductForm({ isOpen, onClose, onSuccess, editingProduct }: Prod
         condition: 'new'
       });
     }
-  }, [editingProduct]);
+  }, [editingProduct, isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

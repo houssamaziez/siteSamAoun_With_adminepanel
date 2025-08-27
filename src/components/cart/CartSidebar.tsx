@@ -12,7 +12,6 @@ import {
   X
 } from 'lucide-react';
 import { Button } from '../ui/Button';
-import CartSidebar from '../cart/CartSidebar'; // default import
 
 // Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;

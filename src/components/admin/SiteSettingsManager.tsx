@@ -194,6 +194,7 @@ export function SiteSettingsManager() {
   const tabs = [
     { id: 'general', label: 'عام', icon: Globe },
     { id: 'hero', label: 'الصفحة الرئيسية', icon: Settings2 },
+    { id: 'map', label: 'الخريطة والموقع', icon: MapPin },
     { id: 'location', label: 'الموقع والخريطة', icon: MapPin },
     { id: 'social', label: 'وسائل التواصل', icon: Share2 },
     { id: 'content', label: 'المحتوى', icon: Mail },

@@ -46,10 +46,6 @@ export function ProductsManager() {
   });
 
   const handleEditProduct = (product) => {
-    if (!isAdminUser) {
-      alert('You do not have permission to edit products. Please contact an administrator.');
-      return;
-    }
     setEditingProduct(product);
     setShowForm(true);
   };
@@ -59,11 +55,6 @@ export function ProductsManager() {
   };
 
   const handleDeleteProduct = async (productId) => {
-    if (!isAdminUser) {
-      alert('You do not have permission to delete products. Please contact an administrator.');
-      return;
-    }
-
     if (!window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
       return;
     }
@@ -125,17 +116,10 @@ export function ProductsManager() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-600">Manage your product catalog</p>
-          {!isAdminUser && (
-            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg mt-2">
-              <p className="text-sm">⚠️ You have read-only access. Contact an administrator to edit or delete products.</p>
-            </div>
-          )}
         </div>
-        {isAdminUser && (
-          <Button icon={Plus} onClick={() => setShowForm(true)}>
-            Add Product
-          </Button>
-        )}
+        <Button icon={Plus} onClick={() => setShowForm(true)}>
+          Add Product
+        </Button>
       </div>
 
       {/* Filters */}
@@ -237,24 +221,20 @@ export function ProductsManager() {
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      {isAdminUser && (
-                        <button 
-                          className="p-2 text-gray-400 hover:text-green-600 rounded-lg hover:bg-green-50"
-                          onClick={() => handleEditProduct(product)}
-                          title="Edit product"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                      )}
-                      {isAdminUser && (
-                        <button 
-                          className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
-                          onClick={() => handleDeleteProduct(product.id)}
-                          title="Delete product"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
+                      <button 
+                        className="p-2 text-gray-400 hover:text-green-600 rounded-lg hover:bg-green-50"
+                        onClick={() => handleEditProduct(product)}
+                        title="Edit product"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button 
+                        className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
+                        onClick={() => handleDeleteProduct(product.id)}
+                        title="Delete product"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -272,17 +252,15 @@ export function ProductsManager() {
         )}
       </div>
 
-      {isAdminUser && (
-        <ProductForm
-          isOpen={showForm}
-          onClose={handleCloseForm}
-          onSuccess={() => {
-            refetch();
-            handleCloseForm();
-          }}
-          editingProduct={editingProduct}
-        />
-      )}
+      <ProductForm
+        isOpen={showForm}
+        onClose={handleCloseForm}
+        onSuccess={() => {
+          refetch();
+          handleCloseForm();
+        }}
+        editingProduct={editingProduct}
+      />
 
       {/* Product View Modal */}
       {viewingProduct && (
@@ -423,32 +401,30 @@ export function ProductsManager() {
                     <div className="text-sm text-gray-500">
                       Created: {new Date(viewingProduct.createdAt).toLocaleDateString()}
                     </div>
-                    {isAdminUser && (
-                      <div className="flex space-x-3">
-                        <Button
-                          onClick={() => {
-                            setViewingProduct(null);
-                            handleEditProduct(viewingProduct);
-                          }}
-                          variant="outline"
-                          size="sm"
-                          icon={Edit}
-                        >
-                          Edit Product
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setViewingProduct(null);
-                            handleDeleteProduct(viewingProduct.id);
-                          }}
-                          variant="danger"
-                          size="sm"
-                          icon={Trash2}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex space-x-3">
+                      <Button
+                        onClick={() => {
+                          setViewingProduct(null);
+                          handleEditProduct(viewingProduct);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        icon={Edit}
+                      >
+                        Edit Product
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setViewingProduct(null);
+                          handleDeleteProduct(viewingProduct.id);
+                        }}
+                        variant="danger"
+                        size="sm"
+                        icon={Trash2}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

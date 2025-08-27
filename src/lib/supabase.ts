@@ -89,14 +89,31 @@ export const isAdmin = async (userId: string) => {
   // Validate UUID format
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!userId || !uuidRegex.test(userId)) {
+    console.log('Invalid user ID format:', userId);
     return { isAdmin: false, role: null, error: new Error('Invalid user ID format') };
   }
 
-  const { data, error } = await supabase
-    .from('admins')
-    .select('id, role')
-    .eq('id', userId)
-    .maybeSingle();
-  
-  return { isAdmin: !!data && !error, role: data?.role, error };
+  try {
+    const { data, error } = await supabase
+      .from('admins')
+      .select('id, role')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    console.log('Admin check result:', { userId, data, error });
+    
+    if (error) {
+      console.error('Database error checking admin status:', error);
+      return { isAdmin: false, role: null, error };
+    }
+    
+    const isAdminUser = !!data;
+    const userRole = data?.role || null;
+    
+    console.log('Final admin status:', { isAdminUser, userRole });
+    return { isAdmin: isAdminUser, role: userRole, error: null };
+  } catch (err) {
+    console.error('Network error checking admin status:', err);
+    return { isAdmin: false, role: null, error: err };
+  }
 };

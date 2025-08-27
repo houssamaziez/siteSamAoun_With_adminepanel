@@ -29,11 +29,13 @@ export function UsersManager() {
     try {
       const { user } = await getCurrentUser();
       if (user) {
-        const { role } = await isAdmin(user.id);
+        const { isAdmin: adminStatus, role } = await isAdmin(user.id);
+        console.log('User role check:', { userId: user.id, adminStatus, role });
         setCurrentUserRole(role);
       }
     } catch (error) {
       console.error('Failed to check user role:', error);
+      setCurrentUserRole(null);
     }
   };
 

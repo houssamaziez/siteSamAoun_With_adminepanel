@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"; // ✅ FIXED PATH
-import ReservationForm from "@/components/reservation/ReservationForm"; // ✅ FIXED PATH
+import ReservationForm from "@/components/reservation/ReservationForm2"; // ✅ FIXED PATH
 
 interface ProductDetailProps {
   product: Product;

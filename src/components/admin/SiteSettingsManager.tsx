@@ -192,14 +192,13 @@ export function SiteSettingsManager() {
   };
 
   const tabs = [
-    { id: 'general', label: 'عام', icon: Globe },
-    { id: 'hero', label: 'الصفحة الرئيسية', icon: Settings2 },
-    { id: 'map', label: 'الخريطة والموقع', icon: MapPin },
-    { id: 'location', label: 'الموقع والخريطة', icon: MapPin },
-    { id: 'social', label: 'وسائل التواصل', icon: Share2 },
-    { id: 'content', label: 'المحتوى', icon: Mail },
-    { id: 'business', label: 'معلومات العمل', icon: DollarSign },
-    { id: 'theme', label: 'التصميم والألوان', icon: Palette }
+    { id: 'general', label: 'General', icon: Globe },
+    { id: 'hero', label: 'Homepage', icon: Settings2 },
+    { id: 'map', label: 'Map & Location', icon: MapPin },
+    { id: 'social', label: 'Social Media', icon: Share2 },
+    { id: 'content', label: 'Content', icon: Mail },
+    { id: 'business', label: 'Business Info', icon: DollarSign },
+    { id: 'theme', label: 'Theme & Colors', icon: Palette }
   ];
 
   if (loading) {
@@ -237,8 +236,8 @@ export function SiteSettingsManager() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">إعدادات الموقع الشاملة</h1>
-          <p className="text-gray-600">تحكم في جميع نصوص وإعدادات الموقع</p>
+          <h1 className="text-2xl font-bold text-gray-900">Comprehensive Site Settings</h1>
+          <p className="text-gray-600">Control all site texts and settings</p>
         </div>
       </div>
 
@@ -270,7 +269,7 @@ export function SiteSettingsManager() {
           {/* Success/Error Messages */}
           {saveSuccess && (
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-              تم حفظ الإعدادات بنجاح!
+              Settings saved successfully!
             </div>
           )}
           
@@ -285,13 +284,13 @@ export function SiteSettingsManager() {
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Globe className="w-5 h-5 mr-2" />
-                الإعدادات العامة
+                General Settings
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    اسم الموقع *
+                    Site Name *
                   </label>
                   <input
                     type="text"
@@ -304,7 +303,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    شعار الموقع *
+                    Site Tagline *
                   </label>
                   <input
                     type="text"
@@ -318,7 +317,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف الموقع *
+                  Site Description *
                 </label>
                 <textarea
                   name="siteDescription"
@@ -331,7 +330,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  رابط الشعار
+                  Logo URL
                 </label>
                 <input
                   type="url"
@@ -345,7 +344,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    رقم الهاتف *
+                    Phone Number *
                   </label>
                   <input
                     type="tel"
@@ -358,7 +357,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    رقم الواتساب *
+                    WhatsApp Number *
                   </label>
                   <input
                     type="tel"
@@ -372,7 +371,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  البريد الإلكتروني *
+                  Email Address *
                 </label>
                 <input
                   type="email"
@@ -385,7 +384,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  العنوان *
+                  Address *
                 </label>
                 <input
                   type="text"
@@ -398,7 +397,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ساعات العمل *
+                  Business Hours *
                 </label>
                 <input
                   type="text"
@@ -416,12 +415,12 @@ export function SiteSettingsManager() {
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Settings2 className="w-5 h-5 mr-2" />
-                إعدادات الصفحة الرئيسية
+                Homepage Settings
               </h3>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  العنوان الرئيسي
+                  Main Title
                 </label>
                 <input
                   type="text"
@@ -434,7 +433,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  العنوان الفرعي
+                  Subtitle
                 </label>
                 <input
                   type="text"
@@ -447,7 +446,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف الصفحة الرئيسية
+                  Homepage Description
                 </label>
                 <textarea
                   name="heroDescription"
@@ -461,7 +460,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    عدد المنتجات
+                    Products Count
                   </label>
                   <input
                     type="text"
@@ -475,7 +474,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    عدد العملاء
+                    Customers Count
                   </label>
                   <input
                     type="text"
@@ -491,7 +490,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    معدل الرضا
+                    Satisfaction Rate
                   </label>
                   <input
                     type="text"
@@ -505,7 +504,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    توفر الدعم
+                    Support Availability
                   </label>
                   <input
                     type="text"
@@ -525,12 +524,12 @@ export function SiteSettingsManager() {
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <MapPin className="w-5 h-5 mr-2" />
-                إعدادات الخريطة والموقع
+                Map & Location Settings
               </h3>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  رابط Google Maps
+                  Google Maps URL
                 </label>
                 <input
                   type="url"
@@ -541,17 +540,17 @@ export function SiteSettingsManager() {
                   placeholder="https://maps.google.com/maps?q=36.7538,3.0588&z=15"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  رابط Google Maps الذي سيتم استخدامه في زر "Find Us"
+                  Google Maps URL that will be used in the "Find Us" button
                 </p>
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <h4 className="font-semibold text-blue-900 mb-3">كيفية الحصول على رابط Google Maps:</h4>
                 <ol className="text-sm text-blue-800 space-y-1">
-                  <li><strong>1.</strong> اذهب إلى <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="underline">Google Maps</a></li>
-                  <li><strong>2.</strong> ابحث عن موقع متجرك</li>
-                  <li><strong>3.</strong> انقر على "مشاركة" أو "Share"</li>
-                  <li><strong>4.</strong> انسخ الرابط والصقه في الحقل أعلاه</li>
+                  <li><strong>1.</strong> Go to <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="underline">Google Maps</a></li>
+                  <li><strong>2.</strong> Search for your store location</li>
+                  <li><strong>3.</strong> Click on "Share"</li>
+                  <li><strong>4.</strong> Copy the link and paste it in the field above</li>
                 </ol>
               </div>
 
@@ -564,13 +563,13 @@ export function SiteSettingsManager() {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label className="ml-2 block text-sm text-gray-700">
-                  تفعيل زر الاتجاهات في صفحة الاتصال
+                  Enable directions button on contact page
                 </label>
               </div>
 
               {formData.mapUrl && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-green-900 mb-2">معاينة الرابط:</h4>
+                  <h4 className="font-semibold text-green-900 mb-2">Link Preview:</h4>
                   <a
                     href={formData.mapUrl}
                     target="_blank"
@@ -589,13 +588,13 @@ export function SiteSettingsManager() {
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Share2 className="w-5 h-5 mr-2" />
-                وسائل التواصل الاجتماعي
+                Social Media
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    فيسبوك
+                    Facebook
                   </label>
                   <input
                     type="url"
@@ -609,7 +608,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    تويتر
+                    Twitter
                   </label>
                   <input
                     type="url"
@@ -625,7 +624,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    إنستغرام
+                    Instagram
                   </label>
                   <input
                     type="url"
@@ -639,7 +638,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    يوتيوب
+                    YouTube
                   </label>
                   <input
                     type="url"
@@ -655,7 +654,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    لينكد إن
+                    LinkedIn
                   </label>
                   <input
                     type="url"
@@ -669,7 +668,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    تيك توك
+                    TikTok
                   </label>
                   <input
                     type="url"
@@ -689,13 +688,13 @@ export function SiteSettingsManager() {
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Mail className="w-5 h-5 mr-2" />
-                محتوى الأقسام
+                Content Sections
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    عنوان قسم "من نحن"
+                    About Section Title
                   </label>
                   <input
                     type="text"
@@ -708,7 +707,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    عنوان قسم الخدمات
+                    Services Section Title
                   </label>
                   <input
                     type="text"
@@ -722,7 +721,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف قسم "من نحن"
+                  About Section Description
                 </label>
                 <textarea
                   name="aboutDescription"
@@ -735,7 +734,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف قسم الخدمات
+                  Services Section Description
                 </label>
                 <textarea
                   name="servicesDescription"
@@ -749,7 +748,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    عنوان قسم التقييمات
+                    Testimonials Section Title
                   </label>
                   <input
                     type="text"
@@ -762,7 +761,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    عنوان النشرة الإخبارية
+                    Newsletter Section Title
                   </label>
                   <input
                     type="text"
@@ -776,7 +775,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف التقييمات
+                  Testimonials Description
                 </label>
                 <textarea
                   name="testimonialsDescription"
@@ -789,7 +788,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف النشرة الإخبارية
+                  Newsletter Description
                 </label>
                 <textarea
                   name="newsletterDescription"
@@ -802,7 +801,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف الفوتر
+                  Footer Description
                 </label>
                 <textarea
                   name="footerDescription"
@@ -815,7 +814,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  نص حقوق الطبع والنشر
+                  Copyright Text
                 </label>
                 <input
                   type="text"
@@ -833,13 +832,13 @@ export function SiteSettingsManager() {
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <DollarSign className="w-5 h-5 mr-2" />
-                معلومات العمل
+                Business Information
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    هاتف الطوارئ
+                    Emergency Phone
                   </label>
                   <input
                     type="tel"
@@ -852,7 +851,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    بريد الدعم الفني
+                    Support Email
                   </label>
                   <input
                     type="email"
@@ -867,7 +866,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    بريد المبيعات
+                    Sales Email
                   </label>
                   <input
                     type="email"
@@ -880,7 +879,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    رخصة العمل
+                    Business License
                   </label>
                   <input
                     type="text"
@@ -895,7 +894,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    الرقم الضريبي
+                    Tax Number
                   </label>
                   <input
                     type="text"
@@ -908,7 +907,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    رقم الحساب البنكي
+                    Bank Account Number
                   </label>
                   <input
                     type="text"
@@ -923,7 +922,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    رسوم التوصيل (د.ج)
+                    Delivery Fee (DZD)
                   </label>
                   <input
                     type="number"
@@ -936,7 +935,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    حد التوصيل المجاني (د.ج)
+                    Free Delivery Threshold (DZD)
                   </label>
                   <input
                     type="number"
@@ -950,7 +949,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  مناطق التوصيل
+                  Delivery Areas
                 </label>
                 <input
                   type="text"
@@ -958,7 +957,7 @@ export function SiteSettingsManager() {
                   value={formData.deliveryAreas}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="الجزائر، وهران، قسنطينة"
+                  placeholder="Algiers, Oran, Constantine"
                 />
               </div>
             </div>
@@ -969,16 +968,13 @@ export function SiteSettingsManager() {
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                 <Palette className="w-5 h-5 mr-2" />
-                التصميم والألوان
-                <p className="text-xs text-gray-500 mt-1">
-                  رابط Google Maps للتضمين في الموقع
-                </p>
+                Theme & Colors
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    خط العرض (Latitude)
+                    Latitude
                   </label>
                   <input
                     type="number"
@@ -993,7 +989,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    خط الطول (Longitude)
+                    Longitude
                   </label>
                   <input
                     type="number"
@@ -1008,7 +1004,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    مستوى التكبير (Zoom)
+                    Zoom Level
                   </label>
                   <input
                     type="number"
@@ -1026,7 +1022,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    اللون الأساسي
+                    Primary Color
                   </label>
                   <input
                     type="color"
@@ -1039,7 +1035,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    اللون الثانوي
+                    Secondary Color
                   </label>
                   <input
                     type="color"
@@ -1052,7 +1048,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    لون التمييز
+                    Accent Color
                   </label>
                   <input
                     type="color"
@@ -1067,7 +1063,7 @@ export function SiteSettingsManager() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    الكلمات المفتاحية (SEO)
+                    Meta Keywords (SEO)
                   </label>
                   <input
                     type="text"
@@ -1080,7 +1076,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    المؤلف (SEO)
+                    Meta Author (SEO)
                   </label>
                   <input
                     type="text"
@@ -1094,7 +1090,7 @@ export function SiteSettingsManager() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  CSS مخصص
+                  Custom CSS
                 </label>
                 <textarea
                   name="customCss"
@@ -1102,13 +1098,13 @@ export function SiteSettingsManager() {
                   onChange={handleChange}
                   rows={6}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-                  placeholder="/* أضف CSS مخصص هنا */"
+                  placeholder="/* Add custom CSS here */"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  JavaScript مخصص
+                  Custom JavaScript
                 </label>
                 <textarea
                   name="customJs"
@@ -1116,13 +1112,13 @@ export function SiteSettingsManager() {
                   onChange={handleChange}
                   rows={6}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-                  placeholder="// أضف JavaScript مخصص هنا"
+                  placeholder="// Add custom JavaScript here"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  نص الإعلان
+                  Announcement Text
                 </label>
                 <input
                   type="text"
@@ -1130,7 +1126,7 @@ export function SiteSettingsManager() {
                   value={formData.announcementText}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="إعلان مهم للعملاء"
+                  placeholder="Important announcement for customers"
                 />
               </div>
 
@@ -1143,7 +1139,7 @@ export function SiteSettingsManager() {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label className="ml-2 block text-sm text-gray-700">
-                  تفعيل الإعلان
+                  Enable Announcement
                 </label>
               </div>
 
@@ -1156,15 +1152,15 @@ export function SiteSettingsManager() {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label className="ml-2 block text-sm text-gray-700">
-                  تفعيل الاتجاهات والملاحة
+                  Enable Directions & Navigation
                 </label>
               </div>
 
               {formData.mapLatitude && formData.mapLongitude && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-green-900 mb-2">معاينة الموقع:</h4>
+                  <h4 className="font-semibold text-green-900 mb-2">Location Preview:</h4>
                   <p className="text-sm text-green-800">
-                    الإحداثيات: {formData.mapLatitude}, {formData.mapLongitude}
+                    Coordinates: {formData.mapLatitude}, {formData.mapLongitude}
                   </p>
                   <a
                     href={`https://www.google.com/maps?q=${formData.mapLatitude},${formData.mapLongitude}`}
@@ -1172,14 +1168,14 @@ export function SiteSettingsManager() {
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 text-sm underline"
                   >
-                    عرض في Google Maps
+                    View in Google Maps
                   </a>
                 </div>
               )}
 
               {/* Location Picker Tool */}
               <div className="border-t border-gray-200 pt-6">
-                <h4 className="font-semibold text-gray-900 mb-4">أداة تحديد الموقع</h4>
+                <h4 className="font-semibold text-gray-900 mb-4">Location Picker Tool</h4>
                 <LocationPicker
                   latitude={formData.mapLatitude ? parseFloat(formData.mapLatitude) : undefined}
                   longitude={formData.mapLongitude ? parseFloat(formData.mapLongitude) : undefined}
@@ -1204,7 +1200,7 @@ export function SiteSettingsManager() {
               icon={Save}
               size="lg"
             >
-              حفظ جميع الإعدادات
+              Save All Settings
             </Button>
           </div>
         </form>

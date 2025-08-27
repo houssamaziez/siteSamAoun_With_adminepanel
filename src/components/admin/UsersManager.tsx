@@ -220,8 +220,8 @@ interface UserFormProps {
 
 function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
   const [formData, setFormData] = useState({
-    userId: '',
     email: '',
+    password: '',
     name: '',
     role: 'staff' as 'admin' | 'manager' | 'staff'
   });
@@ -231,15 +231,15 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
   useEffect(() => {
     if (editingUser) {
       setFormData({
-        userId: editingUser.id,
         email: editingUser.email,
+        password: '',
         name: editingUser.name,
         role: editingUser.role
       });
     } else {
       setFormData({
-        userId: '',
         email: '',
+        password: '',
         name: '',
         role: 'staff'
       });
@@ -265,11 +265,23 @@ function UserForm({ isOpen, onClose, onSuccess, editingUser }: UserFormProps) {
 
         if (error) throw error;
       } else {
-        // Create new admin user entry
+        // First create the user in Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: undefined // Disable email confirmation
+          }
+        });
+
+        if (authError) throw authError;
+        if (!authData.user) throw new Error('Failed to create user');
+
+        // Then create admin user entry with the new user ID
         const { error } = await supabase
           .from('admins')
           .insert({
-            id: formData.userId,
+            id: authData.user.id,
             email: formData.email,
             name: formData.name,
             role: formData.role

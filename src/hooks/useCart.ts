@@ -6,6 +6,7 @@ const CART_STORAGE_KEY = 'techhub_cart';
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -60,10 +61,8 @@ export function useCart() {
       return newCart;
     });
     
-    // Force a re-render by updating a timestamp
-    setTimeout(() => {
-      console.log('Cart update completed');
-    }, 0);
+    // Trigger update for components that depend on cart changes
+    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const updateItem = useCallback((productId: string, updates: Partial<Pick<CartItem, 'quantity' | 'notes'>>) => {
@@ -77,6 +76,7 @@ export function useCart() {
       console.log('Cart after update:', updated);
       return updated;
     });
+    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const removeItem = useCallback((productId: string) => {
@@ -86,28 +86,30 @@ export function useCart() {
       console.log('Cart after removal:', filtered);
       return filtered;
     });
+    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const clearCart = useCallback(() => {
     console.log('Clearing cart');
     setItems([]);
+    setUpdateTrigger(prev => prev + 1);
   }, []);
 
   const getItemCount = useCallback(() => {
     const count = items.reduce((total, item) => total + item.quantity, 0);
     console.log('Cart item count:', count);
     return count;
-  }, [items]); // This dependency ensures the count updates when items change
+  }, [items, updateTrigger]);
 
   const getTotalAmount = useCallback(() => {
     const total = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
     console.log('Cart total amount:', total);
     return total;
-  }, [items]);
+  }, [items, updateTrigger]);
 
   const getItem = useCallback((productId: string) => {
     return items.find(item => item.product.id === productId);
-  }, [items]);
+  }, [items, updateTrigger]);
 
   // Debug: Log cart state changes
   useEffect(() => {
@@ -116,7 +118,8 @@ export function useCart() {
 
   return {
     items,
-    itemCount: getItemCount(), // Add direct access to item count
+    itemCount: getItemCount(),
+    updateTrigger, // Expose trigger for components that need to react to changes
     addItem,
     updateItem,
     removeItem,

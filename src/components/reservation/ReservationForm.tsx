@@ -15,7 +15,7 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
     customerName: '',
     customerPhone: '',
     customerWhatsApp: '',
-    pickupBranch: 'main-store',
+    pickupBranch: 'Cortec batna',
     proposedDate: '',
     proposedTime: '',
     notes: ''

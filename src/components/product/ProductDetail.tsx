@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from "react";
 import {
   ArrowLeft,
   ShoppingCart,
   Calendar,
-} from 'lucide-react';
-import { Button } from '../ui/Button';
-import { Product } from '../../types';
-import { useCart } from '../../hooks/useCart';
-import { createClient } from '@supabase/supabase-js';
+} from "lucide-react";
+import { Button } from "../ui/Button";
+import { Product } from "../../types";
+import { useCart } from "../../hooks/useCart";
+import { createClient } from "@supabase/supabase-js";
 
 // Supabase setup
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
@@ -26,23 +25,25 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
   const [formData, setFormData] = useState({
-    customerName: '',
-    customerPhone: '',
-    customerWhatsApp: '',
-    pickupBranch: 'main-store',
-    proposedDate: '',
-    proposedTime: '',
-    notes: ''
+    customerName: "",
+    customerPhone: "",
+    customerWhatsApp: "",
+    pickupBranch: "main-store",
+    proposedDate: "",
+    proposedTime: "",
+    notes: "",
   });
   const [loading, setLoading] = useState(false);
 
   const cartItem = getItem(product.id);
   const discountPercent = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      )
     : 0;
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [product.id]);
 
   const handleQuantityChange = (newQty: number) => {
@@ -57,28 +58,36 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     } else {
       addItem(product, quantity);
     }
+
+    const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
+    if (btn) {
+      btn.classList.add("animate-pulse");
+      setTimeout(() => btn.classList.remove("animate-pulse"), 600);
+    }
   };
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {
     if (showReservationForm) {
       const now = new Date();
       const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      const hh = String(now.getHours()).padStart(2, '0');
-      const min = String(now.getMinutes()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const hh = String(now.getHours()).padStart(2, "0");
+      const min = String(now.getMinutes()).padStart(2, "0");
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         proposedDate: `${yyyy}-${mm}-${dd}`,
-        proposedTime: `${hh}:${min}`
+        proposedTime: `${hh}:${min}`,
       }));
     }
   }, [showReservationForm]);
@@ -98,26 +107,28 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         proposed_time: formData.proposedTime,
         notes: formData.notes,
         items: [{ product, quantity }],
-        total_amount: product.price * quantity
+        total_amount: product.price * quantity,
       };
 
-      const { error } = await supabase.from('reservations').insert([reservationData]);
+      const { error } = await supabase
+        .from("reservations")
+        .insert([reservationData]);
       if (error) throw error;
 
-      alert('✅ Reservation submitted successfully!');
+      alert("✅ Reservation submitted successfully!");
       setShowReservationForm(false);
       setFormData({
-        customerName: '',
-        customerPhone: '',
-        customerWhatsApp: '',
-        pickupBranch: 'main-store',
-        proposedDate: '',
-        proposedTime: '',
-        notes: ''
+        customerName: "",
+        customerPhone: "",
+        customerWhatsApp: "",
+        pickupBranch: "main-store",
+        proposedDate: "",
+        proposedTime: "",
+        notes: "",
       });
     } catch (err) {
       console.error(err);
-      alert('❌ Error occurred while submitting reservation');
+      alert("❌ Error occurred while submitting reservation");
     } finally {
       setLoading(false);
     }
@@ -126,12 +137,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
-      <motion.div
-        initial={{ x: -30, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className="flex items-center gap-3 mb-4"
-      >
+      <div className="flex items-center gap-3 mb-6 animate-fadeIn">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-5 h-5 mr-1" />
           Back
@@ -139,49 +145,38 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
           {product.name}
         </h1>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product Images */}
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.img
-            key={selectedImageIndex}
+        <div className="transition-transform duration-500 ease-in-out">
+          <img
             src={product.images[selectedImageIndex]}
             alt={product.name}
-            className="rounded-2xl shadow-2xl w-full h-96 object-cover"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            className="rounded-2xl shadow-2xl w-full h-96 object-cover transform hover:scale-105 transition-all duration-500"
           />
-
           <div className="flex gap-3 mt-5">
             {product.images.map((img, idx) => (
-              <motion.img
+              <img
                 key={idx}
                 src={img}
                 alt={`Image ${idx + 1}`}
                 onClick={() => setSelectedImageIndex(idx)}
-                whileHover={{ scale: 1.1 }}
-                className={`w-24 h-24 rounded-xl cursor-pointer border-2 transition-all duration-300 shadow-md hover:shadow-lg ${
-                  selectedImageIndex === idx ? 'border-blue-600' : 'border-gray-300'
+                className={`w-24 h-24 rounded-xl cursor-pointer border-2 transition-all duration-300 hover:scale-110 hover:shadow-lg ${
+                  selectedImageIndex === idx
+                    ? "border-blue-600"
+                    : "border-gray-300"
                 }`}
               />
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Product Details */}
-        <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-6"
-        >
-          <p className="text-gray-600 leading-relaxed text-lg">{product.description}</p>
+        <div className="space-y-6 animate-slideUp">
+          <p className="text-gray-600 leading-relaxed text-lg">
+            {product.description}
+          </p>
 
           <div className="flex items-center gap-3">
             <span className="text-3xl font-bold text-green-600 drop-shadow-md">
@@ -193,7 +188,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </span>
             )}
             {discountPercent > 0 && (
-              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm shadow-md">
+              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm shadow-md animate-bounce">
                 -{discountPercent}%
               </span>
             )}
@@ -208,110 +203,102 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-            <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
-              <Button
-                data-add-to-cart
-                onClick={handleAddToCart}
-                className="w-full shadow-lg hover:shadow-xl transition-all duration-300"
-                icon={ShoppingCart}
-              >
-                Add to Cart
-              </Button>
-            </motion.div>
-            <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
-              <Button
-                variant="secondary"
-                onClick={() => setShowReservationForm(true)}
-                className="w-full shadow-lg hover:shadow-xl transition-all duration-300"
-                icon={Calendar}
-              >
-                Reserve Now
-              </Button>
-            </motion.div>
+            <Button
+              data-add-to-cart
+              onClick={handleAddToCart}
+              className="flex-1 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              icon={ShoppingCart}
+            >
+              Add to Cart
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowReservationForm(true)}
+              className="flex-1 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              icon={Calendar}
+            >
+              Reserve Now
+            </Button>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Reservation Form */}
-      <AnimatePresence>
-        {showReservationForm && (
-          <motion.form
-            onSubmit={handleReservationSubmit}
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 60 }}
-            transition={{ duration: 0.6 }}
-            className="mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-gray-100"
-          >
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">📝 Reservation</h2>
-            <p className="text-gray-500 mb-6 text-lg">
-              Fill the details below to reserve your product.
-            </p>
+      {showReservationForm && (
+        <form
+          onSubmit={handleReservationSubmit}
+          className="mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-gray-100 transition-all duration-500 ease-in-out animate-slideUp"
+        >
+          <h2 className="text-3xl font-bold mb-4 text-gray-800">
+            📝 Reservation
+          </h2>
+          <p className="text-gray-500 mb-6 text-lg">
+            Fill the details below to reserve your product.
+          </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                name="customerName"
-                value={formData.customerName}
-                onChange={handleFormChange}
-                placeholder="Full Name"
-                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
-                required
-              />
-              <input
-                type="tel"
-                name="customerPhone"
-                value={formData.customerPhone}
-                onChange={handleFormChange}
-                placeholder="Phone Number"
-                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
-                required
-              />
-              <input
-                type="tel"
-                name="customerWhatsApp"
-                value={formData.customerWhatsApp}
-                onChange={handleFormChange}
-                placeholder="WhatsApp Number (optional)"
-                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              <input
-                type="date"
-                name="proposedDate"
-                value={formData.proposedDate}
-                onChange={handleFormChange}
-                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-              <input
-                type="time"
-                name="proposedTime"
-                value={formData.proposedTime}
-                onChange={handleFormChange}
-                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
-
-            <textarea
-              name="notes"
-              value={formData.notes}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="customerName"
+              value={formData.customerName}
               onChange={handleFormChange}
-              placeholder="Write any additional instructions here..."
-              className="p-4 rounded-xl border mt-6 w-full focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Full Name"
+              className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+              required
             />
+            <input
+              type="tel"
+              name="customerPhone"
+              value={formData.customerPhone}
+              onChange={handleFormChange}
+              placeholder="Phone Number"
+              className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+              required
+            />
+            <input
+              type="tel"
+              name="customerWhatsApp"
+              value={formData.customerWhatsApp}
+              onChange={handleFormChange}
+              placeholder="WhatsApp Number (optional)"
+              className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="mt-8 w-full shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              {loading ? 'Submitting Reservation...' : '✅ Confirm Reservation'}
-            </Button>
-          </motion.form>
-        )}
-      </AnimatePresence>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <input
+              type="date"
+              name="proposedDate"
+              value={formData.proposedDate}
+              onChange={handleFormChange}
+              className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <input
+              type="time"
+              name="proposedTime"
+              value={formData.proposedTime}
+              onChange={handleFormChange}
+              className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          <textarea
+            name="notes"
+            value={formData.notes}
+            onChange={handleFormChange}
+            placeholder="Write any additional instructions here..."
+            className="p-4 rounded-xl border mt-6 w-full focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+
+          <Button
+            type="submit"
+            disabled={loading}
+            className="mt-8 w-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+          >
+            {loading ? "Submitting Reservation..." : "✅ Confirm Reservation"}
+          </Button>
+        </form>
+      )}
     </div>
   );
 }

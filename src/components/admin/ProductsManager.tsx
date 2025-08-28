@@ -162,7 +162,6 @@ export function ProductsManager() {
             <option value="components">Components</option>
             <option value="peripherals">Peripherals</option>
             <option value="gaming">Gaming</option>
-            <option value="networking">Networking</option>
           </select>
         </div>
       </div>

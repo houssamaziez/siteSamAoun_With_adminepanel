@@ -251,16 +251,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               placeholder="رقم واتساب"
               className="p-3 rounded-lg border"
             />
-            <select
-              name="pickupBranch"
-              value={formData.pickupBranch}
-              onChange={handleFormChange}
-              className="p-3 rounded-lg border"
-            >
-              <option value="main-store">المتجر الرئيسي</option>
-              <option value="branch-1">الفرع 1</option>
-              <option value="branch-2">الفرع 2</option>
-            </select>
+       
             <input
               type="date"
               name="proposedDate"

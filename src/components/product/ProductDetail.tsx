@@ -61,14 +61,15 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       addItem(product, quantity);
     }
 
-// ✅ Show toast on success
-setToast({ message: "✅ Product added to cart successfully 🎉", type: "success" });
+    // ✅ Show toast on success
+    setToast({ message: "✅ تمت إضافة المنتج إلى السلة بنجاح 🎉", type: "success" });
 
-const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
-if (btn) {
-  btn.classList.add("animate-pulse");
-  setTimeout(() => btn.classList.remove("animate-pulse"), 600);
-}
+    const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
+    if (btn) {
+      btn.classList.add("animate-pulse");
+      setTimeout(() => btn.classList.remove("animate-pulse"), 600);
+    }
+  };
 
   const handleFormChange = (
     e: React.ChangeEvent<
@@ -125,24 +126,22 @@ if (btn) {
       if (error) throw error;
 
       // ✅ Toast for success
-     setToast({ message: "📩 Reservation request sent successfully ✅", type: "success" });
+      setToast({ message: "📩 تم إرسال طلب الحجز بنجاح ✅", type: "success" });
 
-setShowReservationForm(false);
-setFormData({
-  customerName: "",
-  customerPhone: "",
-  customerWhatsApp: "",
-  pickupBranch: "main-store",
-  proposedDate: "",
-  proposedTime: "",
-  notes: "",
-});
-} catch (err) {
-  console.error(err);
-  // ❌ Toast for error
-  setToast({ message: "❌ An error occurred while sending the reservation request", type: "error" });
-}
-
+      setShowReservationForm(false);
+      setFormData({
+        customerName: "",
+        customerPhone: "",
+        customerWhatsApp: "",
+        pickupBranch: "main-store",
+        proposedDate: "",
+        proposedTime: "",
+        notes: "",
+      });
+    } catch (err) {
+      console.error(err);
+      // ❌ Toast for error
+      setToast({ message: "❌ حدث خطأ أثناء إرسال طلب الحجز", type: "error" });
     } finally {
       setLoading(false);
     }

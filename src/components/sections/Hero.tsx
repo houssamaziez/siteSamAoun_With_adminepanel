@@ -88,8 +88,8 @@ export function Hero({ onExploreProducts }: HeroProps) {
                   <Truck className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Free Delivery</h3>
-                  <p className="text-sm text-gray-400">Same-day available</p>
+                  <h3 className="font-semibold">Fast Delivery</h3>
+                  <p className="text-sm text-gray-400">Affordable Delivery (DZD)</p>
                 </div>
               </div>
               

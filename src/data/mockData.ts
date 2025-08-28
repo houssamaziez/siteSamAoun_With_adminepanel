@@ -256,23 +256,23 @@ export const products: Product[] = [
 export const testimonials = [
   {
     id: "1",
-    name: "Khalil Blf",
-    role: "Graphic Designer",
+    name: "سعاد",
+    role: "Graphic Designe",
     avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150",
     rating: 5,
     text: "متجر رائع مع أسعار رائعة جدا و مناسبة يستحق أفضل تقييم.  \nشكراcortec"
   },
   {
     id: "2",
-    name: "Mike Chen",
+    name: "Danial",
     role: "Software Developer",
     avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150",
     rating: 5,
-    text: "TechHub Pro has everything I need for my development setup. Great prices, knowledgeable staff, and they always have the latest components in stock."
+    text: "Good prices and hospitality and of course best products"
   },
   {
     id: "3",
-    name: "Emma Rodriguez",
+    name: "houssam eddine",
     role: "Content Creator",
     avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150",
     rating: 5,

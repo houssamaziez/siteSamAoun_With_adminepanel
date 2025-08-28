@@ -126,22 +126,24 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       if (error) throw error;
 
       // ✅ Toast for success
-      setToast({ message: "📩 تم إرسال طلب الحجز بنجاح ✅", type: "success" });
+     setToast({ message: "📩 Reservation request sent successfully ✅", type: "success" });
 
-      setShowReservationForm(false);
-      setFormData({
-        customerName: "",
-        customerPhone: "",
-        customerWhatsApp: "",
-        pickupBranch: "main-store",
-        proposedDate: "",
-        proposedTime: "",
-        notes: "",
-      });
-    } catch (err) {
-      console.error(err);
-      // ❌ Toast for error
-      setToast({ message: "❌ حدث خطأ أثناء إرسال طلب الحجز", type: "error" });
+setShowReservationForm(false);
+setFormData({
+  customerName: "",
+  customerPhone: "",
+  customerWhatsApp: "",
+  pickupBranch: "main-store",
+  proposedDate: "",
+  proposedTime: "",
+  notes: "",
+});
+} catch (err) {
+  console.error(err);
+  // ❌ Toast for error
+  setToast({ message: "❌ An error occurred while sending the reservation request", type: "error" });
+}
+
     } finally {
       setLoading(false);
     }

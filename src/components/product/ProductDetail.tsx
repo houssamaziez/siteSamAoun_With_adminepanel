@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  ArrowLeft,
-  ShoppingCart,
-  Calendar,
-} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { ArrowLeft, ShoppingCart, Calendar } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Product } from "../../types";
 import { useCart } from "../../hooks/useCart";
@@ -34,6 +30,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     notes: "",
   });
   const [loading, setLoading] = useState(false);
+
+  // ✅ مرجع للفورم للتحكم بالتمرير
+  const reservationFormRef = useRef<HTMLFormElement | null>(null);
 
   const cartItem = getItem(product.id);
   const discountPercent = product.originalPrice
@@ -89,6 +88,11 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         proposedDate: `${yyyy}-${mm}-${dd}`,
         proposedTime: `${hh}:${min}`,
       }));
+
+      // ✅ عند الفتح، نمرر تلقائيًا للفورم
+      setTimeout(() => {
+        reservationFormRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
     }
   }, [showReservationForm]);
 
@@ -226,6 +230,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       {/* Reservation Form */}
       {showReservationForm && (
         <form
+          ref={reservationFormRef} // ✅ ربط المرجع بالفورم
           onSubmit={handleReservationSubmit}
           className="mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-gray-100 transition-all duration-500 ease-in-out animate-slideUp"
         >

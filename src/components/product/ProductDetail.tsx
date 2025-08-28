@@ -2,22 +2,14 @@ import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   ShoppingCart,
-  Heart,
-  Share2,
-  Star,
   Calendar,
-  Clock,
-  User,
-  Phone,
-  MapPin,
-  MessageSquare,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Product } from '../../types';
 import { useCart } from '../../hooks/useCart';
 import { createClient } from '@supabase/supabase-js';
 
-// إعداد Supabase
+// Supabase setup
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -48,19 +40,19 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
-  // 🔹 Scroll إلى أعلى الصفحة عند الدخول
+  // Scroll to top when product changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [product.id]);
 
-  // تغيير الكمية
+  // Handle quantity changes
   const handleQuantityChange = (newQty: number) => {
     if (newQty >= 1 && newQty <= product.stock) {
       setQuantity(newQty);
     }
   };
 
-  // إضافة المنتج للسلة الخارجية
+  // Add product to external cart
   const handleAddToCart = () => {
     if (cartItem) {
       updateItem(product.id, { quantity: cartItem.quantity + quantity });
@@ -75,7 +67,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   };
 
-  // تحديث حقول الحجز
+  // Handle reservation form input changes
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -83,7 +75,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // ملء التاريخ والوقت الحاليين
+  // Fill current date and time automatically
   useEffect(() => {
     if (showReservationForm) {
       const now = new Date();
@@ -101,7 +93,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   }, [showReservationForm]);
 
-  // إرسال الحجز إلى Supabase
+  // Submit reservation to Supabase
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -123,7 +115,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
 
-      alert('✅ تم إرسال الحجز بنجاح!');
+      alert('✅ Reservation submitted successfully!');
       setShowReservationForm(false);
       setFormData({
         customerName: '',
@@ -136,7 +128,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       });
     } catch (err) {
       console.error(err);
-      alert('❌ حدث خطأ أثناء إرسال الحجز');
+      alert('❌ Error occurred while submitting reservation');
     } finally {
       setLoading(false);
     }
@@ -144,17 +136,17 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* زر الرجوع */}
+      {/* Back button */}
       <div className="flex items-center gap-3 mb-4">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-5 h-5 mr-1" />
-          الرجوع
+          Back
         </Button>
         <h1 className="text-2xl font-bold">{product.name}</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* صور المنتج */}
+        {/* Product Images */}
         <div>
           <img
             src={product.images[selectedImageIndex]}
@@ -176,13 +168,13 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
           </div>
         </div>
 
-        {/* تفاصيل المنتج */}
+        {/* Product Details */}
         <div className="space-y-5">
           <p className="text-gray-600">{product.description}</p>
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-bold text-green-600">{product.price} دج</span>
+            <span className="text-2xl font-bold text-green-600">{product.price} DZD</span>
             {product.originalPrice && (
-              <span className="line-through text-gray-400">{product.originalPrice} دج</span>
+              <span className="line-through text-gray-400">{product.originalPrice} DZD</span>
             )}
             {discountPercent > 0 && (
               <span className="bg-red-500 text-white px-2 py-1 rounded-lg text-sm">
@@ -191,14 +183,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             )}
           </div>
 
-          {/* كمية المنتج */}
+          {/* Product Quantity */}
           <div className="flex items-center gap-4">
             <Button onClick={() => handleQuantityChange(quantity - 1)}>-</Button>
             <span className="text-xl">{quantity}</span>
             <Button onClick={() => handleQuantityChange(quantity + 1)}>+</Button>
           </div>
 
-          {/* الأزرار */}
+          {/* Action Buttons */}
           <div className="flex gap-4">
             <Button
               data-add-to-cart
@@ -206,7 +198,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               className="flex-1"
               icon={ShoppingCart}
             >
-              أضف إلى السلة
+              Add to Cart
             </Button>
             <Button
               variant="secondary"
@@ -214,23 +206,23 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               className="flex-1"
               icon={Calendar}
             >
-              احجز الآن
+              Reserve Now
             </Button>
           </div>
         </div>
       </div>
 
-      {/* نموذج الحجز */}
+      {/* Reservation Form */}
       {showReservationForm && (
         <form onSubmit={handleReservationSubmit} className="mt-8 p-5 bg-gray-100 rounded-2xl shadow">
-          <h2 className="text-xl font-bold mb-4">نموذج الحجز</h2>
+          <h2 className="text-xl font-bold mb-4">Reservation Form</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               name="customerName"
               value={formData.customerName}
               onChange={handleFormChange}
-              placeholder="الاسم الكامل"
+              placeholder="Full Name"
               className="p-3 rounded-lg border"
               required
             />
@@ -239,7 +231,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               name="customerPhone"
               value={formData.customerPhone}
               onChange={handleFormChange}
-              placeholder="رقم الهاتف"
+              placeholder="Phone Number"
               className="p-3 rounded-lg border"
               required
             />
@@ -248,10 +240,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               name="customerWhatsApp"
               value={formData.customerWhatsApp}
               onChange={handleFormChange}
-              placeholder="رقم واتساب"
+              placeholder="WhatsApp Number"
               className="p-3 rounded-lg border"
             />
-       
             <input
               type="date"
               name="proposedDate"
@@ -271,7 +262,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             name="notes"
             value={formData.notes}
             onChange={handleFormChange}
-            placeholder="ملاحظات إضافية"
+            placeholder="Additional Notes"
             className="p-3 rounded-lg border mt-3 w-full"
           />
           <Button
@@ -279,7 +270,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             disabled={loading}
             className="mt-4 w-full"
           >
-            {loading ? 'جاري الحجز...' : 'تأكيد الحجز'}
+            {loading ? 'Submitting Reservation...' : 'Confirm Reservation'}
           </Button>
         </form>
       )}

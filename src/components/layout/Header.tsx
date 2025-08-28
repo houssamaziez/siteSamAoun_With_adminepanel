@@ -18,7 +18,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
 
   // Use settings from database or fallback to defaults
   const siteData = settings || {
-    siteName: 'TechHub Pro',
+    siteName: 'Cortec batna ',
     siteTagline: 'Your Complete Technology Solution',
     address: '123 Tech Street, Digital City, DC 12345',
     phone: '+1 (555) 123-4567',

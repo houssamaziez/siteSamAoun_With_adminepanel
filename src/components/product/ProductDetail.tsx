@@ -31,6 +31,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   });
   const [loading, setLoading] = useState(false);
 
+  // ✅ Toast state
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
   // ✅ مرجع للفورم للتحكم بالتمرير
   const reservationFormRef = useRef<HTMLFormElement | null>(null);
 
@@ -57,6 +60,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     } else {
       addItem(product, quantity);
     }
+
+    // ✅ Show toast on success
+    setToast({ message: "✅ تمت إضافة المنتج إلى السلة بنجاح 🎉", type: "success" });
 
     const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
     if (btn) {
@@ -89,7 +95,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         proposedTime: `${hh}:${min}`,
       }));
 
-      // ✅ عند الفتح، نمرر تلقائيًا للفورم
+      // ✅ Scroll to form on open
       setTimeout(() => {
         reservationFormRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 300);
@@ -119,7 +125,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         .insert([reservationData]);
       if (error) throw error;
 
-      alert("✅ Reservation submitted successfully!");
+      // ✅ Toast for success
+      setToast({ message: "📩 تم إرسال طلب الحجز بنجاح ✅", type: "success" });
+
       setShowReservationForm(false);
       setFormData({
         customerName: "",
@@ -132,14 +140,34 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       });
     } catch (err) {
       console.error(err);
-      alert("❌ Error occurred while submitting reservation");
+      // ❌ Toast for error
+      setToast({ message: "❌ حدث خطأ أثناء إرسال طلب الحجز", type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Auto-hide toast
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Toast */}
+      {toast && (
+        <div
+          className={`fixed top-10 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl shadow-xl text-white font-semibold text-lg z-50 transition-all duration-300 ${
+            toast.type === "success" ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
+
       {/* Back button */}
       <div className="flex items-center gap-3 mb-6 animate-fadeIn">
         <Button variant="ghost" size="sm" onClick={onBack}>
@@ -230,7 +258,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       {/* Reservation Form */}
       {showReservationForm && (
         <form
-          ref={reservationFormRef} // ✅ ربط المرجع بالفورم
+          ref={reservationFormRef}
           onSubmit={handleReservationSubmit}
           className="mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-gray-100 transition-all duration-500 ease-in-out animate-slideUp"
         >

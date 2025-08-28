@@ -3,7 +3,7 @@ import { Search, ShoppingCart, Menu, X, Phone, MapPin, Clock } from 'lucide-reac
 import { Button } from '../ui/Button';
 import { useCart } from '../../hooks/useCart';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
-import { useNavigate } from 'react-router-dom'; // ⬅ لإضافة التوجيه للصفحة الرئيسية
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   onCartOpen: () => void;

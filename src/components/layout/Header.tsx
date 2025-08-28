@@ -3,6 +3,7 @@ import { Search, ShoppingCart, Menu, X, Phone, MapPin, Clock } from 'lucide-reac
 import { Button } from '../ui/Button';
 import { useCart } from '../../hooks/useCart';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useNavigate } from 'react-router-dom';  // ✅ لإضافة التنقل
 
 interface HeaderProps {
   onCartOpen: () => void;
@@ -11,6 +12,7 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
+  const navigate = useNavigate();  // ✅ هنا سنستخدمه للانتقال للصفحة الرئيسية
   const { getItemCount, items, updateTrigger, getCacheStatus, refreshCart, isUpdating } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,7 +25,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
     address: '123 Tech Street, Digital City, DC 12345',
     phone: '+1 (555) 123-4567',
     hours: 'Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM',
-    logoUrl: undefined, // fallback: avoids undefined property
+    logoUrl: undefined,
   };
 
   // Get current cart count
@@ -43,9 +45,12 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   }, [items, updateTrigger, cartCount, getCacheStatus]);
 
   const handleCartClick = () => {
-    // Refresh cart before opening to ensure latest data
     refreshCart();
     onCartOpen();
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');  // ✅ التوجيه للصفحة الرئيسية
   };
 
   return (
@@ -77,7 +82,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center cursor-pointer" onClick={handleLogoClick}>
             <button
               className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               onClick={onMenuOpen}
@@ -156,14 +161,10 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
                   {cartCount}
                 </span>
               )}
-              
-              {/* Cart update indicator */}
               {(cartAnimation || isUpdating) && (
                 <div className="absolute -top-3 -right-3 w-4 h-4 bg-green-500 rounded-full animate-ping"></div>
               )}
             </button>
-
-        
           </div>
         </div>
       </div>

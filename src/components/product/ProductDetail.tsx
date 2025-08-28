@@ -62,7 +62,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
 
     // ✅ Show toast on success
-    setToast({ message: "✅ تمت إضافة المنتج إلى السلة بنجاح 🎉", type: "success" });
+setToast({ message: "✅ Product added to cart successfully 🎉", type: "success" });
 
     const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
     if (btn) {
@@ -126,7 +126,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       if (error) throw error;
 
       // ✅ Toast for success
-      setToast({ message: "📩 تم إرسال طلب الحجز بنجاح ✅", type: "success" });
+setToast({ message: "📩 Reservation request sent successfully ✅", type: "success" });
 
       setShowReservationForm(false);
       setFormData({

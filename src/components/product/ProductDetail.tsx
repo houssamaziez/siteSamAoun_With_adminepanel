@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   ShoppingCart,
@@ -40,34 +41,24 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
-  // Scroll to top when product changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [product.id]);
 
-  // Handle quantity changes
   const handleQuantityChange = (newQty: number) => {
     if (newQty >= 1 && newQty <= product.stock) {
       setQuantity(newQty);
     }
   };
 
-  // Add product to cart
   const handleAddToCart = () => {
     if (cartItem) {
       updateItem(product.id, { quantity: cartItem.quantity + quantity });
     } else {
       addItem(product, quantity);
     }
-
-    const btn = document.querySelector('[data-add-to-cart]') as HTMLElement;
-    if (btn) {
-      btn.classList.add('animate-pulse');
-      setTimeout(() => btn.classList.remove('animate-pulse'), 600);
-    }
   };
 
-  // Handle reservation form input changes
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -75,7 +66,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Fill current date and time automatically when form is opened
   useEffect(() => {
     if (showReservationForm) {
       const now = new Date();
@@ -93,7 +83,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   }, [showReservationForm]);
 
-  // Submit reservation to Supabase
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -137,160 +126,192 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
-      <div className="flex items-center gap-3 mb-4">
+      <motion.div
+        initial={{ x: -30, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="flex items-center gap-3 mb-4"
+      >
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-5 h-5 mr-1" />
           Back
         </Button>
-        <h1 className="text-2xl font-bold">{product.name}</h1>
-      </div>
+        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+          {product.name}
+        </h1>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product Images */}
-        <div>
-          <img
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.img
+            key={selectedImageIndex}
             src={product.images[selectedImageIndex]}
             alt={product.name}
-            className="rounded-2xl shadow-lg w-full h-96 object-cover"
+            className="rounded-2xl shadow-2xl w-full h-96 object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
           />
-          <div className="flex gap-3 mt-3">
+
+          <div className="flex gap-3 mt-5">
             {product.images.map((img, idx) => (
-              <img
+              <motion.img
                 key={idx}
                 src={img}
                 alt={`Image ${idx + 1}`}
                 onClick={() => setSelectedImageIndex(idx)}
-                className={`w-20 h-20 rounded-lg cursor-pointer border-2 ${
+                whileHover={{ scale: 1.1 }}
+                className={`w-24 h-24 rounded-xl cursor-pointer border-2 transition-all duration-300 shadow-md hover:shadow-lg ${
                   selectedImageIndex === idx ? 'border-blue-600' : 'border-gray-300'
                 }`}
               />
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Product Details */}
-        <div className="space-y-5">
-          <p className="text-gray-600">{product.description}</p>
+        <motion.div
+          initial={{ y: 40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="space-y-6"
+        >
+          <p className="text-gray-600 leading-relaxed text-lg">{product.description}</p>
+
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-bold text-green-600">{product.price} DZD</span>
+            <span className="text-3xl font-bold text-green-600 drop-shadow-md">
+              {product.price} DZD
+            </span>
             {product.originalPrice && (
-              <span className="line-through text-gray-400">{product.originalPrice} DZD</span>
+              <span className="line-through text-gray-400 text-lg">
+                {product.originalPrice} DZD
+              </span>
             )}
             {discountPercent > 0 && (
-              <span className="bg-red-500 text-white px-2 py-1 rounded-lg text-sm">
+              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm shadow-md">
                 -{discountPercent}%
               </span>
             )}
           </div>
 
-          {/* Product Quantity */}
-          <div className="flex items-center gap-4">
+          {/* Quantity */}
+          <div className="flex items-center gap-6">
             <Button onClick={() => handleQuantityChange(quantity - 1)}>-</Button>
-            <span className="text-xl">{quantity}</span>
+            <span className="text-xl font-semibold">{quantity}</span>
             <Button onClick={() => handleQuantityChange(quantity + 1)}>+</Button>
           </div>
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-            <Button
-              data-add-to-cart
-              onClick={handleAddToCart}
-              className="flex-1"
-              icon={ShoppingCart}
-            >
-              Add to Cart
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setShowReservationForm(true)}
-              className="flex-1"
-              icon={Calendar}
-            >
-              Reserve Now
-            </Button>
+            <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
+              <Button
+                data-add-to-cart
+                onClick={handleAddToCart}
+                className="w-full shadow-lg hover:shadow-xl transition-all duration-300"
+                icon={ShoppingCart}
+              >
+                Add to Cart
+              </Button>
+            </motion.div>
+            <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
+              <Button
+                variant="secondary"
+                onClick={() => setShowReservationForm(true)}
+                className="w-full shadow-lg hover:shadow-xl transition-all duration-300"
+                icon={Calendar}
+              >
+                Reserve Now
+              </Button>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Reservation Form */}
-      {showReservationForm && (
-        <form onSubmit={handleReservationSubmit} className="mt-8 p-5 bg-gray-100 rounded-2xl shadow">
-          {/* Reservation Title */}
-          <h2 className="text-2xl font-bold mb-4">📝 Reservation Information</h2>
-          <p className="text-gray-600 mb-6">
-            Please fill in the details below to reserve your selected product.
-          </p>
-
-          {/* Contact Details */}
-          <h3 className="text-lg font-semibold mb-2">👤 Contact Details</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="customerName"
-              value={formData.customerName}
-              onChange={handleFormChange}
-              placeholder="Full Name"
-              className="p-3 rounded-lg border"
-              required
-            />
-            <input
-              type="tel"
-              name="customerPhone"
-              value={formData.customerPhone}
-              onChange={handleFormChange}
-              placeholder="Phone Number"
-              className="p-3 rounded-lg border"
-              required
-            />
-            <input
-              type="tel"
-              name="customerWhatsApp"
-              value={formData.customerWhatsApp}
-              onChange={handleFormChange}
-              placeholder="WhatsApp Number (optional)"
-              className="p-3 rounded-lg border"
-            />
-          </div>
-
-          {/* Pickup Preferences */}
-          <h3 className="text-lg font-semibold mt-6 mb-2">📍 Pickup Preferences</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="date"
-              name="proposedDate"
-              value={formData.proposedDate}
-              onChange={handleFormChange}
-              className="p-3 rounded-lg border"
-            />
-            <input
-              type="time"
-              name="proposedTime"
-              value={formData.proposedTime}
-              onChange={handleFormChange}
-              className="p-3 rounded-lg border"
-            />
-          </div>
-
-          {/* Additional Notes */}
-          <h3 className="text-lg font-semibold mt-6 mb-2">🗒️ Additional Notes</h3>
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleFormChange}
-            placeholder="Write any additional instructions here..."
-            className="p-3 rounded-lg border mt-3 w-full"
-          />
-
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            disabled={loading}
-            className="mt-6 w-full"
+      <AnimatePresence>
+        {showReservationForm && (
+          <motion.form
+            onSubmit={handleReservationSubmit}
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ duration: 0.6 }}
+            className="mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-gray-100"
           >
-            {loading ? 'Submitting Reservation...' : '✅ Confirm Reservation'}
-          </Button>
-        </form>
-      )}
+            <h2 className="text-3xl font-bold mb-4 text-gray-800">📝 Reservation</h2>
+            <p className="text-gray-500 mb-6 text-lg">
+              Fill the details below to reserve your product.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="customerName"
+                value={formData.customerName}
+                onChange={handleFormChange}
+                placeholder="Full Name"
+                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+              <input
+                type="tel"
+                name="customerPhone"
+                value={formData.customerPhone}
+                onChange={handleFormChange}
+                placeholder="Phone Number"
+                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+              <input
+                type="tel"
+                name="customerWhatsApp"
+                value={formData.customerWhatsApp}
+                onChange={handleFormChange}
+                placeholder="WhatsApp Number (optional)"
+                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              <input
+                type="date"
+                name="proposedDate"
+                value={formData.proposedDate}
+                onChange={handleFormChange}
+                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+              <input
+                type="time"
+                name="proposedTime"
+                value={formData.proposedTime}
+                onChange={handleFormChange}
+                className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleFormChange}
+              placeholder="Write any additional instructions here..."
+              className="p-4 rounded-xl border mt-6 w-full focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="mt-8 w-full shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              {loading ? 'Submitting Reservation...' : '✅ Confirm Reservation'}
+            </Button>
+          </motion.form>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -61,15 +61,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       addItem(product, quantity);
     }
 
-    // ✅ Show toast on success
-    setToast({ message: "✅ تمت إضافة المنتج إلى السلة بنجاح 🎉", type: "success" });
+// ✅ Show toast on success
+setToast({ message: "✅ Product added to cart successfully 🎉", type: "success" });
 
-    const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
-    if (btn) {
-      btn.classList.add("animate-pulse");
-      setTimeout(() => btn.classList.remove("animate-pulse"), 600);
-    }
-  };
+const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
+if (btn) {
+  btn.classList.add("animate-pulse");
+  setTimeout(() => btn.classList.remove("animate-pulse"), 600);
+}
 
   const handleFormChange = (
     e: React.ChangeEvent<

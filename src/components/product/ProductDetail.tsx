@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ShoppingCart, Heart, Share2, Star, Shield, Truck, RotateCcw, Check, Minus, Plus, BookmarkPlus, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Product } from '../../types';
@@ -57,27 +57,42 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Fill date and time automatically
+  useEffect(() => {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+
+    setFormData(prev => ({
+      ...prev,
+      proposedDate: `${yyyy}-${mm}-${dd}`,
+      proposedTime: `${hh}:${min}`
+    }));
+  }, [showReservationForm]);
+
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-const reservationData = {
-  reference_number: `REF-${Date.now()}`,
-  customer_name: formData.customerName,
-  customer_phone: formData.customerPhone,
-  customer_whatsapp: formData.customerWhatsApp,
-  pickup_branch: formData.pickupBranch,
-  proposed_date: formData.proposedDate,
-  proposed_time: formData.proposedTime,
-  notes: formData.notes,
-  items: [{ product, quantity }], // بدون stringify
-  total_amount: product.price * quantity
-};
+      const reservationData = {
+        reference_number: `REF-${Date.now()}`,
+        customer_name: formData.customerName,
+        customer_phone: formData.customerPhone,
+        customer_whatsapp: formData.customerWhatsApp,
+        pickup_branch: formData.pickupBranch,
+        proposed_date: formData.proposedDate,
+        proposed_time: formData.proposedTime,
+        notes: formData.notes,
+        items: [{ product, quantity }],
+        total_amount: product.price * quantity
+      };
 
-const { error } = await supabase.from('reservations').insert([reservationData]);
-
+      const { error } = await supabase.from('reservations').insert([reservationData]);
       if (error) throw error;
-      alert('تم إرسال الحجز بنجاح!');
+      alert('Reservation submitted successfully!');
       setShowReservationForm(false);
       setFormData({
         customerName: '',
@@ -90,7 +105,7 @@ const { error } = await supabase.from('reservations').insert([reservationData]);
       });
     } catch (err) {
       console.error(err);
-      alert('حدث خطأ أثناء إرسال الحجز!');
+      alert('An error occurred while submitting the reservation!');
     } finally {
       setLoading(false);
     }
@@ -106,10 +121,10 @@ const { error } = await supabase.from('reservations').insert([reservationData]);
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Product Images */}
         <div className="space-y-4">
-          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
+          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative shadow-md">
             <img src={product.images[selectedImageIndex]} alt={product.name} className="w-full h-full object-cover" />
             {discountPercent > 0 && (
-              <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+              <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full shadow">
                 -{discountPercent}%
               </div>
             )}
@@ -165,7 +180,7 @@ const { error } = await supabase.from('reservations').insert([reservationData]);
               </Button>
 
               <Button onClick={() => setShowReservationForm(true)} disabled={product.stock === 0} icon={BookmarkPlus} className="flex-1 bg-purple-600 text-white">
-                حجز الآن
+                Reserve Now
               </Button>
             </div>
           </div>
@@ -203,19 +218,19 @@ const { error } = await supabase.from('reservations').insert([reservationData]);
       {/* Reservation Modal */}
       {showReservationForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl p-6">
+          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-semibold">نموذج الحجز</h2>
+              <h2 className="text-2xl font-semibold">Reservation Form</h2>
               <button onClick={() => setShowReservationForm(false)}><X className="w-6 h-6 text-gray-500"/></button>
             </div>
             <form onSubmit={handleReservationSubmit} className="space-y-4">
-              <input name="customerName" placeholder="الاسم" value={formData.customerName} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
-              <input name="customerPhone" placeholder="رقم الهاتف" value={formData.customerPhone} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
+              <input name="customerName" placeholder="Full Name" value={formData.customerName} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
+              <input name="customerPhone" placeholder="Phone Number" value={formData.customerPhone} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
               <input name="customerWhatsApp" placeholder="WhatsApp" value={formData.customerWhatsApp} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
               <input name="proposedDate" type="date" value={formData.proposedDate} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
               <input name="proposedTime" type="time" value={formData.proposedTime} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
-              <textarea name="notes" placeholder="ملاحظات" value={formData.notes} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
-              <Button type="submit" disabled={loading} className="w-full bg-purple-600 text-white">{loading ? 'جاري الإرسال...' : 'إرسال الحجز'}</Button>
+              <textarea name="notes" placeholder="Notes" value={formData.notes} onChange={handleFormChange} className="w-full border rounded px-3 py-2"/>
+              <Button type="submit" disabled={loading} className="w-full bg-purple-600 text-white">{loading ? 'Submitting...' : 'Submit Reservation'}</Button>
             </form>
           </div>
         </div>

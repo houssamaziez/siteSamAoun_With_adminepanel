@@ -52,7 +52,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   };
 
-  // Add product to external cart
+  // Add product to cart
   const handleAddToCart = () => {
     if (cartItem) {
       updateItem(product.id, { quantity: cartItem.quantity + quantity });
@@ -75,7 +75,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Fill current date and time automatically
+  // Fill current date and time automatically when form is opened
   useEffect(() => {
     if (showReservationForm) {
       const now = new Date();
@@ -215,7 +215,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       {/* Reservation Form */}
       {showReservationForm && (
         <form onSubmit={handleReservationSubmit} className="mt-8 p-5 bg-gray-100 rounded-2xl shadow">
-          <h2 className="text-xl font-bold mb-4">Reservation Form</h2>
+          {/* Reservation Title */}
+          <h2 className="text-2xl font-bold mb-4">📝 Reservation Information</h2>
+          <p className="text-gray-600 mb-6">
+            Please fill in the details below to reserve your selected product.
+          </p>
+
+          {/* Contact Details */}
+          <h3 className="text-lg font-semibold mb-2">👤 Contact Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -240,9 +247,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               name="customerWhatsApp"
               value={formData.customerWhatsApp}
               onChange={handleFormChange}
-              placeholder="WhatsApp Number"
+              placeholder="WhatsApp Number (optional)"
               className="p-3 rounded-lg border"
             />
+          </div>
+
+          {/* Pickup Preferences */}
+          <h3 className="text-lg font-semibold mt-6 mb-2">📍 Pickup Preferences</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="date"
               name="proposedDate"
@@ -258,19 +270,24 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               className="p-3 rounded-lg border"
             />
           </div>
+
+          {/* Additional Notes */}
+          <h3 className="text-lg font-semibold mt-6 mb-2">🗒️ Additional Notes</h3>
           <textarea
             name="notes"
             value={formData.notes}
             onChange={handleFormChange}
-            placeholder="Additional Notes"
+            placeholder="Write any additional instructions here..."
             className="p-3 rounded-lg border mt-3 w-full"
           />
+
+          {/* Submit Button */}
           <Button
             type="submit"
             disabled={loading}
-            className="mt-4 w-full"
+            className="mt-6 w-full"
           >
-            {loading ? 'Submitting Reservation...' : 'Confirm Reservation'}
+            {loading ? 'Submitting Reservation...' : '✅ Confirm Reservation'}
           </Button>
         </form>
       )}

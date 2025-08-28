@@ -926,7 +926,7 @@ export function SiteSettingsManager() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Free Delivery Threshold (DZD)
+                   Affordable Delivery (DZD)
                   </label>
                   <input
                     type="number"

@@ -9,7 +9,7 @@ export const store: Store = {
   whatsapp: "+1 (555) 123-4567",
   email: "info@techhubpro.com",
   hours: "Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM",
- 
+  services: ["Hardware Installation", "System Maintenance", "Custom Builds", "Data Recovery", "Technical Support", "Warranty Service"]
 };
 
 export const categories: ProductCategory[] = [

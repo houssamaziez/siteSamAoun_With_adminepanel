@@ -118,6 +118,35 @@ export function Footer() {
             </ul>
           </div>
 
+     
+
+          {/* Contact Info */}
+          <div>
+            <h4 className="text-lg font-semibold mb-6">Contact Info</h4>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <MapPin className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
+                <span className="text-gray-400">{siteData.address}</span>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Phone className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                <span className="text-gray-400">{siteData.phone}</span>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Mail className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                <span className="text-gray-400">{siteData.email}</span>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <Clock className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
+                <span className="text-gray-400">{siteData.hours}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">

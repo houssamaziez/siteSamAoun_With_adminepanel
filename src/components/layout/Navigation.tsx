@@ -41,15 +41,7 @@ export function Navigation({ onCategorySelect }: NavigationProps) {
               );
             })}
           </div>
-
-          <div className="flex items-center space-x-4">
-            <button className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
-              Services
-            </button>
-            <button className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
-              Support
-            </button>
-          </div>
+ 
         </div>
       </div>
     </nav>

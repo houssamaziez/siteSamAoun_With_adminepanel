@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Menu, Phone, MapPin, Clock } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { ShoppingCart, Menu, Phone, MapPin, Clock } from 'lucide-react';
 import { useCart } from '../../hooks/useCart';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,6 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   const navigate = useNavigate();
   const { getItemCount, items, updateTrigger, getCacheStatus, refreshCart, isUpdating } = useCart();
   const { settings } = useSiteSettings();
-  const [searchQuery, setSearchQuery] = useState('');
   const [cartAnimation, setCartAnimation] = useState(false);
 
   const siteData = settings || {
@@ -102,29 +100,8 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8 animate-fade-in">
-            <div className="w-full relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-glow"
-                placeholder="Search products..."
-              />
-            </div>
-          </div>
-
           {/* Actions */}
           <div className="flex items-center space-x-4 animate-fade-in-right">
-            {/* Mobile Search */}
-            <button className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover-scale">
-              <Search className="w-6 h-6" />
-            </button>
-
             {/* Cart */}
             <button
               onClick={handleCartClick}
@@ -161,22 +138,6 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
               )}
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Mobile Search Bar */}
-      <div className="md:hidden border-t border-gray-200 px-4 py-3 bg-gray-50/50">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-glow"
-            placeholder="Search products..."
-          />
         </div>
       </div>
     </header>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Menu, X, Phone, MapPin, Clock } from 'lucide-react';
+import { Search, ShoppingCart, Menu, Phone, MapPin, Clock } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useCart } from '../../hooks/useCart';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
-import { useNavigate } from 'react-router-dom';  // ✅ لإضافة التنقل
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   onCartOpen: () => void;
@@ -12,13 +12,12 @@ interface HeaderProps {
 }
 
 export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
-  const navigate = useNavigate();  // ✅ هنا سنستخدمه للانتقال للصفحة الرئيسية
+  const navigate = useNavigate();
   const { getItemCount, items, updateTrigger, getCacheStatus, refreshCart, isUpdating } = useCart();
   const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState('');
   const [cartAnimation, setCartAnimation] = useState(false);
 
-  // Use settings from database or fallback to defaults
   const siteData = settings || {
     siteName: 'Cortec batna ',
     siteTagline: 'Your Complete Technology Solution',
@@ -28,16 +27,9 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
     logoUrl: undefined,
   };
 
-  // Get current cart count
   const cartCount = getItemCount();
-  
-  // Log cart changes for debugging
+
   useEffect(() => {
-    console.log('🔔 Header: Cart updated, count:', cartCount, 'items:', items.length);
-    console.log('🔔 Header: Update trigger:', updateTrigger);
-    console.log('🔔 Header: Cache status:', getCacheStatus());
-    
-    // Trigger cart animation when items are added
     if (cartCount > 0) {
       setCartAnimation(true);
       setTimeout(() => setCartAnimation(false), 1000);
@@ -50,7 +42,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
   };
 
   const handleLogoClick = () => {
-    navigate('/');  // ✅ التوجيه للصفحة الرئيسية
+    navigate('/');
   };
 
   return (
@@ -99,8 +91,12 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
                   />
                 )}
                 <div>
-                  <h1 className="text-2xl font-bold gradient-text hover-scale">{siteData.siteName}</h1>
-                  <p className="text-sm text-gray-600 hidden sm:block opacity-80">{siteData.siteTagline}</p>
+                  <h1 className="text-2xl font-bold gradient-text hover-scale">
+                    {siteData.siteName}
+                  </h1>
+                  <p className="text-sm text-gray-600 hidden sm:block opacity-80">
+                    {siteData.siteTagline}
+                  </p>
                 </div>
               </div>
             </div>
@@ -111,7 +107,15 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             <div className="w-full relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
                 <Search className="h-5 w-5 text-gray-400" />
-        
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent hover-glow"
+                placeholder="Search products..."
+              />
+            </div>
           </div>
 
           {/* Actions */}
@@ -129,17 +133,24 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
               }`}
               disabled={isUpdating}
             >
-              <ShoppingCart className={`w-6 h-6 group-hover:animate-wiggle transition-transform duration-300 ${
-                cartAnimation || isUpdating ? 'animate-pulse text-green-600' : ''
-              }`} />
+              <ShoppingCart
+                className={`w-6 h-6 group-hover:animate-wiggle transition-transform duration-300 ${
+                  cartAnimation || isUpdating ? 'animate-pulse text-green-600' : ''
+                }`}
+              />
               {cartCount > 0 && (
-                <span 
+                <span
                   key={cartCount}
                   className={`absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-medium transition-all duration-300 ${
-                    cartAnimation || isUpdating ? 'animate-ping' : 'animate-cart-bounce'
+                    cartAnimation || isUpdating
+                      ? 'animate-ping'
+                      : 'animate-cart-bounce'
                   }`}
                   style={{
-                    animation: (cartAnimation || isUpdating) ? 'ping 1s cubic-bezier(0, 0, 0.2, 1)' : 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite'
+                    animation:
+                      cartAnimation || isUpdating
+                        ? 'ping 1s cubic-bezier(0, 0, 0.2, 1)'
+                        : 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite',
                   }}
                 >
                   {cartCount}

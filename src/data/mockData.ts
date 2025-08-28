@@ -53,8 +53,7 @@ export const categories: ProductCategory[] = [
     image: "https://images.pexels.com/photos/7915483/pexels-photo-7915483.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: "Gamepad2"
   },
-on: "Wifi"
-  }
+ 
 ];
 
 export const products: Product[] = [

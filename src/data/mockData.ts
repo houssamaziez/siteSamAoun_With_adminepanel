@@ -256,11 +256,11 @@ export const products: Product[] = [
 export const testimonials = [
   {
     id: "1",
-    name: "Sarah Johnson",
+    name: "Khalil Blf",
     role: "Graphic Designer",
     avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150",
     rating: 5,
-    text: "Excellent service and high-quality products. The team helped me build the perfect workstation for my design work. Fast delivery and professional installation!"
+    text: "متجر رائع مع أسعار رائعة جدا و مناسبة يستحق أفضل تقييم.  \nشكراcortec"
   },
   {
     id: "2",

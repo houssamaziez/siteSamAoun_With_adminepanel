@@ -9,7 +9,7 @@ export const store: Store = {
   whatsapp: "+1 (555) 123-4567",
   email: "info@techhubpro.com",
   hours: "Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM",
-  services: ["Hardware Installation", "System Maintenance", "Custom Builds", "Data Recovery", "Technical Support", "Warranty Service"]
+ 
 };
 
 export const categories: ProductCategory[] = [
@@ -53,7 +53,14 @@ export const categories: ProductCategory[] = [
     image: "https://images.pexels.com/photos/7915483/pexels-photo-7915483.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: "Gamepad2"
   },
- 
+  {
+    id: "6",
+    name: "Networking",
+    slug: "networking",
+    description: "Routers, switches, and network equipment",
+    image: "https://images.pexels.com/photos/4218883/pexels-photo-4218883.jpeg?auto=compress&cs=tinysrgb&w=800",
+    icon: "Wifi"
+  }
 ];
 
 export const products: Product[] = [

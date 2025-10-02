@@ -183,7 +183,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 <img
                   src={img}
                   alt={`صورة ${idx + 1}`}
-                  className="max-w-full max-h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             ))}

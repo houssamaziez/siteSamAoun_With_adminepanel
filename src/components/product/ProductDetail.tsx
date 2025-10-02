@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, X } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Product } from "../../types";
 import { useCart } from "../../hooks/useCart";
@@ -18,6 +18,7 @@ interface ProductDetailProps {
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
   const { getItem } = useCart();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showFullImage, setShowFullImage] = useState(false); // ✅ حالة فتح الصورة الكبيرة
   const [quantity, setQuantity] = useState(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     proposedDate: "",
     proposedTime: "",
     notes: "",
-    deliveryPlace: "bureau", // ✅ مكان التسليم
+    deliveryPlace: "bureau",
   });
   const [loading, setLoading] = useState(false);
 
@@ -95,7 +96,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         pickup_branch: formData.pickupBranch,
         proposed_date: formData.proposedDate,
         proposed_time: formData.proposedTime,
-        notes: finalNotes, // ✅ إدماج مكان التسليم
+        notes: finalNotes,
         items: [{ product, quantity }],
         total_amount: product.price * quantity,
       };
@@ -157,15 +158,17 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* صور المنتج */}
         <div>
-          {/* ✅ الصورة الكبيرة - تظهر كاملة */}
-          <div className="w-full h-[600px] bg-white flex items-center justify-center rounded-2xl shadow-2xl overflow-hidden">
-  <img
-    src={product.images[selectedImageIndex]}
-    alt={product.name}
-    className="w-full h-full object-cover"
-  />
-</div>
-
+          {/* ✅ الصورة الكبيرة */}
+          <div
+            className="w-full h-[600px] bg-white flex items-center justify-center rounded-2xl shadow-2xl overflow-hidden cursor-pointer"
+            onClick={() => setShowFullImage(true)}
+          >
+            <img
+              src={product.images[selectedImageIndex]}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
 
           {/* ✅ الصور الصغيرة */}
           <div className="flex gap-3 mt-5">
@@ -199,7 +202,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               <span className="line-through text-gray-400 text-lg">{product.originalPrice} دج</span>
             )}
             {discountPercent > 0 && (
-              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm">-{discountPercent}%</span>
+              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm">
+                -{discountPercent}%
+              </span>
             )}
           </div>
 
@@ -289,6 +294,23 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             {loading ? "جاري إرسال طلب الحجز..." : "✅ تأكيد الحجز"}
           </Button>
         </form>
+      )}
+
+      {/* ✅ عرض الصورة كاملة في نافذة */}
+      {showFullImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setShowFullImage(false)}
+        >
+          <button className="absolute top-6 right-6 text-white" onClick={() => setShowFullImage(false)}>
+            <X size={32} />
+          </button>
+          <img
+            src={product.images[selectedImageIndex]}
+            alt={product.name}
+            className="max-w-[90%] max-h-[90%] object-contain"
+          />
+        </div>
       )}
     </div>
   );

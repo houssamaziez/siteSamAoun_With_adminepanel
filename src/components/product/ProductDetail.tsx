@@ -28,10 +28,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     proposedDate: "",
     proposedTime: "",
     notes: "",
-    deliveryPlace: "bureau", // ✅ مكان التسليم
+    deliveryPlace: "bureau", // مكان التسليم الافتراضي
   });
   const [loading, setLoading] = useState(false);
-
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const reservationFormRef = useRef<HTMLFormElement | null>(null);
 
@@ -45,9 +44,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   }, [product.id]);
 
   const handleQuantityChange = (newQty: number) => {
-    if (newQty >= 1 && newQty <= product.stock) {
-      setQuantity(newQty);
-    }
+    if (newQty >= 1 && newQty <= product.stock) setQuantity(newQty);
   };
 
   const handleFormChange = (
@@ -95,7 +92,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         pickup_branch: formData.pickupBranch,
         proposed_date: formData.proposedDate,
         proposed_time: formData.proposedTime,
-        notes: finalNotes, // ✅ إدماج مكان التسليم
+        notes: finalNotes,
         items: [{ product, quantity }],
         total_amount: product.price * quantity,
       };
@@ -124,7 +121,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     }
   };
 
-  // ✅ إخفاء التوست تلقائياً
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => setToast(null), 3000);
@@ -134,7 +130,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* ✅ توست */}
+      {/* توست */}
       {toast && (
         <div
           className={`fixed top-10 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl shadow-xl text-white font-semibold text-lg z-50 transition-all duration-300 ${
@@ -155,42 +151,33 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* صور المنتج */}
-        <div>
-          {/* ✅ الصورة الكبيرة - تظهر كاملة */}
-          <div className="w-full h-96 bg-white flex items-center justify-center rounded-2xl shadow-2xl">
-            <img
-              src={product.images[selectedImageIndex]}
-              alt={product.name}
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
+        {/* الصورة الكبيرة */}
+        <div className="w-full h-96 bg-white flex items-center justify-center rounded-2xl shadow-2xl overflow-hidden">
+          <img
+            src={product.images[selectedImageIndex]}
+            alt={product.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-          {/* ✅ الصور الصغيرة */}
-          <div className="flex gap-3 mt-5">
-            {product.images.map((img, idx) => (
-              <div
-                key={idx}
-                onClick={() => setSelectedImageIndex(idx)}
-                className={`w-24 h-24 rounded-xl cursor-pointer border-2 flex items-center justify-center bg-white transition-all duration-300 ${
-                  selectedImageIndex === idx ? "border-blue-600" : "border-gray-300"
-                }`}
-              >
-                <img
-                  src={img}
-                  alt={`صورة ${idx + 1}`}
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            ))}
-          </div>
+        {/* الصور الصغيرة */}
+        <div className="flex gap-3 mt-5">
+          {product.images.map((img, idx) => (
+            <div
+              key={idx}
+              onClick={() => setSelectedImageIndex(idx)}
+              className={`w-24 h-24 rounded-xl cursor-pointer border-2 flex items-center justify-center bg-white transition-all duration-300 ${
+                selectedImageIndex === idx ? "border-blue-600" : "border-gray-300"
+              } overflow-hidden`}
+            >
+              <img src={img} alt={`صورة ${idx + 1}`} className="w-full h-full object-cover" />
+            </div>
+          ))}
         </div>
 
         {/* تفاصيل المنتج */}
-        <div className="space-y-6 animate-slideUp">
-          <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
-            {product.description}
-          </p>
+        <div className="space-y-6 animate-slideUp md:col-span-2">
+          <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">{product.description}</p>
 
           <div className="flex items-center gap-3">
             <span className="text-3xl font-bold text-green-600">{product.price} دج</span>
@@ -223,7 +210,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         </div>
       </div>
 
-      {/* ✅ فورم الحجز */}
+      {/* فورم الحجز */}
       {showReservationForm && (
         <form
           ref={reservationFormRef}
@@ -262,7 +249,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             />
           </div>
 
-          {/* ✅ اختيار مكان التسليم */}
+          {/* اختيار مكان التسليم */}
           <div className="mt-6">
             <label className="block text-gray-700 font-medium mb-2">مكان التسليم</label>
             <select

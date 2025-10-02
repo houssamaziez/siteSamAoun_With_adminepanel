@@ -118,7 +118,7 @@ export const products: Product[] = [
     stock: 3,
     status: 'active',
     featured: true,
-    warranty: "ضمان الشركة المصنعة لمدة 3 سنوات",
+    warranty: "ضمان الشركة المصنعة ",
     condition: 'new',
     createdAt: new Date().toISOString()
   },

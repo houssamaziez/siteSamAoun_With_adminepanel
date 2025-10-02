@@ -5,7 +5,7 @@ import { Product } from "../../types";
 import { useCart } from "../../hooks/useCart";
 import { createClient } from "@supabase/supabase-js";
 
-// Supabase setup
+// إعداد Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -31,7 +31,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
   });
   const [loading, setLoading] = useState(false);
 
-  // ✅ Toast state
+  // ✅ حالة التوست
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   // ✅ مرجع للفورم للتحكم بالتمرير
@@ -61,8 +61,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       addItem(product, quantity);
     }
 
-    // ✅ Show toast on success
-setToast({ message: "✅ Product added to cart successfully 🎉", type: "success" });
+    // ✅ توست عند النجاح
+    setToast({ message: "✅ تم إضافة المنتج إلى السلة بنجاح 🎉", type: "success" });
 
     const btn = document.querySelector("[data-add-to-cart]") as HTMLElement;
     if (btn) {
@@ -95,7 +95,7 @@ setToast({ message: "✅ Product added to cart successfully 🎉", type: "succes
         proposedTime: `${hh}:${min}`,
       }));
 
-      // ✅ Scroll to form on open
+      // ✅ التمرير للفورم عند الفتح
       setTimeout(() => {
         reservationFormRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 300);
@@ -125,8 +125,8 @@ setToast({ message: "✅ Product added to cart successfully 🎉", type: "succes
         .insert([reservationData]);
       if (error) throw error;
 
-      // ✅ Toast for success
-setToast({ message: "📩 Reservation request sent successfully ✅", type: "success" });
+      // ✅ توست نجاح
+      setToast({ message: "📩 تم إرسال طلب الحجز بنجاح ✅", type: "success" });
 
       setShowReservationForm(false);
       setFormData({
@@ -140,14 +140,14 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
       });
     } catch (err) {
       console.error(err);
-      // ❌ Toast for error
+      // ❌ توست خطأ
       setToast({ message: "❌ حدث خطأ أثناء إرسال طلب الحجز", type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Auto-hide toast
+  // ✅ إخفاء التوست تلقائياً
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => setToast(null), 3000);
@@ -157,7 +157,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Toast */}
+      {/* توست */}
       {toast && (
         <div
           className={`fixed top-10 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl shadow-xl text-white font-semibold text-lg z-50 transition-all duration-300 ${
@@ -168,11 +168,11 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
         </div>
       )}
 
-      {/* Back button */}
+      {/* زر الرجوع */}
       <div className="flex items-center gap-3 mb-6 animate-fadeIn">
         <Button variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft className="w-5 h-5 mr-1" />
-          Back
+          رجوع
         </Button>
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
           {product.name}
@@ -180,7 +180,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Product Images */}
+        {/* صور المنتج */}
         <div className="transition-transform duration-500 ease-in-out">
           <img
             src={product.images[selectedImageIndex]}
@@ -192,7 +192,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
               <img
                 key={idx}
                 src={img}
-                alt={`Image ${idx + 1}`}
+                alt={`صورة ${idx + 1}`}
                 onClick={() => setSelectedImageIndex(idx)}
                 className={`w-24 h-24 rounded-xl cursor-pointer border-2 transition-all duration-300 hover:scale-110 hover:shadow-lg ${
                   selectedImageIndex === idx
@@ -204,19 +204,19 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
           </div>
         </div>
 
-        {/* Product Details */}
+        {/* تفاصيل المنتج */}
         <div className="space-y-6 animate-slideUp">
           <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
-  {product.description}
-</p>
+            {product.description}
+          </p>
 
           <div className="flex items-center gap-3">
             <span className="text-3xl font-bold text-green-600 drop-shadow-md">
-              {product.price} DZD
+              {product.price} دج
             </span>
             {product.originalPrice && (
               <span className="line-through text-gray-400 text-lg">
-                {product.originalPrice} DZD
+                {product.originalPrice} دج
               </span>
             )}
             {discountPercent > 0 && (
@@ -226,14 +226,14 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
             )}
           </div>
 
-          {/* Quantity */}
+          {/* الكمية */}
           <div className="flex items-center gap-6">
             <Button onClick={() => handleQuantityChange(quantity - 1)}>-</Button>
             <span className="text-xl font-semibold">{quantity}</span>
             <Button onClick={() => handleQuantityChange(quantity + 1)}>+</Button>
           </div>
 
-          {/* Action Buttons */}
+          {/* أزرار الإجراءات */}
           <div className="flex gap-4">
             <Button
               data-add-to-cart
@@ -241,7 +241,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
               className="flex-1 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               icon={ShoppingCart}
             >
-              Add to Cart
+              إضافة إلى السلة
             </Button>
             <Button
               variant="secondary"
@@ -249,13 +249,13 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
               className="flex-1 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               icon={Calendar}
             >
-              Reserve Now
+              حجز الآن
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Reservation Form */}
+      {/* فورم الحجز */}
       {showReservationForm && (
         <form
           ref={reservationFormRef}
@@ -263,10 +263,10 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
           className="mt-10 p-6 bg-white rounded-3xl shadow-2xl border border-gray-100 transition-all duration-500 ease-in-out animate-slideUp"
         >
           <h2 className="text-3xl font-bold mb-4 text-gray-800">
-            📝 Reservation
+            📝 الحجز
           </h2>
           <p className="text-gray-500 mb-6 text-lg">
-            Fill the details below to reserve your product.
+            يرجى ملء البيانات أدناه لإتمام عملية الحجز.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -275,7 +275,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
               name="customerName"
               value={formData.customerName}
               onChange={handleFormChange}
-              placeholder="Full Name"
+              placeholder="الاسم الكامل"
               className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
@@ -284,7 +284,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
               name="customerPhone"
               value={formData.customerPhone}
               onChange={handleFormChange}
-              placeholder="Phone Number"
+              placeholder="رقم الهاتف"
               className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
@@ -293,7 +293,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
               name="customerWhatsApp"
               value={formData.customerWhatsApp}
               onChange={handleFormChange}
-              placeholder="WhatsApp Number (optional)"
+              placeholder="رقم الواتساب (اختياري)"
               className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
@@ -319,7 +319,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
             name="notes"
             value={formData.notes}
             onChange={handleFormChange}
-            placeholder="Write any additional instructions here..."
+            placeholder="اكتب أي ملاحظات أو تعليمات إضافية هنا..."
             className="p-4 rounded-xl border mt-6 w-full focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
@@ -328,7 +328,7 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
             disabled={loading}
             className="mt-8 w-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
-            {loading ? "Submitting Reservation..." : "✅ Confirm Reservation"}
+            {loading ? "جاري إرسال طلب الحجز..." : "✅ تأكيد الحجز"}
           </Button>
         </form>
       )}

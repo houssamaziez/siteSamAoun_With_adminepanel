@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Menu, Phone, MapPin, Clock } from 'lucide-react';
-import { useCart } from '../../hooks/useCart';
+import { Menu, Phone, MapPin, Clock } from 'lucide-react';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
-  onCartOpen: () => void;
   onMenuOpen: () => void;
   onAdminAccess: () => void;
 }
 
-export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
+export function Header({ onMenuOpen, onAdminAccess }: HeaderProps) {
   const navigate = useNavigate();
-  const { getItemCount, items, updateTrigger, getCacheStatus, refreshCart, isUpdating } = useCart();
   const { settings } = useSiteSettings();
-  const [cartAnimation, setCartAnimation] = useState(false);
 
   const siteData = settings || {
     siteName: 'Cortec batna ',
@@ -23,20 +19,6 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
     phone: '+1 (555) 123-4567',
     hours: 'Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM',
     logoUrl: undefined,
-  };
-
-  const cartCount = getItemCount();
-
-  useEffect(() => {
-    if (cartCount > 0) {
-      setCartAnimation(true);
-      setTimeout(() => setCartAnimation(false), 1000);
-    }
-  }, [items, updateTrigger, cartCount, getCacheStatus]);
-
-  const handleCartClick = () => {
-    refreshCart();
-    onCartOpen();
   };
 
   const handleLogoClick = () => {
@@ -101,43 +83,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-4 animate-fade-in-right">
-            {/* Cart */}
-            <button
-              onClick={handleCartClick}
-              className={`relative p-3 text-gray-600 hover:text-gray-900 transition-all duration-300 group hover-scale hover-glow rounded-full ${
-                cartAnimation || isUpdating ? 'animate-bounce' : ''
-              }`}
-              disabled={isUpdating}
-            >
-              <ShoppingCart
-                className={`w-6 h-6 group-hover:animate-wiggle transition-transform duration-300 ${
-                  cartAnimation || isUpdating ? 'animate-pulse text-green-600' : ''
-                }`}
-              />
-              {cartCount > 0 && (
-                <span
-                  key={cartCount}
-                  className={`absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-medium transition-all duration-300 ${
-                    cartAnimation || isUpdating
-                      ? 'animate-ping'
-                      : 'animate-cart-bounce'
-                  }`}
-                  style={{
-                    animation:
-                      cartAnimation || isUpdating
-                        ? 'ping 1s cubic-bezier(0, 0, 0.2, 1)'
-                        : 'cart-bounce 0.8s ease-in-out, pulse-glow 2s ease-in-out infinite',
-                  }}
-                >
-                  {cartCount}
-                </span>
-              )}
-              {(cartAnimation || isUpdating) && (
-                <div className="absolute -top-3 -right-3 w-4 h-4 bg-green-500 rounded-full animate-ping"></div>
-              )}
-            </button>
-          </div>
+          {/* 🔹 زر السلة تم إزالته */}
         </div>
       </div>
     </header>

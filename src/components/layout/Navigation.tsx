@@ -23,7 +23,7 @@ export function Navigation({ onCategorySelect }: NavigationProps) {
               onClick={() => handleCategoryClick('all')}
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
             >
-              All Products
+             جميع المنتجات
             </button>
             
             {categories.map((category) => {

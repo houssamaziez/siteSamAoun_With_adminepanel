@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wrench, Shield, Truck, HeadphonesIcon, Settings, Award } from 'lucide-react';
+import { Wrench, Shield, Truck, Headphones as HeadphonesIcon, Settings, Award } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { store } from '../../data/mockData';
 import { useSiteSettings } from '../../hooks/useSiteSettings';

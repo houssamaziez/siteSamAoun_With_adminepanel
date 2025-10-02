@@ -320,7 +320,7 @@ export function ReservationsManager() {
                           </div>
                           {reservation.customerWhatsApp && (
                             <div className="flex items-center space-x-2 text-sm text-green-600">
-                              <span className="text-xs">WhatsApp:</span>
+                              <span className="text-xs">Wilaya:</span>
                               <span>{reservation.customerWhatsApp}</span>
                             </div>
                           )}

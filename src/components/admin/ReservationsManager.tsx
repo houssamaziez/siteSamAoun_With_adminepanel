@@ -544,7 +544,7 @@ function ReservationDetailModal({ reservation, onClose, onStatusUpdate }) {
                     </div>
                     {reservation.customerWhatsApp && (
                       <div>
-                        <label className="text-sm font-medium text-gray-600">WhatsApp</label>
+                        <label className="text-sm font-medium text-gray-600">Wilaya</label>
                         <p className="text-green-600">{reservation.customerWhatsApp}</p>
                       </div>
                     )}

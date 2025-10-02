@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, MapPin, Shield, Truck, HeadphonesIcon } from 'lucide-react';
+import { ArrowRight, MapPin, Shield, Truck, Headphones as HeadphonesIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 

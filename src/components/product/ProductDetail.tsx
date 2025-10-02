@@ -80,6 +80,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ ملء التاريخ والوقت تلقائياً في الخلفية
   useEffect(() => {
     if (showReservationForm) {
       const now = new Date();
@@ -113,8 +114,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         customer_phone: formData.customerPhone,
         customer_whatsapp: formData.customerWhatsApp,
         pickup_branch: formData.pickupBranch,
-        proposed_date: formData.proposedDate,
-        proposed_time: formData.proposedTime,
+        proposed_date: formData.proposedDate, // يبقى يذهب لقاعدة البيانات
+        proposed_time: formData.proposedTime, // لكن لا يظهر للمستخدم
         notes: formData.notes,
         items: [{ product, quantity }],
         total_amount: product.price * quantity,
@@ -294,23 +295,6 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               value={formData.customerWhatsApp}
               onChange={handleFormChange}
               placeholder="رقم الواتساب (اختياري)"
-              className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <input
-              type="date"
-              name="proposedDate"
-              value={formData.proposedDate}
-              onChange={handleFormChange}
-              className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-            <input
-              type="time"
-              name="proposedTime"
-              value={formData.proposedTime}
-              onChange={handleFormChange}
               className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>

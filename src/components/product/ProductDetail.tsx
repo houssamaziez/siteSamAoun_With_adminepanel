@@ -206,9 +206,9 @@ setToast({ message: "📩 Reservation request sent successfully ✅", type: "suc
 
         {/* Product Details */}
         <div className="space-y-6 animate-slideUp">
-          <p className="text-gray-600 leading-relaxed text-lg">
-            {product.description}
-          </p>
+          <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
+  {product.description}
+</p>
 
           <div className="flex items-center gap-3">
             <span className="text-3xl font-bold text-green-600 drop-shadow-md">

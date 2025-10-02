@@ -158,13 +158,14 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
         {/* صور المنتج */}
         <div>
           {/* ✅ الصورة الكبيرة - تظهر كاملة */}
-          <div className="w-full h-96 bg-white flex items-center justify-center rounded-2xl shadow-2xl">
-            <img
-              src={product.images[selectedImageIndex]}
-              alt={product.name}
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
+          <div className="w-full h-[600px] bg-white flex items-center justify-center rounded-2xl shadow-2xl overflow-hidden">
+  <img
+    src={product.images[selectedImageIndex]}
+    alt={product.name}
+    className="w-full h-full object-cover"
+  />
+</div>
+
 
           {/* ✅ الصور الصغيرة */}
           <div className="flex gap-3 mt-5">

@@ -236,14 +236,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
           {/* أزرار الإجراءات */}
           <div className="flex gap-4">
-            <Button
-              data-add-to-cart
-              onClick={handleAddToCart}
-              className="flex-1 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-              icon={ShoppingCart}
-            >
-              إضافة إلى السلة
-            </Button>
+           
             <Button
               variant="secondary"
               onClick={() => setShowReservationForm(true)}

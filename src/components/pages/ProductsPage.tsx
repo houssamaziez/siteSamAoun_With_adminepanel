@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Search, Filter, Grid, List, ArrowLeft, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
+import { Search, Filter, Grid2x2 as Grid, List, ArrowLeft, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { ProductCard } from '../ui/ProductCard';
 import { Button } from '../ui/Button';
 import { useProducts, useCategories } from '../../hooks/useSupabaseData';

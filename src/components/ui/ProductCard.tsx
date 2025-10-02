@@ -128,7 +128,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
             disabled={product.stock === 0 || isUpdating}
             className="flex-1 text-sm font-semibold hover-lift btn-primary shadow-medium"
           >
-            Reserve Now
+            حجز الآن
           </Button>
 
           <Button

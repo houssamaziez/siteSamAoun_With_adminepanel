@@ -78,7 +78,7 @@ export function Hero({ onExploreProducts }: HeroProps) {
                   <Shield className="w-6 h-6 text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold" dir="rtl">ضمان 3 سنوات</h3>
+                  <h3 className="font-semibold" dir="rtl">ضمان </h3>
                   <p className="text-sm text-gray-400" dir="rtl">على جميع المنتجات</p>
                 </div>
               </div>

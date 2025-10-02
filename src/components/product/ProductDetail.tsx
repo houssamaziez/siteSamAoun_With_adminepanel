@@ -157,22 +157,31 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* صور المنتج */}
         <div>
-          <img
-            src={product.images[selectedImageIndex]}
-            alt={product.name}
-            className="rounded-2xl shadow-2xl w-full h-96 object-cover"
-          />
+          {/* ✅ الصورة الكبيرة - تظهر كاملة */}
+          <div className="w-full h-96 bg-white flex items-center justify-center rounded-2xl shadow-2xl">
+            <img
+              src={product.images[selectedImageIndex]}
+              alt={product.name}
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+
+          {/* ✅ الصور الصغيرة */}
           <div className="flex gap-3 mt-5">
             {product.images.map((img, idx) => (
-              <img
+              <div
                 key={idx}
-                src={img}
-                alt={`صورة ${idx + 1}`}
                 onClick={() => setSelectedImageIndex(idx)}
-                className={`w-24 h-24 rounded-xl cursor-pointer border-2 transition-all duration-300 ${
+                className={`w-24 h-24 rounded-xl cursor-pointer border-2 flex items-center justify-center bg-white transition-all duration-300 ${
                   selectedImageIndex === idx ? "border-blue-600" : "border-gray-300"
                 }`}
-              />
+              >
+                <img
+                  src={img}
+                  alt={`صورة ${idx + 1}`}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
             ))}
           </div>
         </div>

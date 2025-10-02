@@ -152,13 +152,13 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* الصورة الكبيرة */}
-        <div className="w-full h-96 bg-white flex items-center justify-center rounded-2xl shadow-2xl overflow-hidden">
-          <img
-            src={product.images[selectedImageIndex]}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <div className="w-full bg-white flex items-center justify-center rounded-2xl shadow-2xl overflow-hidden">
+  <img
+    src={product.images[selectedImageIndex]}
+    alt={product.name}
+    className="w-full h-auto max-h-[600px] object-contain"
+  />
+</div>
 
         {/* الصور الصغيرة */}
         <div className="flex gap-3 mt-5">

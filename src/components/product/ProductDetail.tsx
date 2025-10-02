@@ -287,7 +287,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               name="customerWhatsApp"
               value={formData.customerWhatsApp}
               onChange={handleFormChange}
-              placeholder="رقم الواتساب (اختياري)"
+              placeholder="رقم 2 (اختياري)"
               className="p-4 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>

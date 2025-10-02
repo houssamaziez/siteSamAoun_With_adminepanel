@@ -183,17 +183,17 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
 
         {/* Actions */}
         <div className="flex gap-2 items-center">
-          <Button
-            variant="primary"
-            size="sm"
-            icon={ShoppingCart}
-            onClick={handleAddToCart}
-            disabled={product.stock === 0 || isUpdating}
-            loading={isUpdating}
-            className="flex-1 text-sm font-semibold hover-lift btn-primary shadow-medium"
-          >
-            {isUpdating ? 'جاري الإضافة...' : cartItem ? `في السلة (${cartItem.quantity})` : 'أضف للسلة'}
-          </Button>
+              <Button
+  variant="primary"
+  size="sm"
+  icon={Calendar} // 👈 بدّل الأيقونة لو تحب
+  onClick={handleAddToCart}
+  disabled={product.stock === 0 || isUpdating}
+  loading={isUpdating}
+  className="flex-1 text-sm font-semibold hover-lift btn-primary shadow-medium"
+>
+  {isUpdating ? '...جاري الحجز' : cartItem ? `محجوز (${cartItem.quantity})` : 'Reserve Now'}
+</Button>
 
      
 

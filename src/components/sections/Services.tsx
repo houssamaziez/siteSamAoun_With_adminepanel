@@ -26,10 +26,10 @@ export function Services() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4" dir="rtl">
             {settings?.servicesTitle || siteData.servicesTitle}
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto" dir="rtl">
             {settings?.servicesDescription || siteData.servicesDescription}
           </p>
         </div>
@@ -44,10 +44,10 @@ export function Services() {
                 <div className={`w-16 h-16 ${color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}>
                   <IconComponent className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{service}</h3>
-                <p className="text-gray-600">
-                  Professional {service.toLowerCase()} services by certified technicians 
-                  with years of experience.
+                <h3 className="text-xl font-semibold text-gray-900 mb-2" dir="rtl">{service}</h3>
+                <p className="text-gray-600" dir="rtl">
+                  خدمات {service.toLowerCase()} احترافية من قبل فنيين معتمدين
+                  بسنوات من الخبرة.
                 </p>
               </div>
             );
@@ -56,9 +56,9 @@ export function Services() {
 
         {/* CTA Section */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-center text-white">
-          <h3 className="text-2xl font-bold mb-4">Need Professional Help?</h3>
-          <p className="text-lg mb-6 opacity-90">
-            Our certified technicians are ready to help with installation, maintenance, and support.
+          <h3 className="text-2xl font-bold mb-4" dir="rtl">تحتاج مساعدة احترافية؟</h3>
+          <p className="text-lg mb-6 opacity-90" dir="rtl">
+            فنيونا المعتمدون مستعدون للمساعدة في التركيب والصيانة والدعم.
           </p>
        
         </div>

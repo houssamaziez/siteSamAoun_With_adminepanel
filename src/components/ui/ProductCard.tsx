@@ -140,12 +140,12 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
         </div>
 
         {/* Product Name */}
-        <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+        <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300" dir="rtl">
           {product.name}
         </h3>
 
         {/* Description */}
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2" dir="rtl">
           {product.shortDescription}
         </p>
 
@@ -176,7 +176,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
           </div>
           {product.stock <= 5 && product.stock > 0 && (
             <span className="text-xs text-orange-600 font-bold bg-orange-100 px-2 py-1 rounded-full animate-pulse">
-              Only {product.stock} left
+              متبقي {product.stock} فقط
             </span>
           )}
         </div>
@@ -192,7 +192,7 @@ export function ProductCard({ product, onViewDetails }: ProductCardProps) {
             loading={isUpdating}
             className="flex-1 text-sm font-semibold hover-lift btn-primary shadow-medium"
           >
-            {isUpdating ? 'Adding...' : cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
+            {isUpdating ? 'جاري الإضافة...' : cartItem ? `في السلة (${cartItem.quantity})` : 'أضف للسلة'}
           </Button>
           <Button
             variant="outline"

@@ -48,8 +48,8 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 relative">
           <div className="flex items-center space-x-2">
             <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600 animate-float" />
-            <h2 className="text-xl sm:text-2xl font-bold gradient-text">
-              Cart ({cartCount})
+            <h2 className="text-xl sm:text-2xl font-bold gradient-text" dir="rtl">
+              السلة ({cartCount})
             </h2>
           </div>
           <div className="flex items-center space-x-2">
@@ -60,7 +60,7 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                 setTimeout(() => setLocalUpdating(false), 500);
               }}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200 text-gray-500 hover:text-blue-600"
-              title="Refresh Cart"
+              title="تحديث السلة"
             >
               <svg className={`w-5 h-5 ${isUpdating ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -80,8 +80,8 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
           {items.length === 0 ? (
             <div className="text-center py-20">
               <ShoppingBag className="w-16 h-16 sm:w-20 sm:h-20 text-gray-300 mx-auto mb-4 animate-float" />
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Your cart is empty</h3>
-              <p className="text-gray-500 text-sm sm:text-lg">Add some products to get started!</p>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2" dir="rtl">سلتك فارغة</h3>
+              <p className="text-gray-500 text-sm sm:text-lg" dir="rtl">أضف بعض المنتجات للبدء!</p>
             </div>
           ) : (
             <div className="space-y-4 sm:space-y-6">
@@ -129,10 +129,10 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
                     </div>
                     <button
                       onClick={() => removeItem(item.product.id)}
-                      className="text-red-500 hover:text-red-700 text-xs sm:text-sm font-medium bg-red-50 hover:bg-red-100 px-2 sm:px-3 py-1 rounded-full transition-all duration-200"
+                      className="text-red-500 hover:text-red-700 text-xs sm:text-sm font-medium bg-red-50 hover:bg-red-100 px-2 sm:px-3 py-1 rounded-full transition-all duration-200" dir="rtl"
                       disabled={isUpdating}
                     >
-                      Remove
+                      إزالة
                     </button>
                   </div>
                 </div>
@@ -146,8 +146,8 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
           <div className="border-t border-gray-200 p-4 sm:p-6 space-y-3 sm:space-y-6 bg-gradient-to-r from-blue-50 to-purple-50 sticky bottom-0">
             {/* Total */}
             <div className="flex items-center justify-between text-lg sm:text-xl font-bold">
-              <span className="text-gray-900">Total:</span>
-              <span className="gradient-text text-xl sm:text-2xl">{cartTotal.toLocaleString()} DZD</span>
+              <span className="text-gray-900" dir="rtl">المجموع:</span>
+              <span className="gradient-text text-xl sm:text-2xl">{cartTotal.toLocaleString()} د.ج</span>
             </div>
 
             {/* Checkout Button */}
@@ -159,13 +159,13 @@ export function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebarProps) {
               iconPosition="right"
               className="w-full shadow btn-primary text-base sm:text-lg py-3 sm:py-4"
             >
-              {isUpdating ? 'Processing...' : 'Proceed to Reservation'}
+              {isUpdating ? 'جاري المعالجة...' : 'المتابعة للحجز'}
             </Button>
 
             {/* Additional Info */}
             <div className="text-center mt-2">
-              <p className="text-xs sm:text-sm text-gray-500">
-                Click to confirm your reservation request
+              <p className="text-xs sm:text-sm text-gray-500" dir="rtl">
+                انقر لتأكيد طلب الحجز الخاص بك
               </p>
             </div>
           </div>

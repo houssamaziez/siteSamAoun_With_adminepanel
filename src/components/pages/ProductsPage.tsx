@@ -138,17 +138,17 @@ export function ProductsPage() {
           
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                {currentCategory ? currentCategory.name : 'All Products'}
+              <h1 className="text-4xl font-bold text-gray-900 mb-2" dir="rtl">
+                {currentCategory ? currentCategory.name : 'جميع المنتجات'}
               </h1>
-              <p className="text-lg text-gray-600">
-                {currentCategory ? currentCategory.description : 'Discover our complete range of technology products'}
+              <p className="text-lg text-gray-600" dir="rtl">
+                {currentCategory ? currentCategory.description : 'اكتشف مجموعتنا الكاملة من المنتجات التقنية'}
               </p>
             </div>
             
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500 bg-white px-3 py-2 rounded-lg border">
-                <span className="font-medium text-gray-900">{filteredProducts.length}</span> products found
+                <span className="font-medium text-gray-900">{filteredProducts.length}</span> منتج موجود
               </div>
               
               <Link 
@@ -156,7 +156,7 @@ export function ProductsPage() {
                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
+                العودة للرئيسية
               </Link>
             </div>
           </div>
@@ -171,10 +171,11 @@ export function ProductsPage() {
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Search products, brands, or descriptions..."
+                  placeholder="ابحث عن المنتجات، العلامات التجارية، أو الأوصاف..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-right"
+                  dir="rtl"
                 />
                 {searchQuery && (
                   <button
@@ -194,11 +195,11 @@ export function ProductsPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               >
-                <option value="name">Sort by Name</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="brand">Sort by Brand</option>
-                <option value="newest">Newest First</option>
+                <option value="name">ترتيب حسب الاسم</option>
+                <option value="price-low">السعر: من الأقل للأعلى</option>
+                <option value="price-high">السعر: من الأعلى للأقل</option>
+                <option value="brand">ترتيب حسب العلامة التجارية</option>
+                <option value="newest">الأحدث أولاً</option>
               </select>
             </div>
 
@@ -236,7 +237,7 @@ export function ProductsPage() {
                 }`}
               >
                 <SlidersHorizontal className="w-5 h-5 mr-2" />
-                Filters
+                الفلاتر
                 {activeFiltersCount > 0 && (
                   <span className="ml-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {activeFiltersCount}
@@ -253,8 +254,8 @@ export function ProductsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Price Range */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Price Range: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} DZD
+                  <label className="block text-sm font-medium text-gray-700 mb-3" dir="rtl">
+                    نطاق السعر: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} د.ج
                   </label>
                   <div className="space-y-2">
                     <input
@@ -280,8 +281,8 @@ export function ProductsPage() {
 
                 {/* Brands */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Brands ({selectedBrands.length} selected)
+                  <label className="block text-sm font-medium text-gray-700 mb-3" dir="rtl">
+                    العلامات التجارية ({selectedBrands.length} محددة)
                   </label>
                   <div className="max-h-32 overflow-y-auto space-y-2">
                     {availableBrands.map(brand => (
@@ -300,14 +301,14 @@ export function ProductsPage() {
 
                 {/* Condition */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Condition
+                  <label className="block text-sm font-medium text-gray-700 mb-3" dir="rtl">
+                    الحالة
                   </label>
                   <div className="space-y-2">
                     {[
-                      { value: 'all', label: 'All Conditions' },
-                      { value: 'new', label: 'New' },
-                      { value: 'refurbished', label: 'Refurbished' }
+                      { value: 'all', label: 'جميع الحالات' },
+                      { value: 'new', label: 'جديد' },
+                      { value: 'refurbished', label: 'مُجدد' }
                     ].map(option => (
                       <label key={option.value} className="flex items-center">
                         <input
@@ -332,7 +333,7 @@ export function ProductsPage() {
                     disabled={activeFiltersCount === 0}
                     className="w-full"
                   >
-                    Clear All Filters
+                    مسح جميع الفلاتر
                   </Button>
                 </div>
               </div>
@@ -344,11 +345,11 @@ export function ProductsPage() {
         {activeFiltersCount > 0 && (
           <div className="mb-6 animate-fade-in">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">Active filters:</span>
+              <span className="text-sm font-medium text-gray-700" dir="rtl">الفلاتر النشطة:</span>
               
               {searchQuery && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Search: "{searchQuery}"
+                  البحث: "{searchQuery}"
                   <button
                     onClick={() => setSearchQuery('')}
                     className="ml-2 hover:text-blue-600"
@@ -360,7 +361,7 @@ export function ProductsPage() {
 
               {selectedBrands.map(brand => (
                 <span key={brand} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Brand: {brand}
+                  العلامة التجارية: {brand}
                   <button
                     onClick={() => handleBrandToggle(brand)}
                     className="ml-2 hover:text-green-600"
@@ -372,7 +373,7 @@ export function ProductsPage() {
 
               {selectedCondition !== 'all' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  Condition: {selectedCondition}
+                  الحالة: {selectedCondition === 'new' ? 'جديد' : 'مُجدد'}
                   <button
                     onClick={() => setSelectedCondition('all')}
                     className="ml-2 hover:text-purple-600"
@@ -384,7 +385,7 @@ export function ProductsPage() {
 
               {(priceRange[0] > 0 || priceRange[1] < 100000) && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                  Price: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} DZD
+                  السعر: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} د.ج
                   <button
                     onClick={() => setPriceRange([0, 100000])}
                     className="ml-2 hover:text-orange-600"
@@ -422,17 +423,17 @@ export function ProductsPage() {
               <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
                 <Filter className="w-12 h-12 text-gray-400" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">No products found</h3>
-              <p className="text-gray-600 mb-8">
-                We couldn't find any products matching your criteria. Try adjusting your filters or search terms.
+              <h3 className="text-2xl font-bold text-gray-900 mb-4" dir="rtl">لم يتم العثور على منتجات</h3>
+              <p className="text-gray-600 mb-8" dir="rtl">
+                لم نتمكن من العثور على أي منتجات تطابق معاييرك. جرب تعديل الفلاتر أو مصطلحات البحث.
               </p>
               <div className="space-y-3">
                 <Button onClick={clearFilters} className="w-full">
-                  Clear All Filters
+                  مسح جميع الفلاتر
                 </Button>
                 <Link to="/" className="block">
                   <Button variant="outline" className="w-full">
-                    Browse All Categories
+                    تصفح جميع الفئات
                   </Button>
                 </Link>
               </div>
@@ -444,7 +445,7 @@ export function ProductsPage() {
         {filteredProducts.length > 0 && filteredProducts.length >= 20 && (
           <div className="text-center mt-12 animate-fade-in">
             <Button variant="outline" size="lg">
-              Load More Products
+              تحميل المزيد من المنتجات
             </Button>
           </div>
         )}

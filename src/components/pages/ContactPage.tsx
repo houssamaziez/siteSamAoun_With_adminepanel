@@ -60,11 +60,11 @@ export function ContactPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-16 animate-fade-in-up">
-          <h1 className="text-4xl lg:text-5xl font-bold gradient-text mb-6">
+          <h1 className="text-4xl lg:text-5xl font-bold gradient-text mb-6" dir="rtl">
             {settings?.contactTitle || 'Contact Us'}
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Get in touch with our team. We're here to help with all your technology needs.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto" dir="rtl">
+            تواصل مع فريقنا. نحن هنا للمساعدة في جميع احتياجاتك التقنية.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export function ContactPage() {
           {/* Contact Information */}
           <div className="space-y-8 animate-fade-in-left">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-strong p-8 hover-lift">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6" dir="rtl">تواصل معنا</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -80,8 +80,8 @@ export function ContactPage() {
                     <MapPin className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Address</h3>
-                    <p className="text-gray-600">{siteData.address}</p>
+                    <h3 className="font-semibold text-gray-900" dir="rtl">العنوان</h3>
+                    <p className="text-gray-600" dir="rtl">{siteData.address}</p>
                   </div>
                 </div>
 
@@ -90,9 +90,9 @@ export function ContactPage() {
                     <Phone className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Phone</h3>
+                    <h3 className="font-semibold text-gray-900" dir="rtl">الهاتف</h3>
                     <p className="text-gray-600">{siteData.phone}</p>
-                    <p className="text-sm text-gray-500">WhatsApp: {siteData.whatsapp}</p>
+                    <p className="text-sm text-gray-500" dir="rtl">واتساب: {siteData.whatsapp}</p>
                   </div>
                 </div>
 
@@ -101,7 +101,7 @@ export function ContactPage() {
                     <Mail className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Email</h3>
+                    <h3 className="font-semibold text-gray-900" dir="rtl">البريد الإلكتروني</h3>
                     <p className="text-gray-600">{siteData.email}</p>
                   </div>
                 </div>
@@ -111,8 +111,8 @@ export function ContactPage() {
                     <Clock className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Business Hours</h3>
-                    <p className="text-gray-600">{siteData.hours}</p>
+                    <h3 className="font-semibold text-gray-900" dir="rtl">ساعات العمل</h3>
+                    <p className="text-gray-600" dir="rtl">{siteData.hours}</p>
                   </div>
                 </div>
               </div>
@@ -123,7 +123,7 @@ export function ContactPage() {
                   icon={MessageSquare}
                   className="w-full hover-lift btn-primary"
                 >
-                  Contact via WhatsApp
+                  تواصل عبر الواتساب
                 </Button>
               </div>
             </div>
@@ -133,14 +133,14 @@ export function ContactPage() {
           <div className="animate-fade-in-right">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-strong overflow-hidden hover-lift">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Find Us</h2>
-                <p className="text-gray-600">Visit our store for hands-on experience</p>
+                <h2 className="text-2xl font-bold text-gray-900" dir="rtl">اعثر علينا</h2>
+                <p className="text-gray-600" dir="rtl">قم بزيارة متجرنا للحصول على تجربة عملية</p>
               </div>
               
               <div className="aspect-video">
                 <iframe
                   src={getEmbedMapUrl()}
-                  title="خريطة موقع المتجر"
+                  title="Store Location Map"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -158,7 +158,7 @@ export function ContactPage() {
                   variant="outline"
                   className="w-full hover-lift mb-3"
                 >
-                  Open in Google Maps
+                  فتح في خرائط جوجل
                 </Button>
                 
                 {settings?.enableDirections && (
@@ -167,7 +167,7 @@ export function ContactPage() {
                     icon={Navigation}
                     className="w-full hover-lift"
                   >
-                    Get Directions
+                    الحصول على الاتجاهات
                   </Button>
                 )}
               </div>

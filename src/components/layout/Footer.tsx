@@ -38,19 +38,20 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="text-2xl font-bold mb-2">{settings?.newsletterTitle || siteData.newsletterTitle}</h3>
-              <p className="text-gray-400">
+              <h3 className="text-2xl font-bold mb-2" dir="rtl">{settings?.newsletterTitle || siteData.newsletterTitle}</h3>
+              <p className="text-gray-400" dir="rtl">
                 {settings?.newsletterDescription || siteData.newsletterDescription}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <input
                 type="email"
-                placeholder="Enter your email address"
-                className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
+                placeholder="أدخل عنوان بريدك الإلكتروني"
+                className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400 text-right"
+                dir="rtl"
               />
               <Button icon={ArrowRight} iconPosition="right">
-                Subscribe
+                اشترك
               </Button>
             </div>
           </div>
@@ -62,8 +63,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <h3 className="text-2xl font-bold mb-4">{siteData.siteName}</h3>
-            <p className="text-gray-400 mb-6 leading-relaxed">
+            <h3 className="text-2xl font-bold mb-4" dir="rtl">{siteData.siteName}</h3>
+            <p className="text-gray-400 mb-6 leading-relaxed" dir="rtl">
               {settings?.footerDescription || siteData.footerDescription}
             </p>
             
@@ -106,11 +107,11 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
+            <h4 className="text-lg font-semibold mb-6" dir="rtl">روابط سريعة</h4>
             <ul className="space-y-3">
-              {['About Us', 'Products', 'Services', 'Support', 'Blog', 'Careers'].map((link) => (
+              {['من نحن', 'المنتجات', 'الخدمات', 'الدعم', 'المدونة', 'الوظائف'].map((link) => (
                 <li key={link}>
-                  <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200" dir="rtl">
                     {link}
                   </a>
                 </li>
@@ -122,11 +123,11 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Contact Info</h4>
+            <h4 className="text-lg font-semibold mb-6" dir="rtl">معلومات الاتصال</h4>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
-                <span className="text-gray-400">{siteData.address}</span>
+                <span className="text-gray-400" dir="rtl">{siteData.address}</span>
               </div>
               
               <div className="flex items-center space-x-3">
@@ -141,7 +142,7 @@ export function Footer() {
               
               <div className="flex items-start space-x-3">
                 <Clock className="w-5 h-5 text-blue-400 mt-1 flex-shrink-0" />
-                <span className="text-gray-400">{siteData.hours}</span>
+                <span className="text-gray-400" dir="rtl">{siteData.hours}</span>
               </div>
             </div>
           </div>
@@ -152,22 +153,22 @@ export function Footer() {
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm mb-4 md:mb-0">
+            <p className="text-gray-400 text-sm mb-4 md:mb-0" dir="rtl">
               © {currentYear} {siteData.siteName}. {settings?.copyrightText || siteData.copyrightText}
             </p>
             
             <div className="flex flex-wrap gap-6 text-sm">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                Privacy Policy
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200" dir="rtl">
+                سياسة الخصوصية
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                Terms of Service
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200" dir="rtl">
+                شروط الخدمة
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                Cookie Policy
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200" dir="rtl">
+                سياسة ملفات تعريف الارتباط
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                Sitemap
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200" dir="rtl">
+                خريطة الموقع
               </a>
             </div>
           </div>

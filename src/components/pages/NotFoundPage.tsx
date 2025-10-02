@@ -9,28 +9,28 @@ export function NotFoundPage() {
       <div className="text-center">
         <div className="mb-8">
           <div className="text-9xl font-bold text-gray-300 mb-4">404</div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Page Not Found</h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-md mx-auto">
-            Sorry, we couldn't find the page you're looking for. 
-            It might have been moved, deleted, or you entered the wrong URL.
+          <h1 className="text-4xl font-bold text-gray-900 mb-4" dir="rtl">الصفحة غير موجودة</h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-md mx-auto" dir="rtl">
+            عذراً، لم نتمكن من العثور على الصفحة التي تبحث عنها.
+            ربما تم نقلها أو حذفها أو أدخلت رابطاً خاطئاً.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/">
             <Button icon={Home} size="lg">
-              Back to Home
+              العودة للرئيسية
             </Button>
           </Link>
           <Link to="/products">
             <Button variant="outline" icon={Search} size="lg">
-              Browse Products
+              تصفح المنتجات
             </Button>
           </Link>
         </div>
 
         <div className="mt-12 text-sm text-gray-500">
-          <p>Need help? Contact our support team</p>
+          <p dir="rtl">تحتاج مساعدة؟ تواصل مع فريق الدعم</p>
         </div>
       </div>
     </div>

@@ -62,7 +62,7 @@ export function Header({ onCartOpen, onMenuOpen, onAdminAccess }: HeaderProps) {
             <div className="flex items-center animate-fade-in-right">
               <Clock className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">{siteData.hours}</span>
-              <span className="sm:hidden">Open Mon-Sat</span>
+              <span className="sm:hidden">مفتوح الإثنين-السبت</span>
             </div>
           </div>
         </div>

@@ -37,7 +37,7 @@ export function Hero({ onExploreProducts }: HeroProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <div className="text-white animate-fade-in-left">
-            <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6 animate-fade-in-up stagger-1">
+            <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6 animate-fade-in-up stagger-1" dir="rtl">
               {settings?.heroTitle || siteData.heroTitle}
               <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent animate-pulse">
                 
@@ -45,7 +45,7 @@ export function Hero({ onExploreProducts }: HeroProps) {
               
             </h1>
             
-            <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed animate-fade-in-up stagger-2">
+            <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed animate-fade-in-up stagger-2" dir="rtl">
               {settings?.heroSubtitle || siteData.heroSubtitle}
             </p>
 
@@ -57,7 +57,7 @@ export function Hero({ onExploreProducts }: HeroProps) {
                 iconPosition="right"
                 className="text-lg px-8 py-4 hover-lift btn-primary"
               >
-                Explore Products
+                استكشف المنتجات
               </Button>
               
               <Button 
@@ -67,7 +67,7 @@ export function Hero({ onExploreProducts }: HeroProps) {
                 onClick={handleFindUs}
                 className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-gray-900 hover-lift glass"
               >
-                Find Us
+                اعثر علينا
               </Button>
             </div>
 
@@ -78,8 +78,8 @@ export function Hero({ onExploreProducts }: HeroProps) {
                   <Shield className="w-6 h-6 text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">3-Year Warranty</h3>
-                  <p className="text-sm text-gray-400">On all products</p>
+                  <h3 className="font-semibold" dir="rtl">ضمان 3 سنوات</h3>
+                  <p className="text-sm text-gray-400" dir="rtl">على جميع المنتجات</p>
                 </div>
               </div>
               
@@ -88,8 +88,8 @@ export function Hero({ onExploreProducts }: HeroProps) {
                   <Truck className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Fast Delivery</h3>
-                  <p className="text-sm text-gray-400">Affordable Delivery (DZD)</p>
+                  <h3 className="font-semibold" dir="rtl">توصيل سريع</h3>
+                  <p className="text-sm text-gray-400" dir="rtl">توصيل بأسعار معقولة (د.ج)</p>
                 </div>
               </div>
               
@@ -98,8 +98,8 @@ export function Hero({ onExploreProducts }: HeroProps) {
                   <HeadphonesIcon className="w-6 h-6 text-purple-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">24/7 Support</h3>
-                  <p className="text-sm text-gray-400">Expert assistance</p>
+                  <h3 className="font-semibold" dir="rtl">دعم 24/7</h3>
+                  <p className="text-sm text-gray-400" dir="rtl">مساعدة خبراء</p>
                 </div>
               </div>
             </div>
@@ -123,12 +123,12 @@ export function Hero({ onExploreProducts }: HeroProps) {
                 <div className="flex items-center space-x-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-gray-900">{settings?.statProductsCount || siteData.statProductsCount}</div>
-                    <div className="text-sm text-gray-600">Products</div>
+                    <div className="text-sm text-gray-600">منتج</div>
                   </div>
                   <div className="w-px h-12 bg-gray-300"></div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-gray-900">{settings?.statSatisfactionRate || siteData.statCustomersCount}</div>
-                    <div className="text-sm text-gray-600">Satisfaction</div>
+                    <div className="text-sm text-gray-600">رضا العملاء</div>
                   </div>
                 </div>
               </div>

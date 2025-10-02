@@ -1,55 +1,55 @@
 import { Product, ProductCategory, Store } from '../types';
 
 export const store: Store = {
-  name: "TechHub Pro",
-  tagline: "Your Complete Technology Solution",
-  description: "Professional computer and technology store offering the latest hardware, components, and expert services.",
-  address: "123 Tech Street, Digital City, DC 12345",
+  name: "كورتك باتنة",
+  tagline: "حلولك التقنية الشاملة",
+  description: "متجر كمبيوتر وتكنولوجيا احترافي يقدم أحدث الأجهزة والمكونات والخدمات المتخصصة.",
+  address: "شارع التقنية 123، المدينة الرقمية، باتنة",
   phone: "+1 (555) 123-4567",
   whatsapp: "+1 (555) 123-4567",
   email: "info@techhubpro.com",
-  hours: "Mon-Fri: 9AM-7PM, Sat: 10AM-6PM, Sun: 12PM-5PM",
-  services: ["Hardware Installation", "System Maintenance", "Custom Builds", "Data Recovery", "Technical Support", "Warranty Service"]
+  hours: "الإثنين-الجمعة: 9ص-7م، السبت: 10ص-6م، الأحد: 12ظ-5م",
+  services: ["تركيب الأجهزة", "صيانة الأنظمة", "التجميع المخصص", "استرداد البيانات", "الدعم التقني", "خدمة الضمان"]
 };
 
 export const categories: ProductCategory[] = [
   {
     id: "1",
-    name: "Laptops",
+    name: "أجهزة لابتوب",
     slug: "laptops",
-    description: "Professional and gaming laptops",
+    description: "أجهزة لابتوب احترافية وللألعاب",
     image: "https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: "Laptop"
   },
   {
     id: "2",
-    name: "Desktops",
+    name: "أجهزة مكتبية",
     slug: "desktops",
-    description: "Custom and pre-built desktop systems",
+    description: "أنظمة مكتبية مخصصة ومُجمعة مسبقاً",
     image: "https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: "Monitor"
   },
   {
     id: "3",
-    name: "Components",
+    name: "المكونات",
     slug: "components",
-    description: "CPUs, GPUs, RAM, and more",
+    description: "معالجات، كروت رسومات، ذاكرة، والمزيد",
     image: "https://images.pexels.com/photos/2399840/pexels-photo-2399840.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: "Cpu"
   },
   {
     id: "4",
-    name: "Peripherals",
+    name: "الملحقات",
     slug: "peripherals",
-    description: "Keyboards, mice, monitors, and accessories",
+    description: "لوحات مفاتيح، فأرات، شاشات، وإكسسوارات",
     image: "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: "Keyboard"
   },
   {
     id: "5",
-    name: "Gaming",
+    name: "الألعاب",
     slug: "gaming",
-    description: "Gaming gear and accessories",
+    description: "معدات وإكسسوارات الألعاب",
     image: "https://images.pexels.com/photos/7915483/pexels-photo-7915483.jpeg?auto=compress&cs=tinysrgb&w=800",
     icon: "Gamepad2"
   },
@@ -60,7 +60,7 @@ export const products: Product[] = [
   {
     id: "1",
     sku: "LAP001",
-    name: "MacBook Pro 14-inch M3",
+    name: "ماك بوك برو 14 بوصة M3",
     slug: "macbook-pro-14-m3",
     brand: "Apple",
     price: 1999,
@@ -71,10 +71,10 @@ export const products: Product[] = [
       "https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     category: categories[0],
-    shortDescription: "Powerful professional laptop with M3 chip",
-    description: "The MacBook Pro 14-inch with M3 chip delivers exceptional performance for professionals and creators. Features advanced graphics, all-day battery life, and stunning Liquid Retina XDR display.",
+    shortDescription: "لابتوب احترافي قوي بمعالج M3",
+    description: "يقدم ماك بوك برو 14 بوصة بمعالج M3 أداءً استثنائياً للمحترفين والمبدعين. يتميز برسومات متقدمة وبطارية تدوم طوال اليوم وشاشة Liquid Retina XDR مذهلة.",
     specifications: {
-      "Processor": "Apple M3 8-core CPU",
+      "المعالج": "Apple M3 8-core CPU",
       "Memory": "16GB Unified Memory",
       "Storage": "512GB SSD",
       "Display": "14.2-inch Liquid Retina XDR",
@@ -86,14 +86,14 @@ export const products: Product[] = [
     stock: 5,
     status: 'active',
     featured: true,
-    warranty: "1 Year Apple Warranty",
+    warranty: "ضمان آبل لمدة سنة واحدة",
     condition: 'new',
     createdAt: new Date().toISOString()
   },
   {
     id: "2",
     sku: "GPU001",
-    name: "NVIDIA RTX 4080 Graphics Card",
+    name: "كارت رسومات NVIDIA RTX 4080",
     slug: "nvidia-rtx-4080",
     brand: "NVIDIA",
     price: 1199,
@@ -103,10 +103,10 @@ export const products: Product[] = [
       "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1200"
     ],
     category: categories[2],
-    shortDescription: "High-performance graphics card for gaming and content creation",
-    description: "Experience exceptional gaming and content creation with the RTX 4080. Features advanced ray tracing, DLSS 3, and massive 16GB GDDR6X memory.",
+    shortDescription: "كارت رسومات عالي الأداء للألعاب وإنشاء المحتوى",
+    description: "استمتع بتجربة ألعاب وإنشاء محتوى استثنائية مع RTX 4080. يتميز بتتبع الأشعة المتقدم وDLSS 3 وذاكرة 16GB GDDR6X ضخمة.",
     specifications: {
-      "GPU": "NVIDIA GeForce RTX 4080",
+      "كارت الرسومات": "NVIDIA GeForce RTX 4080",
       "Memory": "16GB GDDR6X",
       "Memory Bus": "256-bit",
       "Boost Clock": "2.51 GHz",
@@ -118,7 +118,7 @@ export const products: Product[] = [
     stock: 3,
     status: 'active',
     featured: true,
-    warranty: "3 Year Manufacturer Warranty",
+    warranty: "ضمان الشركة المصنعة لمدة 3 سنوات",
     condition: 'new',
     createdAt: new Date().toISOString()
   },

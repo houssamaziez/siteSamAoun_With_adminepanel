@@ -19,17 +19,17 @@ export function FeaturedProducts({ products, onViewProduct, onViewAllProducts }:
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Featured Products
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4" dir="rtl">
+              المنتجات المميزة
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Our product catalog is being updated. Please check back soon!
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8" dir="rtl">
+              يتم تحديث كتالوج منتجاتنا. يرجى المراجعة قريباً!
             </p>
             <Button
               size="lg"
               onClick={onViewAllProducts}
             >
-              Browse All Products
+              تصفح جميع المنتجات
             </Button>
           </div>
         </div>
@@ -42,12 +42,12 @@ export function FeaturedProducts({ products, onViewProduct, onViewAllProducts }:
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16 animate-fade-in-up">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 gradient-text">
-            Featured Products
+          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 gradient-text" dir="rtl">
+            المنتجات المميزة
           </h2>
-          <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Discover our handpicked selection of the latest and most popular tech products, 
-            carefully chosen for their performance, reliability, and value.
+          <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed" dir="rtl">
+            اكتشف مجموعتنا المختارة بعناية من أحدث وأشهر المنتجات التقنية،
+            المختارة بعناية لأدائها وموثوقيتها وقيمتها.
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export function FeaturedProducts({ products, onViewProduct, onViewAllProducts }:
           </div>
         ) : (
           <div className="text-center py-16 mb-16 animate-fade-in">
-            <p className="text-xl text-gray-600 mb-8">No featured products available at the moment.</p>
+            <p className="text-xl text-gray-600 mb-8" dir="rtl">لا توجد منتجات مميزة متاحة في الوقت الحالي.</p>
           </div>
         )}
 
@@ -77,7 +77,7 @@ export function FeaturedProducts({ products, onViewProduct, onViewAllProducts }:
             onClick={onViewAllProducts}
             className="hover-lift btn-primary shadow-medium px-10 py-4 text-lg"
           >
-            View All Products
+            عرض جميع المنتجات
           </Button>
         </div>
       </div>

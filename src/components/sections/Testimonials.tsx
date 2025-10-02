@@ -20,10 +20,10 @@ export function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4" dir="rtl">
             {settings?.testimonialsTitle || siteData.testimonialsTitle}
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto" dir="rtl">
             {settings?.testimonialsDescription || siteData.testimonialsDescription}
           </p>
         </div>
@@ -48,7 +48,7 @@ export function Testimonials() {
               </div>
 
               {/* Testimonial Text */}
-              <p className="text-gray-700 mb-6 leading-relaxed">
+              <p className="text-gray-700 mb-6 leading-relaxed" dir="rtl">
                 "{testimonial.text}"
               </p>
 
@@ -72,19 +72,19 @@ export function Testimonials() {
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="text-center">
             <div className="text-4xl font-bold text-blue-600 mb-2">{settings?.statCustomersCount || siteData.statCustomersCount}</div>
-            <div className="text-gray-600">Happy Customers</div>
+            <div className="text-gray-600" dir="rtl">عميل سعيد</div>
           </div>
           <div className="text-center">
             <div className="text-4xl font-bold text-green-600 mb-2">{settings?.statSatisfactionRate || siteData.statSatisfactionRate}</div>
-            <div className="text-gray-600">Satisfaction Rate</div>
+            <div className="text-gray-600" dir="rtl">معدل الرضا</div>
           </div>
           <div className="text-center">
             <div className="text-4xl font-bold text-purple-600 mb-2">{settings?.statProductsCount || siteData.statProductsCount}</div>
-            <div className="text-gray-600">Products Available</div>
+            <div className="text-gray-600" dir="rtl">منتج متاح</div>
           </div>
           <div className="text-center">
             <div className="text-4xl font-bold text-orange-600 mb-2">{settings?.statSupportAvailability || siteData.statSupportAvailability}</div>
-            <div className="text-gray-600">Support Available</div>
+            <div className="text-gray-600" dir="rtl">دعم متاح</div>
           </div>
         </div>
       </div>

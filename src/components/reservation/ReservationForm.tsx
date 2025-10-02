@@ -79,7 +79,7 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
         <div className="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
           {/* رأس النموذج */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-900">Reserve Your Items</h2>
+            <h2 className="text-2xl font-semibold text-gray-900" dir="rtl">احجز منتجاتك</h2>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
               <X className="w-6 h-6 text-gray-500" />
             </button>
@@ -88,11 +88,11 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
           <form onSubmit={handleSubmit} className="p-6 space-y-8">
             {/* قسم معلومات العميل */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Customer Information</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3" dir="rtl">معلومات العميل</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <User className="w-4 h-4 mr-2" /> Full Name *
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2" dir="rtl">
+                    <User className="w-4 h-4 ml-2" /> الاسم الكامل *
                   </label>
                   <input
                     type="text"
@@ -101,13 +101,14 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
                     onChange={handleFormChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your full name"
+                    placeholder="أدخل اسمك الكامل"
+                    dir="rtl"
                   />
                 </div>
 
                 <div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <Phone className="w-4 h-4 mr-2" /> Phone Number *
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2" dir="rtl">
+                    <Phone className="w-4 h-4 ml-2" /> رقم الهاتف *
                   </label>
                   <input
                     type="tel"
@@ -116,7 +117,7 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
                     onChange={handleFormChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Your phone number"
+                    placeholder="رقم هاتفك"
                   />
                 </div>
               </div>
@@ -124,9 +125,9 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
 
             {/* قسم التواصل */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Contact Details</h3>
-              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                <Phone className="w-4 h-4 mr-2" /> WhatsApp Number (Optional)
+              <h3 className="text-lg font-semibold text-gray-800 mb-3" dir="rtl">تفاصيل التواصل</h3>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2" dir="rtl">
+                <Phone className="w-4 h-4 ml-2" /> رقم الواتساب (اختياري)
               </label>
               <input
                 type="tel"
@@ -134,17 +135,18 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
                 value={formData.customerWhatsApp}
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="WhatsApp number (if different)"
+                placeholder="رقم الواتساب (إذا كان مختلفاً)"
+                dir="rtl"
               />
             </div>
 
             {/* قسم التاريخ والوقت */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Preferred Date & Time</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3" dir="rtl">التاريخ والوقت المفضل</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="w-4 h-4 mr-2" /> Preferred Date *
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2" dir="rtl">
+                    <Calendar className="w-4 h-4 ml-2" /> التاريخ المفضل *
                   </label>
                   <input
                     type="date"
@@ -158,8 +160,8 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
                 </div>
 
                 <div>
-                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                    <Clock className="w-4 h-4 mr-2" /> Preferred Time *
+                  <label className="flex items-center text-sm font-medium text-gray-700 mb-2" dir="rtl">
+                    <Clock className="w-4 h-4 ml-2" /> الوقت المفضل *
                   </label>
                   <select
                     name="proposedTime"
@@ -168,7 +170,7 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="">Select time</option>
+                    <option value="">اختر الوقت</option>
                     {timeSlots.map(time => <option key={time} value={time}>{time}</option>)}
                   </select>
                 </div>
@@ -177,9 +179,9 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
 
             {/* قسم الملاحظات */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Additional Notes</h3>
-              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                <MessageSquare className="w-4 h-4 mr-2" /> Special Requests or Questions
+              <h3 className="text-lg font-semibold text-gray-800 mb-3" dir="rtl">ملاحظات إضافية</h3>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2" dir="rtl">
+                <MessageSquare className="w-4 h-4 ml-2" /> طلبات خاصة أو أسئلة
               </label>
               <textarea
                 name="notes"
@@ -187,17 +189,18 @@ export function ReservationForm({ isOpen, onClose, onSubmit }: ReservationFormPr
                 onChange={handleFormChange}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Any special requirements or questions..."
+                placeholder="أي متطلبات خاصة أو أسئلة..."
+                dir="rtl"
               />
             </div>
 
             {/* الأزرار */}
             <div className="flex gap-4">
               <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-                Cancel
+                إلغاء
               </Button>
               <Button type="submit" loading={loading} className="flex-1">
-                Submit Reservation
+                إرسال الحجز
               </Button>
             </div>
           </form>

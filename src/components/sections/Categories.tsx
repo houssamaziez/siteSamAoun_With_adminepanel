@@ -14,12 +14,12 @@ export function Categories({ onCategorySelect, categories }: CategoriesProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16 animate-fade-in-up">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 gradient-text">
-            Shop by Category
+          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 gradient-text" dir="rtl">
+            تسوق حسب الفئة
           </h2>
-          <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Find exactly what you need with our comprehensive range of technology categories, 
-            from high-performance gaming gear to professional workstation components.
+          <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed" dir="rtl">
+            اعثر على ما تحتاجه بالضبط مع مجموعتنا الشاملة من فئات التكنولوجيا،
+            من معدات الألعاب عالية الأداء إلى مكونات محطات العمل المهنية.
           </p>
         </div>
 

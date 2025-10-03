@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Search, Filter, Grid2x2 as Grid, List, ArrowLeft, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { ProductCard } from '../ui/ProductCard';
@@ -10,6 +10,10 @@ export function ProductsPage() {
   const navigate = useNavigate();
   const { products, loading } = useProducts();
   const { categories } = useCategories();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('name');

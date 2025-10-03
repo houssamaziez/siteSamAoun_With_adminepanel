@@ -16,6 +16,9 @@ import { Reservation } from './types';
 import { createReservation } from './hooks/useSupabaseData';
 import { getCurrentUser } from './lib/supabase';
 
+// Store scroll positions for desktop only
+const scrollPositions = new Map<string, number>();
+
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,6 +31,36 @@ function AppContent() {
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  // Save and restore scroll position (desktop only)
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const isMobile = window.innerWidth < 768;
+
+    // Skip scroll restoration on mobile devices
+    if (isMobile) {
+      return;
+    }
+
+    // Save scroll position when leaving
+    const handleScroll = () => {
+      scrollPositions.set(currentPath, window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Restore scroll position when entering home page
+    const savedPosition = scrollPositions.get(currentPath);
+    if (savedPosition !== undefined && currentPath === '/') {
+      setTimeout(() => {
+        window.scrollTo({ top: savedPosition, behavior: 'instant' });
+      }, 0);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [location.pathname]);
 
   const checkAuthStatus = async () => {
     try {
